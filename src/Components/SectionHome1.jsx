@@ -8,12 +8,11 @@ const SectionHome1 = () => {
 
   return (
     <>
- <section className="  relative mt-8 md:flex justify-center ">
-  <div className="max-w-screen-xl  flex w-full md:grid-cols-3 gap-6 px-4 md:px-8">
-    
-    {/* Left big image */} 
-    <div className="relative h-[75%] w-[70%] hidden  rounded-2xl md:flex flex-col overflow-hidden">
-      {/* Image */}
+ <section className="relative mt-8 px-4 md:px-8 font-sans">
+  <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-3">
+
+    {/* Left big image */}
+    <div className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
       <img
         src={heroImg}
         alt="Main Visual"
@@ -21,52 +20,54 @@ const SectionHome1 = () => {
       />
 
       {/* Text Overlay */}
-      <div className="absolute top-10 left-10 z-10 text-white">
-        <p className="text-6xl font-semibold leading-13">
+      <div className="absolute top-8 left-6 z-10 text-white">
+        <p className="text-4xl md:text-6xl font-semibold leading-tight md:leading-[3.2rem]">
           Color Of <br /> Summer <br /> Outfit
         </p>
-        <button className="mt-4 px-6 py-1 bg-[#E5C870] text-black rounded-full shadow-lg">
+        <button className="mt-4 px-6 py-2 bg-[#E5C870] text-black rounded-full shadow-lg text-sm md:text-base">
           Shop the Look →
         </button>
       </div>
 
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/30 rounded-2xl z-0" />
+      <div className="absolute inset-0 bg-black/30 z-0 rounded-2xl" />
     </div>
 
     {/* Right stacked cards */}
-    <div className="flex flex-col gap-2">
+    <div className="flex sm:flex-col  flex-row sm:gap-3 gap-2 w-full md:w-[30%]">
       {/* Card 1 */}
-      <div className="bg-[#3a3a3a] text-[#E5C870] p-6 rounded-2xl relative flex flex-col h-[250px] w-[400px]">
-        <p className="text-4xl font-semibold leading-8 mt-[50px] z-10 relative">Naturally<br />Styled</p>
+      <div className="bg-[#3a3a3a] text-[#E5C870] sm:p-6 px-2  rounded-2xl relative sm:w-full w-[40%]  h-[240px] sm:h-[260px]">
+        <p className="text-2xl sm:text-5xl font-semibold sm:leading-10  leading-6 mt-[40px] z-10 relative">
+          Naturally<br />Styled
+        </p>
         <img
           src={secondImg}
           alt="Styled Model"
-          className="object-contain absolute bottom-0 right-4 rounded-md mt-auto max-h-[240px]"
+          className="object-contain absolute bottom-0 right-4 sm:w-[140px] w-[100px]"
         />
       </div>
 
       {/* Card 2 */}
-      <div className="bg-[#e2c565] text-black p-6 rounded-2xl relative h-[335px] overflow-hidden">
-        <h2 className="text-5xl  font-semibold leading-11 mt-[70px] z-10 relative">
+      <div className="bg-[#e2c565] text-black sm:p-6 px-2 rounded-2xl relative h-[240px] w-[60%] sm:w-full sm:h-[325px] overflow-hidden">
+        <h2 className="text-3xl sm:text-5xl font-semibold leading-10 mt-[40px] z-10 relative">
           Casual <br /> Comfort
         </h2>
         <img
           src={firstImg}
           alt="Casual Comfort"
-          className="absolute bottom-0 right-4 w-[160px] object-contain"
+          className="absolute bottom-0 right-4 sm:w-[140px] w-[100px]  object-contain"
         />
       </div>
     </div>
   </div>
 
-  {/* Scroll Down Button (fixed to bottom center of section) */}
-  <div className=" absolute bottom-[155px] right-[80px] transform -translate-x-1/2">
-    <button className="flex items-center gap-2 px-4 py-1.5 bg-white rounded-xl text-black font-semibold   transition duration-300">
+  {/* Scroll Down Button */}
+  <div className=" absolute md:bottom-[-36px] sm:right-12  right-4 mt-2 md:transform md:-translate-x-1/2 flex justify-center">
+    <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-black font-semibold text-sm shadow hover:shadow-md transition duration-300">
       Scroll Down
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-4 w-4  font-bold"
+        className="h-4 w-4"
         fill="currentColor"
         viewBox="0 0 20 20"
       >
@@ -79,6 +80,7 @@ const SectionHome1 = () => {
     </button>
   </div>
 </section>
+
 
 
 
