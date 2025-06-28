@@ -8,11 +8,11 @@ const SectionHome1 = () => {
 
   return (
     <>
- <section className="relative mt-8 flex justify-center ">
-  <div className="max-w-screen-xl flex w-full md:grid-cols-3 gap-6 px-4 md:px-8">
+ <section className="  relative mt-8 md:flex justify-center ">
+  <div className="max-w-screen-xl  flex w-full md:grid-cols-3 gap-6 px-4 md:px-8">
     
     {/* Left big image */} 
-    <div className="relative h-[75%] w-[70%] rounded-2xl flex flex-col overflow-hidden">
+    <div className="relative h-[75%] w-[70%] hidden  rounded-2xl md:flex flex-col overflow-hidden">
       {/* Image */}
       <img
         src={heroImg}
