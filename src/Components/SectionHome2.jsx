@@ -12,7 +12,10 @@ const SectionHome2 = () => {
     <BoxOfProdcuts />
     <BoxOfProdcuts />
     <BoxOfProdcuts />
+        <BoxOfProdcuts />
     <BoxOfProdcuts />
+    <BoxOfProdcuts />
+ 
   </div>
 </section>
 

@@ -7,12 +7,12 @@ import sale from "../assets/happy-beautiful-couple-posing-with-shopping-bags-vio
 
 const SectionHome3 = () => {
   return (
-     <div className='mt-10 px-4 sm:px-4 md:px-6 lg:px-16 w-full flex justify-center items-center'>
+     <div className='mt-[100px] px-4 sm:px-4 md:px-6 lg:px-16 w-full flex justify-center items-center'>
 
-  <div className='flex flex-col md:flex-row w-full max-w-screen-xl gap-6'>
+  <div className='flex flex-col md:flex-row w-full max-w-screen-xl gap-3'>
 
     {/* LEFT COLUMN */}
-    <div className='flex flex-col w-full md:w-[75%] gap-6'>
+    <div className='flex flex-col w-full md:w-[75%] gap-3'>
 
       {/* Top Box */}
       <div className='bg-white rounded-xl  flex flex-col sm:flex-row items-center justify-between h-full shadow-sm relative'>
@@ -24,7 +24,7 @@ const SectionHome3 = () => {
         </div>
 
         {/* Image */}
-        <img src={sale} alt="Sale" className='h-[200px] sm:h-[250px] md:h-[200px] object-contain' />
+        <img src={sale} alt="Sale" className='h-[150px] sm:h-[250px] md:h-[200px] object-contain' />
 
         {/* Badge */}
         <div className="absolute top-2 right-2">
