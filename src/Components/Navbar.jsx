@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import { FaSearch, FaShoppingBag, FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/image.png"
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const[isclick,setIsClick] = useState("Home")
@@ -10,17 +11,20 @@ const Navbar = () => {
     <>
     <nav className="w-full flex sm:items-center  sm:justify-center sm:gap-[250px] gap-[200px]   items-center justify-evenly   sm:px-6 py-4 bg-[#0A0A0A] text-white font-semibold">
       {/* Left - Nav Links */}
-    <div className="hidden md:flex items-center gap-6 text-sm">
+    
+<div className="hidden md:flex items-center gap-6 text-sm">
   {["Home", "Services", "Products", "Contact"].map((item, idx) => (
     <div
       key={idx}
       onClick={() => setIsClick(item)}
       className="relative group cursor-pointer"
     >
-      <span className="uppercase">{item}</span>
-      {item === isclick && (
-        <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
-      )}
+      <Link to={`/${item.toLowerCase()}`}>
+        <span className="uppercase">{item}</span>
+        {item === isclick && (
+          <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
+        )}
+      </Link>
     </div>
   ))}
 </div>
