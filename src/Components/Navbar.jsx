@@ -87,10 +87,13 @@ const Navbar = () => {
               }}
               className="relative group cursor-pointer"
             >
+               <Link to={`/${item.toLowerCase()}`}>
               <span className="uppercase">{item}</span>
               {item === isclick && (
                 <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
               )}
+              </Link>
+              
             </div>
           ))}
         </div>

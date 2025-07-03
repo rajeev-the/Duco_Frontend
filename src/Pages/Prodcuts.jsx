@@ -1,5 +1,6 @@
 import React from 'react'
 import tshirt from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
+import { Link } from 'react-router-dom'
 
 const Prodcuts = () => {
   return (
@@ -52,7 +53,7 @@ const Prodcuts = () => {
           <div className="bg-black text-white p-6 rounded-xl mb-6 relative">
             <h2 className="text-xl font-bold mb-2">Enquire about <span className="text-yellow-400">Bulk Orders</span> at</h2>
             <div className="bg-white text-black inline-block px-4 py-2 rounded text-sm font-mono">
-              business@bewakoof.com
+              business@duco.com
             </div>
             <p className="text-sm mt-2">*Min. 30 units order | Grab exciting deals & offers</p>
           </div>
@@ -70,7 +71,7 @@ const Prodcuts = () => {
           {/* Product grid */}
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
     {[1, 2, 3, 4, 5, 6].map((item) => (
-      <div key={item} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md">
+      <Link to={`/products/1`} key={item} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md">
         <div className="relative">
           <img
             src={tshirt}
@@ -84,7 +85,7 @@ const Prodcuts = () => {
           <p className="text-gray-500 text-xs">Your design, your style</p>
           <p className=" text-sm font-bold mt-2">₹499</p>
         </div>
-      </div>
+      </Link>
     ))}
   </div>
 

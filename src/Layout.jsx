@@ -7,6 +7,7 @@ const Layout = () => {
   return (
   <>
   <div  className='h-full w-full  bg-[#0A0A0A] montserrat-light'>
+     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#E5C870] to-transparent"></div>
     <Navbar/>
  <div>
 <Outlet/>
