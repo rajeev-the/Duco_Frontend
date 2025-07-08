@@ -1,15 +1,16 @@
 import React,{useState} from 'react'
 import { FaSearch, FaShoppingBag, FaBars, FaTimes } from "react-icons/fa";
 import logo from "../assets/image.png"
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const[isclick,setIsClick] = useState("Home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
-    <nav className="w-full flex sm:items-center  sm:justify-center sm:gap-[250px] gap-[200px]   items-center justify-evenly   sm:px-6 py-4 bg-[#0A0A0A] text-white font-semibold">
+    <nav className="w-full flex sm:items-center  sm:justify-center sm:gap-[250px] gap-[180px]   items-center justify-evenly   sm:px-6 py-4 bg-[#0A0A0A] text-white font-semibold">
       {/* Left - Nav Links */}
     
 <div className="hidden md:flex items-center gap-6 text-sm">
@@ -49,9 +50,9 @@ const Navbar = () => {
             className="bg-transparent placeholder-white text-white outline-none"
           />
         </div>
-      <div className="flex items-center justify-center gap-6">
+      <div className="flex items-center justify-center gap-4">
   {/* Shopping Cart Icon */}
-  <FaShoppingBag className="text-white text-xl cursor-pointer" />
+    <FaShoppingBag onClick={()=> navigate('/cart')} className="text-white text-xl cursor-pointer" />
 
   {/* Mobile Menu Toggle - Only visible on mobile */}
   <div className="md:hidden flex items-center justify-center">
@@ -66,6 +67,7 @@ const Navbar = () => {
       )}
     </button>
   </div>
+
 </div>
 
 
