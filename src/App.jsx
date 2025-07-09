@@ -8,6 +8,8 @@ import Contact from './Pages/Contact.jsx';
 import ProductPage from './Pages/ProductPage.jsx';
 
 import Cart from './Pages/Cart.jsx';
+import GetBulk from './Pages/GetBulk.jsx';
+import Order from './Pages/Order.jsx';
 
 const App = () => {
   return (
@@ -20,6 +22,9 @@ const App = () => {
               <Route  path='/contact' element={<Contact/>}/>
                 <Route  path='/cart' element={<Cart/>}/>
                 <Route  path='/products/:id' element={<ProductPage/>}/>
+                  <Route  path='/getbulk' element={<GetBulk/>}/>
+                     <Route  path='/order' element={<Order/>}/>
+
 
 
       </Route>

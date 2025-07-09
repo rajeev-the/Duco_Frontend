@@ -14,7 +14,7 @@ const Navbar = () => {
       {/* Left - Nav Links */}
     
 <div className="hidden md:flex items-center gap-6 text-sm">
-  {["Home", "Services", "Products", "Contact"].map((item, idx) => (
+  {["Home", "Order", "Products", "Contact"].map((item, idx) => (
     <div
       key={idx}
       onClick={() => setIsClick(item)}
@@ -78,9 +78,20 @@ const Navbar = () => {
 
     </nav>
 
-     {mobileMenuOpen && (
-        <div className="md:hidden px-3 flex  gap-4 text-center  text-white text-sm">
-          {["Home", "Services", "Products", "Contact"].map((item, idx) => (
+    
+   <div className="md:hidden  mt-2  relative   flex items-center gap-2 px-2 py-1">
+  <FaSearch className="text-white" />
+  <input
+    type="text"
+    placeholder="Search For Products..."
+    className="bg-transparent placeholder-white text-white outline-none w-full"
+  />
+   <div className="absolute left-3 -bottom-1 h-[2px] w-1/2 bg-[white]" />
+   
+</div>
+ {mobileMenuOpen && (
+        <div className="md:hidden px-3 flex  mt-4 gap-4 text-center  text-white text-sm">
+          {["Home", "Order", "Products", "Contact"].map((item, idx) => (
             <div
               key={idx}
               onClick={() => {
@@ -100,16 +111,6 @@ const Navbar = () => {
           ))}
         </div>
       )}
-   <div className="md:hidden  mt-2  relative   flex items-center gap-2 px-2 py-1">
-  <FaSearch className="text-white" />
-  <input
-    type="text"
-    placeholder="Search For Products..."
-    className="bg-transparent placeholder-white text-white outline-none w-full"
-  />
-   <div className="absolute left-3 -bottom-1 h-[2px] w-1/2 bg-[white]" />
-</div>
-
 
     </>
 

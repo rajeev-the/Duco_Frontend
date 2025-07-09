@@ -1,8 +1,10 @@
 import React from 'react'
 import BoxOfProdcuts from './BoxOfProdcuts'
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const SectionHome2 = () => {
+  const navigator = useNavigate()
   return (
 <section className="mt-[100px] sm:mt-10 px-4 md:px-8 lg:px-16">
   <h1 className="text-3xl text-white text-center font-semibold">Shop Now</h1>
@@ -21,7 +23,7 @@ const SectionHome2 = () => {
 
   {/* Button Wrapper */}
   <div className="mt-6 flex justify-end">
-    <button className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-xl shadow-sm border font-semibold hover:bg-gray-100 transition">
+    <button  onClick={()=> navigator("/products")} className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-xl shadow-sm border font-semibold hover:bg-gray-100 transition">
       Explore All
       <ChevronRight size={20} />
     </button>

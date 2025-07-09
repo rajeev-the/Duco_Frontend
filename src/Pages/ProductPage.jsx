@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import tshirtImage from '../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import { MdOutlinePrint, MdOutlineColorLens, MdOutlineStraighten } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [selectedSize, setSelectedSize] = useState('M');
+  const navigate = useNavigate()
 
   const colors = [
     '#E3C099', '#4C2A2A', '#8D5A5A', '#3B3B3B', '#007F5F', '#FC5185', '#9ED8DB', '#FFD700',
@@ -38,7 +40,7 @@ const ProductPage = () => {
           <h1 className="text-3xl font-bold text-[#E5C870]">Unisex Classic Crew T-Shirt | UC21</h1>
           <p className="text-2xl font-semibold">₹160.00</p>
 
-          <button className="bg-[#E5C870] hover:bg-green-600 text-black  font-bold px-4 py-2 rounded">Get Your Free Bulk Quote</button>
+          <button onClick={()=> navigate("/getbulk")}  className="bg-[#E5C870] hover:bg-green-600 text-black  font-bold px-4 py-2 rounded">Get Your Free Bulk Quote</button>
 
           <ul className="grid grid-cols-2 gap-1 text-sm text-gray-700">
             <li><FaCheckCircle className="inline mr-1 text-green-600" />180 GSM</li>
