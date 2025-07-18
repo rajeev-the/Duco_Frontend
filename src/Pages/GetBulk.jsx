@@ -3,6 +3,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { FaThumbsUp, FaShippingFast, FaRecycle } from 'react-icons/fa';
 import { MdPrint } from 'react-icons/md';
 import { LuBrush } from 'react-icons/lu';
+import getimage from "../assets/Screenshot 2025-07-10 195251.png"
 const GetBulk = () => {
  const features = [
   {
@@ -131,6 +132,42 @@ const GetBulk = () => {
           </a>
         </div>
       </form>
+    </div>
+
+    <div className='p-5 flex items-center justify-center'>
+      <div>
+<img src={getimage} alt="getbulk" />
+
+        <div class=" text-white   p-4 rounded shadow-md max-w-xl text-xl leading-relaxed">
+  <h3 class="text-lg font-semibold mb-2">Please Note:</h3>
+  <ol class="list-decimal pl-5 space-y-1">
+    <li>All items in Pack of 10.</li>
+    <li>All items without Tik.</li>
+    <li>On Polo T-Shirt:
+      <ul class="list-disc pl-5">
+        <li>One <strong>"</strong> mark represents self collar.</li>
+        <li>Two <strong>**</strong> marks represent knitted collar.</li>
+      </ul>
+    </li>
+    <li>The rates given are applicable for size 36 to 42.
+      <ul class="list-disc pl-5">
+        <li>Size 44 @ ₹3 extra</li>
+        <li>Onwards @ ₹3 extra</li>
+      </ul>
+    </li>
+    <li>Contrast collar on T-Shirt @ ₹3 extra.</li>
+    <li>Cloth Rib on Sleeves @ ₹3 extra.</li>
+    <li>Please do read the terms and conditions.</li>
+    <li>Purchase below 100 quantity is @ ₹5 extra.</li>
+  </ol>
+</div>
+
+      </div>
+
+      
+
+    
+
     </div>
 
   <section className="py-14 px-4 md:px-10 lg:px-20 text-center ">

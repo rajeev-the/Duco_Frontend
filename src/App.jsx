@@ -6,10 +6,13 @@ import './App.css';
 import Prodcuts from './Pages/Prodcuts.jsx';
 import Contact from './Pages/Contact.jsx';
 import ProductPage from './Pages/ProductPage.jsx';
-
+import Adminhome from "./Admin/Home.jsx"
 import Cart from './Pages/Cart.jsx';
 import GetBulk from './Pages/GetBulk.jsx';
 import Order from './Pages/Order.jsx';
+import ProdcutsCreated from './Admin/ProdcutsCreated.jsx';
+import AdminLayout from './Admin/AdminLayout .jsx';
+
 
 const App = () => {
   return (
@@ -28,6 +31,13 @@ const App = () => {
 
 
       </Route>
+
+   
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Adminhome />} />
+        <Route path="products" element={<ProdcutsCreated />} />
+      </Route>
+ 
       
     </Routes>
     
