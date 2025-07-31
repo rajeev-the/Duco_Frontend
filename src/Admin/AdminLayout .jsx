@@ -8,8 +8,11 @@ const AdminLayout = () => {
       <aside className="w-64 bg-gray-800 text-white p-5">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav className="space-y-2">
-          <Link to="/admin" className="block hover:text-blue-300">Dashboard</Link>
+          <Link to="/admin" className="block hover:text-blue-300">Invertory</Link>
           <Link to="/admin/products" className="block hover:text-blue-300">Products</Link>
+        
+          <Link to="/admin/category" className="block hover:text-blue-300">Category</Link>
+             <Link to="/admin/moneyset" className="block hover:text-blue-300">Set Money</Link>
         </nav>
       </aside>
 

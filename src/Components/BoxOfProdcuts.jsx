@@ -1,31 +1,64 @@
-import React from 'react'
-import firstImg from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
+import React,{useContext} from 'react';
+import firstImg from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png";
+import { CartContext } from '../ContextAPI/CartContext';
+import { Link } from 'react-router-dom';
 
-const BoxOfProdcuts = () => {
-    const colors = ["#FF0000", "#FF8A00", "#4A4AFF", "#FFFFFF", "#000000"];
+const BoxOfProdcuts = ({ price ,title ,id ,image }) => {
+  const colors = ["#FF0000", "#FF8A00", "#4A4AFF", "#FFFFFF", "#000000"];
+  const { addtocart } = useContext(CartContext);
+
   return (
-    <div className=' flex  flex-col items-center justify-center     '>
-            <div className=' flex  bg-[#E5C870]  justify-evenly px-[20px] gap-[60px]   rounded-2xl items-center  '>
-                 <div className=" flex flex-col gap-3 z-10  mt-[20px] mb-[80px]">
-      {colors.map((color, index) => (
-        <div
-          key={index}
-          className="w-8 h-8 rounded-full border border-black"
-          style={{ backgroundColor: color }}
-        />
-      ))}
-    </div>
-        <img src={firstImg} alt="Product" className=' h-[250px]  mt-[80px]   object-contain' />
-           
-            </div>
-
-
-        <div className='bg-[#E5C870] text-black   ml-[180px]   text-lg px-1  py-0.5 text-center  rounded-lg   font-bold mt-2'>
-            $300-400
+    <Link to={`/products/${id}`} className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out">
+      {/* Image & Color Swatches */}
+      <div className="relative bg-[#F9F5EB]  flex justify-center items-end rounded-t-3xl">
+        {/* Color Circles */}
+        <div className="absolute top-4 left-4 flex flex-col gap-3 z-10">
+          {colors.map((color, index) => (
+            <span
+              key={index}
+              className="w-5 h-5 rounded-full border border-gray-300 shadow-md"
+              style={{ backgroundColor: color }}
+            />
+          ))}
         </div>
-    </div>
 
-  )
-}
+        {/* Product Image */}
+        <img
+          src={image}
+          alt="Product"
+          className="h-[250px]   object-contain z-0"
+        />
+      </div>
 
-export default BoxOfProdcuts
+      {/* Text Section */}
+      <div className="px-5 pt-4 pb-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-1 tracking-tight">
+         {title || "Classic Crew T-Shirt"}
+        </h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Soft cotton fabric, modern fit, and available in 5 elegant colors.
+        </p>
+
+        <div className="flex justify-between items-center">
+          <span className="text-lg font-bold text-gray-900">₹{price}</span>
+          <button onClick={(e)=>{
+            e.preventDefault();       // prevent Link default
+    e.stopPropagation();  
+            addtocart({
+              id:id,
+              design: [],
+              size: "m",
+              color: "white",
+              quantity: 1,
+              price: price,
+            });
+          }} className="px-4 py-1.5 bg-[#E5C870] text-black text-sm font-medium rounded-full hover:bg-gray-800 transition">
+             Add to Bag
+          </button>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+export default BoxOfProdcuts;

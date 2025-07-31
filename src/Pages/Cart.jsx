@@ -1,55 +1,51 @@
-import React,{useState} from 'react'
+import React,{useState ,useEffect} from 'react'
 import CartItem from '../Components/CartItem ';
+import {useContext} from "react";
+import { CartContext } from "../ContextAPI/CartContext";
+import data from '../data'; // Adjust the import path as necessary
 import watchphoto from '../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png'
+import AddressManager from '../Components/AddressManager';
 
 const Cart = () => {
-   const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "Noise Icon '2.1' Display with Bluetooth Calling",
-      price: 1150.00,
-      size: 36,
-      color: "WHITE",
-      quantity: 1,
-      image: watchphoto,
-       rating: 4.5
-    },
-    {
-      id: 2,
-      name: " Noise Icon '2.1' Display with Bluetooth Calling            ",
-      price: 1250.00,
-      size: 36,
-      color: "BLACK",
-      quantity: 3,
-      image: watchphoto,
-       rating: 4.5
-      
+  const { cart, clear ,removeFromCart ,updateQuantity } = useContext(CartContext);
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+      const stored = localStorage.getItem('user');
+    
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    }, []);
+    
+    console.log(cart)
 
-    },
-    {
-      id: 3,
-      name: "GAMILLE HENROT ARTWORK TOP",
-      price: 495.00,
-      size: 36,
-      color: "BLACK",
-      quantity: 2,
-      image: watchphoto,
-       rating: 4.5
-    }
-  ]);
+const actualdata = cart.map((cartItem) => {
+  const product = data.find((d) => d.id === cartItem.id); // match by ID
+  if (!product) return null;
 
-  const removeItem = (itemId) => {
-    setItems(items.filter(item => item.id !== itemId));
+  return {
+    ...product,
+    ...cartItem
   };
+}).filter(Boolean); // filter out any nulls (unmatched)
 
-  const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-    setItems(items.map(item => 
-      item.id === itemId ? { ...item, quantity: newQuantity } : item
-    ));
-  };
 
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+console.log(actualdata);
+   
+
+
+
+
+  // const updateQuantity = (itemId, newQuantity) => {
+  //   if (newQuantity < 1) return;
+  //   setItems(items.map(item => 
+  //     item.id === itemId ? { ...item, quantity: newQuantity } : item
+  //   ));
+  // };
+
+  // const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = actualdata.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const postage = 24.00;
   const total = subtotal + postage;
 
@@ -61,20 +57,27 @@ const Cart = () => {
         {/* Cart Items */}
         <div className="flex-1">
           <div className="flex-1">
-          {items.map((item) => (
-            <CartItem
-              key={item.id}
-              item={item}
-              updateQuantity={updateQuantity}
-              removeItem={removeItem}
-            />
+          {actualdata?.map((item,i) => (
+           <CartItem
+  key={i}
+  item={item}
+  removeFromCart={() =>
+    removeFromCart(item.id, item.size, item.color, item.design)
+  }
+  updateQuantity={(newQty) =>
+    updateQuantity(item.id, item.size, item.color, item.design, newQty)
+  }
+/>
+
           ))}
         </div>
         </div>
 
         {/* Order Summary */}
-        <div className="lg:w-96   h-fit   rounded-sm  p-6" style={{ backgroundColor: '#112430' }}>
-          <h2 className="text-2xl font-bold mb-6 text-white">ORDER SUMMARY</h2>
+        <div className="lg:w-96  flex flex-col  " >
+          
+          <div className='lg:w-96   h-fit   rounded-sm  p-6' style={{ backgroundColor: '#112430' }}>
+                 <h2 className="text-2xl font-bold mb-6 text-white">ORDER SUMMARY</h2>
           
           <div className="space-y-4 mb-8">
             <div className="flex justify-between">
@@ -102,7 +105,15 @@ const Cart = () => {
           >
             CHECK OUT
           </button>
+
+          </div>
+
+          <AddressManager user={user} setUser={setUser} />
+       
+       
+
         </div>
+       
       </div>
     </div>
   )
