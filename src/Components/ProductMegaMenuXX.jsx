@@ -95,15 +95,16 @@ const [value,setValue] = useState([])
         {/* Product Grid */}
         <div className="grid grid-cols-2 gap-4 overflow-y-auto">
           {value.map((item, idx) => (
-            <div
+            <Link
+            to={`/products/subcategory/${item._id}/${item.subcatogry}`}
               key={idx}
               className="bg-[#E5C870] hover:shadow-md rounded-lg overflow-hidden p-2 text-center transition-all"
             >
              
-              <p className="text-sm font-medium text-black truncate">
+              <p  className="text-sm font-medium text-black truncate">
                 {item.subcatogry}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -1,17 +1,41 @@
-import React from 'react'
+import React, { useState,useEffect } from 'react'
 import tshirt from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FaFilter } from "react-icons/fa";
+import {getproductcategory} from "../Service/APIservice"
+
 
 const SaerchingPage = () => {
+const[prodcuts,setProdcuts] = useState([])
+const {id,catogory_name} = useParams()
+
+useEffect(() => {
+ 
+  const fetchdata =async()=>{
+
+   const data = await getproductcategory(id);
+      if(data){
+        setProdcuts(data)
+        
+      }
+      else{
+        console.log("No Products is available")
+      }
+  }
+  fetchdata()
+
+}, [id])
+
+console.log(prodcuts)
+
   return (
    <div className=" text-white min-h-screen p-4">
       {/* Breadcrumb */}
       
 
       {/* Heading and product count */}
-      <div className="flex justify-between items-center mb-4">
-       <span className="text-white">Cotton Products</span>
+      <div className="flex justify-between items-center mb-2">
+       <span className="text-white text-2xl">{catogory_name}</span>
         <span className="text-gray-500">82 Products</span>
       </div>
 
@@ -60,20 +84,20 @@ const SaerchingPage = () => {
 
           {/* Product grid */}
            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
-    {[1, 2, 3, 4, 5, 6].map((item) => (
-      <Link to={`/products/1`} key={item} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md">
-        <div className="relative">
+    {prodcuts?.map((item) => (
+      <Link to={`/products/${item._id}`} key={item} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md">
+        <div className="relative p-3">
           <img
-            src={tshirt}
+            src={item.image_url[0]?.url[0]}
             alt="T-Shirt Design"
-            className="w-[200px]  object-contain"
+            className="w-[200px] bg-white  object-cover "
           />
           <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">Oversized Fit</div>
         </div>
         <div className="p-4">
-          <h3 className="text-sm font-semibold">Custom T-Shirt {item}</h3>
-          <p className="text-gray-500 text-xs">Your design, your style</p>
-          <p className=" text-sm font-bold mt-2">₹499</p>
+          <h3 className="text-sm font-semibold">{item.products_name}</h3>
+    
+          <p className=" text-sm font-bold mt-2">₹{item.pricing[0].price_per}</p>
         </div>
       </Link>
     ))}

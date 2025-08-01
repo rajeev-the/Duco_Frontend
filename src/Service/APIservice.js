@@ -82,3 +82,17 @@ export const getproductssingle = async (id) => {
     return null;
   }
 };
+
+
+
+
+
+export const getproductcategory = async (idsub) => {
+  try {
+    const res = await axios.get(`https://duco-backend.onrender.com/products/getsub/${idsub}`);
+    return res.data || []; // Assuming controller sends { data: [...] }
+  } catch (err) {
+    console.error("Error fetching subcategories:", err);
+    return null;
+  }
+};
