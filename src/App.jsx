@@ -19,6 +19,7 @@ import MoneySet from './Admin/MoneySet.jsx';
 import { UserProvider } from './ContextAPI/UserContext.jsx';
 import ProfilePanel from './Pages/ProfilePanel.jsx';
 import SaerchingPage from './Pages/SaerchingPage.jsx';
+import ProductsUpdate from './Admin/ProductsUpdate.jsx';
 
 
 const App = () => {
@@ -53,6 +54,7 @@ const App = () => {
         <Route path="products" element={<ProdcutsCreated />} />
         <Route path="category" element={<Category/>} />
         <Route path='moneyset' element={<MoneySet/>} />
+        <Route path='edit/:id' element={<ProductsUpdate/>}/>
 
       </Route>
  

@@ -20,6 +20,8 @@ const Home = () => {
     fetchData();
   }, []);
 
+  console.log(products)
+
   return (
     <>
    
@@ -32,7 +34,9 @@ const Home = () => {
               id: p._id,
               products_name: p.products_name,
               Stock: p.Stock,
-              image:tshirt
+              image:p.image_url?.[0].url[0],
+              image_url:p.image_url,
+              fulldetails:p
             }}
             onEdit={(id) => console.log("Edit clicked for:", id)}
           />

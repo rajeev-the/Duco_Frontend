@@ -96,3 +96,14 @@ export const getproductcategory = async (idsub) => {
     return null;
   }
 };
+
+
+export const Updateproductcate = async (id,updates) => {
+  try {
+    const res = await axios.put(`https://duco-backend.onrender.com/products/update/:${id}`,updates);
+    return res.data || []; // Assuming controller sends { data: [...] }
+  } catch (err) {
+    console.error("Error fetching subcategories:", err);
+    return null;
+  }
+};
