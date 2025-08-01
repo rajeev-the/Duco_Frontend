@@ -3,12 +3,12 @@ import axios from 'axios';
 const API_BASE = 'https://duco-backend.onrender.com/'; // Set if you have a different baseURL
 
 export const fetchAllPrices = async () => {
-  const response = await axios.get(`${API_BASE}/money/get_money`);
+  const response = await axios.get(`${API_BASE}money/get_money`);
   return response.data;
 };
 
 export const createOrUpdatePrice = async (data) => {
-  const response = await axios.post(`${API_BASE}/create_location_price_increase`, data);
+  const response = await axios.post(`${API_BASE}create_location_price_increase`, data);
   return response.data;
 };
 
