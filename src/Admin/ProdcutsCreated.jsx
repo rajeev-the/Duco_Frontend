@@ -1,28 +1,23 @@
-import React, { useState ,useEffect } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ProductsCreated = () => {
   const [currentStep, setCurrentStep] = useState(1);
-   const [subcategories, setSubcategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
 
+  useEffect(() => {
+    const getSubCategories = async () => {
+      try {
+        const res = await axios.get("https://duco-backend.onrender.com/subcategory/getallsubctg");
+        setSubcategories(res.data.subCategory || []);
+      } catch (err) {
+        console.error("Error fetching subcategories:", err);
+      }
+    };
 
-   useEffect(() => {
-       const getSubCategories = async () => {
-    try {
-      const res = await axios.get("https://duco-backend.onrender.com/subcategory/getallsubctg");
-      setSubcategories(res.data.subCategory || []);
-    } catch (err) {
-      console.error("Error fetching subcategories:", err);
-    }
-  };
-
-
-  getSubCategories();
-  
-   }, [])
-   
-
-
+    getSubCategories();
+  }, []);
 
   const [formData, setFormData] = useState({
     products_name: '',
@@ -35,7 +30,8 @@ const ProductsCreated = () => {
     }],
     pricing: [{ quantity: '', price_per: '', discount: 0 }],
     Desciptions: [''],
-    subcategory: ''
+    subcategory: '',
+    gender: 'Male'
   });
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
@@ -145,7 +141,7 @@ const ProductsCreated = () => {
           />
         )}
 
-        {currentStep === 2 && (
+          {currentStep === 2 && (
           <>
             <h3 className="font-semibold text-lg text-gray-700">Images, Color & Sizes</h3>
             {formData.image_url.map((img, imgIndex) => (
@@ -177,7 +173,7 @@ const ProductsCreated = () => {
             <button type="button" onClick={addImageField} className="text-sm text-blue-600 font-medium">+ Add New Image Block</button>
           </>
         )}
-
+       
         {currentStep === 3 && (
           <>
             <h3 className="font-semibold text-lg text-gray-700">Pricing Tiers</h3>
@@ -192,6 +188,7 @@ const ProductsCreated = () => {
           </>
         )}
 
+       
         {currentStep === 4 && (
           <>
             <h3 className="font-semibold text-lg text-gray-700">Product Descriptions</h3>
@@ -206,18 +203,27 @@ const ProductsCreated = () => {
           <>
             <h3 className="font-semibold text-lg text-gray-700">Subcategory Reference</h3>
             <select
-        value= {formData.subcategory}
-           onChange={(e) => handleChange(e, 'subcategory')}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-200"
-        >
-          <option value="">Select a Subcategory</option>
-          {subcategories.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.subcatogry}
-            </option>
-          ))}
-        </select>
-          
+              value={formData.subcategory}
+              onChange={(e) => handleChange(e, 'subcategory')}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-200 mb-4"
+            >
+              <option value="">Select a Subcategory</option>
+              {subcategories.map((cat) => (
+                <option key={cat._id} value={cat._id}>{cat.subcatogry}</option>
+              ))}
+            </select>
+
+            <h3 className="font-semibold text-lg text-gray-700">Product Gender</h3>
+            <select
+              value={formData.gender}
+              onChange={(e) => handleChange(e, 'gender')}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-200"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Unisex">Unisex</option>
+            </select>
           </>
         )}
 
@@ -226,26 +232,9 @@ const ProductsCreated = () => {
             <h3 className="text-xl font-semibold mb-3 text-gray-800">🧾 Review Your Product</h3>
             <div className="bg-gray-50 p-4 rounded space-y-3 text-sm">
               <p><strong>Name:</strong> {formData.products_name}</p>
-              <p><strong>Images:</strong></p>
-              {formData.image_url.map((img, i) => (
-                <div key={i} className="ml-4">
-                  <p>🎨 <strong>Color:</strong> {img.color} ({img.colorcode})</p>
-                  {img.url.map((url, j) => <p key={j} className="ml-4">• {url}</p>)}
-                  {img.videolink && <p className="ml-4">🎥 {img.videolink}</p>}
-                  {img.content.map((c, k) => (
-                    <p key={k} className="ml-6">👕 Size: {c.size}, Stock: {c.minstock}</p>
-                  ))}
-                </div>
-              ))}
-              <p><strong>Pricing:</strong></p>
-              {formData.pricing.map((p, i) => (
-                <p key={i}>Qty: {p.quantity}, Price: ₹{p.price_per}, Discount: {p.discount}%</p>
-              ))}
-              <p><strong>Descriptions:</strong></p>
-              {formData.Desciptions.map((d, i) => (
-                <p key={i}>• {d}</p>
-              ))}
+              <p><strong>Gender:</strong> {formData.gender}</p>
               <p><strong>Subcategory:</strong> {formData.subcategory}</p>
+              {/* Show more fields if needed */}
             </div>
           </>
         )}

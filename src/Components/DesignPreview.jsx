@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , color }) => {
+const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , color ,colortext }) => {
   if (!selectedDesign) return null;
   console.log(selectedDesign)
 
@@ -59,6 +59,7 @@ const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , colo
   size,
   color,
   quantity: 1,
+  colortext,
   price: selectedDesign.price || 0,
 
 });

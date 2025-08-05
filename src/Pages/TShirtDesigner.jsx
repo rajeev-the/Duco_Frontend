@@ -199,8 +199,8 @@ const TshirtDesigner = () => {
       designElements: allDesigns
     };
     const result = await createDesign(payload);
-    if (result) navigate('/cart');
-    else alert('Failed to save design.');
+    if (result)  navigate(-1);
+    else console.log('Failed to save design.');
   };
 
   const downloadDesign = async () => {

@@ -58,7 +58,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
 
             {/* Design Preview */}
             <button
-              onClick={() => setPreviewImage(item.design?.[0]?.url)}
+              onClick={() => setPreviewImage(item.design)}
               className="flex items-center gap-1 px-3 py-1.5 bg-[#E5C870] text-black text-sm rounded-md hover:bg-gray-800 hover:text-white transition"
             >
               <RiEyeFill size={18} />
@@ -89,24 +89,35 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
         </div>
       </div>
 
-      {/* Design Preview Modal */}
-      {previewImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl shadow-xl max-w-md w-full relative">
+ {previewImage !== null && (
+  <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-xl shadow-xl max-w-3xl w-full relative overflow-y-auto max-h-[90vh]">
+      {Array.isArray(previewImage) && previewImage.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {previewImage.map((img, index) => (
             <img
-              src={previewImage}
-              alt="Design Preview"
-              className="w-full h-auto object-contain rounded"
+              key={index}
+              src={img}
+              alt={`Design Preview ${index + 1}`}
+              className="w-full h-auto object-contain rounded border"
             />
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="absolute top-2 right-2 bg-black text-white px-2 py-1 text-xs rounded hover:bg-red-600"
-            >
-              Close
-            </button>
-          </div>
+          ))}
         </div>
+      ) : (
+        <p className="text-center text-gray-600 font-medium">No preview is there</p>
       )}
+
+      <button
+        onClick={() => setPreviewImage(null)} // reset to null, not []
+        className="absolute top-2 right-2 bg-black text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };

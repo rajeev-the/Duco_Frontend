@@ -10,14 +10,16 @@ const ProductPage = () => {
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
   const [showModal, setShowModal] = useState(false);
+  const [colortext,setColortext] = useState(null)
   const [selectedDesign, setSelectedDesign] = useState(null);
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState("");
   const [defaultColorGroup, setDefaultColorGroup] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [loadingDesigns, setLoadingDesigns] = useState(false);
   const { addtocart } = useContext(CartContext);
   const { id } = useParams();
   const navigate = useNavigate();
+  const[gender,setGender] = useState("")
   const[iscount,setIscount]= useState(0)
 
   // Fetch product
@@ -29,11 +31,13 @@ const ProductPage = () => {
         setProduct(p);
         setDefaultColorGroup(p.image_url?.[0]);
         setSelectedColorCode(p.image_url?.[0]?.colorcode || '#ffffff');
+
       }
+      console.log(data)
     };
     fetchProduct();
   }, [id]);
-console.log(designs)
+
   // Load user designs when modal opens
   useEffect(() => {
     const loadDesigns = async () => {
@@ -49,11 +53,12 @@ console.log(designs)
   }, [showModal]);
 
   // Handle color change
-  const handleColorChange = (colorcode) => {
+  const handleColorChange = (colorcode,colortext) => {
     const matched = product?.image_url?.find((c) => c.colorcode === colorcode);
     if (matched) {
       setDefaultColorGroup(matched);
       setSelectedColorCode(colorcode);
+      setColortext(colortext)
       setIscount(0)
     }
   };
@@ -125,7 +130,7 @@ console.log(designs)
                   key={i}
                   className={`w-8 h-8 rounded-full border ${selectedColorCode === c.colorcode ? 'ring-2 ring-black' : ''}`}
                   style={{ backgroundColor: c.colorcode }}
-                  onClick={() => handleColorChange(c.colorcode)}
+                  onClick={() => handleColorChange(c.colorcode,c.color)  }
                 />
               ))}
             </div>
@@ -229,6 +234,8 @@ console.log(designs)
         addtocart={addtocart}
         size={selectedSize}
         color={selectedColorCode}
+        colortext={colortext}
+        gender={gender}
       />
     </section>
   );

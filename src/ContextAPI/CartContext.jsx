@@ -18,43 +18,47 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Add item to cart
-  const addToCart = (product) => {
-    const {
-      id,
-      design,
-      size = 'M',
-      color = '#ffffff',
-      quantity = 1,
-      price = 0,
-    
-    } = product;
+const addToCart = (product) => {
+  const {
+    id,
+    design,
+    size = 'M',
+    color = '#ffffff',
+    quantity = 1,
+    price = 0,
+    colortext = 'white',
+    gender ="Female"
+  } = product;
 
-    const exists = cart.find(
-      (item) =>
+  const exists = cart.find(
+    (item) =>
+      item.id === id &&
+      item.size === size &&
+      item.color === color &&
+      item.design === design &&
+      item.colortext === colortext &&
+      item.gender === gender
+  );
+
+  if (exists) {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
         item.id === id &&
         item.size === size &&
         item.color === color &&
-        item.design === design
+        item.design === design &&
+        item.colortext === colortext &&
+        item.gender === gender
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      )
     );
+  } else {
+    const data = { id, design, size, color, quantity, price, colortext,gender };
+    setCart((prevCart) => [...prevCart, data]);
+  }
+};
 
-    if (exists) {
-      // If same item already exists, increase quantity
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.id === id &&
-          item.size === size &&
-          item.color === color &&
-          item.design === design
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
-      );
-    } else {
-      const data = { id, design, size, color, quantity, price };
-      setCart((prevCart) => [...prevCart, data]);
-    }
-  };
 
 const removeFromCart = (id, size = null, color = null, design = null) => {
   setCart((prevCart) =>
