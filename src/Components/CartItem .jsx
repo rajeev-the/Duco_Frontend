@@ -5,6 +5,7 @@ import { useState } from "react";
 
 const CartItem = ({ item, removeFromCart, updateQuantity }) => {
   const [previewImage, setPreviewImage] = useState(null);
+  console.log(item)
 
   return (
     <div className="border-b border-gray-800 pb-6 mb-6">
@@ -12,18 +13,18 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
         {/* Product Image */}
         <div className="w-full sm:w-32 h-32 bg-gray-200 flex items-center justify-center rounded-lg overflow-hidden shadow-md">
           <img
-            src={item.imgdemo}
+            src={item.image_url[0]?.url[0]}
             alt={item.type}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
 
         {/* Product Info */}
         <div className="flex-1 flex flex-col gap-2 text-white">
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold">{item.type}</h2>
+            <h2 className="text-lg sm:text-xl font-semibold">{item.products_name}</h2>
             <PriceDisplay
-              price={item.price}
+              price={item.pricing[0]?.price_per}
               className="text-base sm:text-lg font-bold text-[#FDC305]"
             />
           </div>

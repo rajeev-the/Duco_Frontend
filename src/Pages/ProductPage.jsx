@@ -33,7 +33,7 @@ const ProductPage = () => {
     };
     fetchProduct();
   }, [id]);
-
+console.log(designs)
   // Load user designs when modal opens
   useEffect(() => {
     const loadDesigns = async () => {
@@ -175,7 +175,8 @@ const ProductPage = () => {
               </button>
               <button
                 onClick={() => {
-                  navigate(`/design/${id}`);
+                 navigate(`/design/${id}/${selectedColorCode.replace('#', '')}`);
+
                   setShowModal(false);
                 }}
                 className="w-full bg-[#E5C870] text-black py-2 rounded-md hover:bg-green-600 transition-all"

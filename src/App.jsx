@@ -20,11 +20,24 @@ import { UserProvider } from './ContextAPI/UserContext.jsx';
 import ProfilePanel from './Pages/ProfilePanel.jsx';
 import SaerchingPage from './Pages/SaerchingPage.jsx';
 import ProductsUpdate from './Admin/ProductsUpdate.jsx';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 
 const App = () => {
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light" // or "dark"
+      />
     <Routes>
 
       
@@ -38,7 +51,7 @@ const App = () => {
                 <Route  path='/products/:id' element={<ProductPage/>}/>
                   <Route  path='/getbulk' element={<GetBulk/>}/>
                      <Route  path='/order' element={<Order/>}/>
-                      <Route  path='/design/:proid' element={<TShirtDesigner/>}/>
+                      <Route  path='/design/:proid/:color' element={<TShirtDesigner/>}/>
                         <Route  path='/profile' element={<ProfilePanel/>}/>
                           <Route  path='/products/subcategory/:id/:catogory_name' element={<SaerchingPage/>}/>
 

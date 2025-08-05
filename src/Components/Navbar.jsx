@@ -34,7 +34,7 @@ const Navbar = ({setIsOpenLog ,user}) => {
         {isclick === "Products" && (
           <>
             <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
-            <div className="absolute top-full  mt-1.5 z-50">
+            <div className="absolute top-full  mt-1 z-50">
               <ProductMegaMenu />
             </div>
           </>

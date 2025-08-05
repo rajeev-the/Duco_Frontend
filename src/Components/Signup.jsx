@@ -1,47 +1,49 @@
 import React, { useState } from 'react';
-import { signupUser, loginUser } from '../Service/UserAPI';
+import { sendOtpToEmail, verifyOtpAndLogin } from '../Service/UserAPI';
+import { toast } from 'react-toastify';
 
-const Signup = ({ isLogin, setIsLogin, setIsOpenLog, login }) => {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+const Signup = ({ setIsOpenLog, login }) => {
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isExistingUser, setIsExistingUser] = useState(false); // 👈 Track user existence
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
-
-    if (!phone || (!isLogin && !name)) {
-      alert('Please fill all fields');
-      return;
-    }
+    if (!email) return toast.error('Please enter your Gmail');
 
     setLoading(true);
     try {
-      if (isLogin) {
-        // LOGIN FLOW
-        const response = await loginUser({ number: phone });
-        if (response.message === 'login successfully') {
-          login(response.user); // Save user in context
-          setIsOpenLog(false);
-        } else {
-          alert(response.message);
-        }
-      } else {
-        // SIGNUP FLOW
-        const response = await signupUser({name: name, number: phone });
+      const res = await sendOtpToEmail({ email });
+      toast.success(res.message || 'OTP sent');
+      setIsExistingUser(res.userExists); // 👈 set if user already exists
+      setStep(2);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (response.message === 'User Created') {
-          login(response.user); // Save new user
-          setIsOpenLog(false);
-        } else if (response.message === 'You already Exist') {
-          alert('Account already exists. Please login.');
-          setIsLogin(true);
-        } else {
-          alert(response.message || 'Signup failed.');
-        }
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otp || !email) return toast.error('Enter both Email and OTP');
+
+    setLoading(true);
+    try {
+      const res = await verifyOtpAndLogin({ email, otp, name });
+
+      if (res.user) {
+        login(res.user); // Save to context
+        toast.success('Logged in successfully');
+        setIsOpenLog(false);
+      } else {
+        toast.error(res.message || 'Verification failed');
       }
     } catch (err) {
-      alert(err.message || 'Something went wrong');
+      toast.error(err.response?.data?.message || 'Error verifying OTP');
     } finally {
       setLoading(false);
     }
@@ -51,63 +53,56 @@ const Signup = ({ isLogin, setIsLogin, setIsOpenLog, login }) => {
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[90%] max-w-md relative">
         <h2 className="text-xl font-bold mb-4 text-center">
-          {isLogin ? 'Login to Your Account' : 'Create an Account'}
+          {step === 1 ? 'Enter Gmail to Get OTP' : 'Verify OTP'}
         </h2>
 
-        {/* Auth Form */}
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-            />
+        <form onSubmit={step === 1 ? handleSendOtp : handleVerifyOtp} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Enter your Gmail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-gray-300 p-2 rounded"
+          />
+
+          {step === 2 && (
+            <>
+              {!isExistingUser && ( // 👈 Only show if user doesn't exist
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded"
+                />
+              )}
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full border border-gray-300 p-2 rounded"
+              />
+            </>
           )}
-
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-gray-300 p-2 rounded"
-          />
-
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full border border-gray-300 p-2 rounded"
-          />
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
             disabled={loading}
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
           >
-            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+            {loading ? 'Processing...' : step === 1 ? 'Send OTP' : 'Verify & Login'}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-center">
-          {isLogin ? (
-            <>
-              Don’t have an account?{' '}
-              <button onClick={() => setIsLogin(false)} className="text-blue-600 underline">
-                Sign Up
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{' '}
-              <button onClick={() => setIsLogin(true)} className="text-blue-600 underline">
-                Login
-              </button>
-            </>
-          )}
-        </p>
+        {step === 2 && (
+          <p className="mt-3 text-sm text-center">
+            Didn't get OTP?{' '}
+            <button onClick={() => setStep(1)} className="text-blue-600 underline">
+              Resend
+            </button>
+          </p>
+        )}
 
         <button
           onClick={() => setIsOpenLog(false)}
@@ -121,3 +116,4 @@ const Signup = ({ isLogin, setIsLogin, setIsOpenLog, login }) => {
 };
 
 export default Signup;
+

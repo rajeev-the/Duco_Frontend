@@ -2,11 +2,22 @@ import React from 'react';
 
 const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , color }) => {
   if (!selectedDesign) return null;
+  console.log(selectedDesign)
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-2xl mx-auto text-center overflow-y-auto max-h-[90vh]">
-        <h2 className="text-xl font-bold mb-4">Design Preview</h2>
+
+        <div className='flex items-center mb-6  justify-between'>
+                   <h2 className="text-xl font-bold ">Design Preview</h2>
+         <button
+          onClick={onClose}
+          className=" bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-700"
+        >
+          Close Preview
+        </button>
+        </div>
+       
 
         {/* Preview container */}
      
@@ -17,30 +28,17 @@ const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , colo
           <div className="w-full flex flex-col items-center gap-4 ">
             {selectedDesign.design.map((item, index) => (
               <div key={index} className="text-center">
-                {item.type === 'image' ? (
+                
                   <>
                    
                     <img
-                      src={item.url}
+                      src={item}
                       alt="Uploaded"
                       className="mx-auto rounded-md shadow-md max-w-[400px]"
                       aria-placeholder='Design Image'
                     />
                   </>
-                ) : (
-                  <>
-                    <p className="text-sm text-black mb-1">Text</p>
-                    <p
-                      className={`${item.font || 'font-sans'} text-lg font-semibold`}
-                      style={{
-                        color: item.color || '#000',
-                        fontSize: `${item.fontSize || 20}px`,
-                      }}
-                    >
-                      {item.text}
-                    </p>
-                  </>
-                )}
+               
               </div>
             ))}
           </div>

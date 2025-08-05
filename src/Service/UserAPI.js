@@ -3,31 +3,16 @@ import axios from 'axios';
 
 const BASE_URL = 'https://duco-backend.onrender.com/user'; // update with your actual backend base URL
 
-// Signup Service
-export const signupUser = async ({ name, number }) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/signup`, {
-      name,
-      number,
-    });
-
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Signup failed" };
-  }
+// 1. Send OTP to Gmail
+export const sendOtpToEmail = async ({ email }) => {
+  const res = await axios.post(`${BASE_URL}/send-otp`, { email });
+  return res.data;
 };
 
-// Login Service
-export const loginUser = async ({ number }) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/login`, {
-      number,
-    });
-
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { message: "Login failed" };
-  }
+// 2. Verify OTP and Login/Signup
+export const verifyOtpAndLogin = async ({ email, otp, name }) => {
+  const res = await axios.post(`${BASE_URL}/verify-otp`, { email, otp, name });
+  return res.data;
 };
 
 export const addAddressToUser = async ({ userId, address }) => {

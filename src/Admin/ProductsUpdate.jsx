@@ -17,7 +17,8 @@ const ProductsUpdate = () => {
       color: '',
       colorcode: '',
       videolink: '',
-      content: [{ size: '', minstock: 1 }]
+      content: [{ size: '', minstock: 1 }],
+      designtshirt: ['']
     }],
     pricing: [{ quantity: '', price_per: '', discount: 0 }],
     Desciptions: [''],
@@ -61,6 +62,12 @@ const ProductsUpdate = () => {
     setFormData({ ...formData, image_url: updated });
   };
 
+  const handleDesignChange = (e, imgIndex, designIndex) => {
+    const updated = [...formData.image_url];
+    updated[imgIndex].designtshirt[designIndex] = e.target.value;
+    setFormData({ ...formData, image_url: updated });
+  };
+
   const addImageField = () => {
     setFormData({
       ...formData,
@@ -69,7 +76,8 @@ const ProductsUpdate = () => {
         color: '',
         colorcode: '',
         videolink: '',
-        content: [{ size: '', minstock: 1 }]
+        content: [{ size: '', minstock: 1 }],
+        designtshirt: ['']
       }]
     });
   };
@@ -83,6 +91,16 @@ const ProductsUpdate = () => {
   const addContentField = (imgIndex) => {
     const updated = [...formData.image_url];
     updated[imgIndex].content.push({ size: '', minstock: 1 });
+    setFormData({ ...formData, image_url: updated });
+  };
+
+  const addDesignField = (imgIndex) => {
+    const updated = [...formData.image_url];
+    if (!updated[imgIndex].designtshirt) {
+      updated[imgIndex].designtshirt = [''];
+    } else {
+      updated[imgIndex].designtshirt.push('');
+    }
     setFormData({ ...formData, image_url: updated });
   };
 
@@ -134,6 +152,7 @@ const ProductsUpdate = () => {
     <div className="max-w-5xl mx-auto p-8 bg-white shadow-xl rounded-lg border border-slate-100">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">✏️ Update Product <span className="text-base block mt-1 text-gray-500">Step {currentStep} of 6</span></h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+
         {currentStep === 1 && (
           <input
             type="text"
@@ -145,7 +164,7 @@ const ProductsUpdate = () => {
           />
         )}
 
-      {currentStep === 2 && (
+        {currentStep === 2 && (
           <>
             <h3 className="font-semibold text-lg text-gray-700">Images, Color & Sizes</h3>
             {formData.image_url.map((img, imgIndex) => (
@@ -156,17 +175,17 @@ const ProductsUpdate = () => {
                   <input type="text" placeholder="Color Code" value={img.colorcode} onChange={(e) => handleNestedChange(e, 'image_url', imgIndex, 'colorcode')} className="border p-2 rounded" />
                   <input type="text" placeholder="Video Link" value={img.videolink} onChange={(e) => handleNestedChange(e, 'image_url', imgIndex, 'videolink')} className="border p-2 rounded" />
                 </div>
+
                 <div className="mt-3 space-y-2">
                   {img.url.map((url, urlIndex) => (
                     <div key={urlIndex} className="flex gap-3 items-center">
                       <input type="text" placeholder={`Image URL #${urlIndex + 1}`} value={url} onChange={(e) => handleImageUrlChange(e, imgIndex, urlIndex)} className="w-full border p-2 rounded" />
-                      {url && (
-                        <img src={url} alt="preview" className="w-16 h-16 object-cover border rounded" />
-                      )}
+                      {url && <img src={url} alt="preview" className="w-16 h-16 object-cover border rounded" />}
                     </div>
                   ))}
                   <button type="button" onClick={() => addImageUrl(imgIndex)} className="text-blue-500 text-sm">+ Add Image URL</button>
                 </div>
+
                 <div className="mt-4">
                   <h4 className="text-sm font-medium text-gray-700">Size & Stock</h4>
                   {img.content.map((contentItem, contentIndex) => (
@@ -177,12 +196,26 @@ const ProductsUpdate = () => {
                   ))}
                   <button type="button" onClick={() => addContentField(imgIndex)} className="text-blue-500 text-sm mt-2">+ Add Size</button>
                 </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-700">Design T-Shirts</h4>
+                  {(img.designtshirt || []).map((design, designIndex) => (
+                    <input
+                      key={designIndex}
+                      type="text"
+                      placeholder={`Design #${designIndex + 1}`}
+                      value={design}
+                      onChange={(e) => handleDesignChange(e, imgIndex, designIndex)}
+                      className="w-full border p-2 rounded mb-2"
+                    />
+                  ))}
+                  <button type="button" onClick={() => addDesignField(imgIndex)} className="text-blue-500 text-sm">+ Add Design</button>
+                </div>
               </div>
             ))}
             <button type="button" onClick={addImageField} className="text-sm text-blue-600 font-medium">+ Add New Image Block</button>
           </>
         )}
-
 
         {currentStep === 3 && (
           <>
@@ -237,6 +270,9 @@ const ProductsUpdate = () => {
                   {img.videolink && <p className="ml-4">🎥 {img.videolink}</p>}
                   {img.content.map((c, k) => (
                     <p key={k} className="ml-6">👕 Size: {c.size}, Stock: {c.minstock}</p>
+                  ))}
+                  {img.designtshirt?.map((d, k) => (
+                    <p key={k} className="ml-6">🎨 Design: {d}</p>
                   ))}
                 </div>
               ))}
