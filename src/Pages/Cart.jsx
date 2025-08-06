@@ -4,12 +4,14 @@ import AddressManager from '../Components/AddressManager';
 import Loading from '../Components/Loading';
 import { CartContext } from "../ContextAPI/CartContext";
 import { getproducts } from "../Service/APIservice";
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigator = useNavigate()
 
   // Get user from localStorage
   useEffect(() => {
@@ -98,6 +100,9 @@ const Cart = () => {
             <button
               className="w-full py-4 font-bold hover:bg-opacity-90 transition-all"
               style={{ backgroundColor: '#FDC305', color: '#112430' }}
+              onClick={ ()=>
+                navigator("/payment")
+              }
             >
               CHECK OUT
             </button>

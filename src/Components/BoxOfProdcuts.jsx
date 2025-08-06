@@ -2,10 +2,18 @@ import React,{useContext} from 'react';
 import firstImg from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png";
 import { CartContext } from '../ContextAPI/CartContext';
 import { Link } from 'react-router-dom';
+import { usePriceContext } from '../ContextAPI/PriceContext';
 
 const BoxOfProdcuts = ({ price ,title ,id ,image }) => {
   const colors = ["#FF0000", "#FF8A00", "#4A4AFF", "#FFFFFF", "#000000"];
   const { addtocart } = useContext(CartContext);
+   const { toConvert, priceIncrease  } = usePriceContext();
+
+    function calculatePrice(currency, ac, high) {
+    const actualPrice = currency*ac
+    return  actualPrice + (actualPrice * (high / 100));
+
+}
 
   return (
     <Link to={`/products/${id}`} className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out">
@@ -40,7 +48,7 @@ const BoxOfProdcuts = ({ price ,title ,id ,image }) => {
         </p>
 
         <div className="flex justify-between items-center">
-          <span className="text-lg font-bold text-gray-900">₹{price}</span>
+          <span className="text-lg font-bold text-gray-900">₹{calculatePrice(toConvert,price,priceIncrease)}</span>
           <button onClick={(e)=>{
             e.preventDefault();       // prevent Link default
     e.stopPropagation();  

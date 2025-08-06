@@ -5,10 +5,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchPreviousDesigns, getproductssingle } from '../Service/APIservice';
 import DesignPreviewModal from '../Components/DesignPreview';
 import { CartContext } from "../ContextAPI/CartContext";
+import { usePriceContext } from '../ContextAPI/PriceContext';
 
 const ProductPage = () => {
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
+ const { toConvert, priceIncrease  } = usePriceContext();
   const [showModal, setShowModal] = useState(false);
   const [colortext,setColortext] = useState(null)
   const [selectedDesign, setSelectedDesign] = useState(null);
@@ -61,7 +63,14 @@ const ProductPage = () => {
       setColortext(colortext)
       setIscount(0)
     }
-  };
+  }; 
+
+  function calculatePrice(currency, ac, high) {
+    const actualPrice = currency*ac
+    return  actualPrice + (actualPrice * (high / 100));
+
+}
+
 
   return (
     <section className="p-6 text-white">
@@ -89,7 +98,7 @@ const ProductPage = () => {
         {/* Right - Details */}
         <div className="space-y-6">
           <h1 className="text-3xl font-bold text-[#E5C870]">{product?.products_name}</h1>
-          <p className="text-2xl font-semibold">₹{product?.pricing?.[0]?.price_per}</p>
+          <p className="text-2xl font-semibold">₹{calculatePrice(toConvert,product?.pricing?.[0]?.price_per,priceIncrease)}</p>
 
           <button
             onClick={() => navigate("/getbulk")}

@@ -22,6 +22,9 @@ import SaerchingPage from './Pages/SaerchingPage.jsx';
 import ProductsUpdate from './Admin/ProductsUpdate.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import CurrentLocation from './Pages/CurrentLocation.jsx';
+import { PriceProvider } from './ContextAPI/PriceContext.jsx';
+import PaymentPage from './Pages/PaymentPage.jsx';
 
 
 const App = () => {
@@ -41,7 +44,7 @@ const App = () => {
     <Routes>
 
       
-      <Route path='/' element={ <CartProvider> <UserProvider> <Layout /> </UserProvider>  </CartProvider>}>
+      <Route path='/' element={  <PriceProvider>  <CartProvider> <UserProvider> <Layout /> </UserProvider>  </CartProvider> </PriceProvider> }>
  
       <Route index path='' element={<Home/>}/>
        <Route index path='/home' element={<Home/>}/>
@@ -53,6 +56,7 @@ const App = () => {
                      <Route  path='/order' element={<Order/>}/>
                       <Route  path='/design/:proid/:color' element={<TShirtDesigner/>}/>
                         <Route  path='/profile' element={<ProfilePanel/>}/>
+                         <Route  path='/payment' element={<PaymentPage/>}/>
                           <Route  path='/products/subcategory/:id/:catogory_name' element={<SaerchingPage/>}/>
 
 

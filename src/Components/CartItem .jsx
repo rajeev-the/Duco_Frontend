@@ -2,10 +2,16 @@ import QuantityControlss from "./QuantityControlss";
 import PriceDisplay from "./PriceDisplay";
 import { RiEyeFill } from "react-icons/ri";
 import { useState } from "react";
-
+import { usePriceContext } from '../ContextAPI/PriceContext';
 const CartItem = ({ item, removeFromCart, updateQuantity }) => {
   const [previewImage, setPreviewImage] = useState(null);
-  console.log(item)
+     const { toConvert, priceIncrease  } = usePriceContext();
+  
+      function calculatePrice(currency, ac, high) {
+      const actualPrice = currency*ac
+      return  actualPrice + (actualPrice * (high / 100));
+  
+  }
 
   return (
     <div className="border-b border-gray-800 pb-6 mb-6">
@@ -24,7 +30,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">{item.products_name}</h2>
             <PriceDisplay
-              price={item.pricing[0]?.price_per}
+              price={calculatePrice(toConvert,item.pricing[0]?.price_per,priceIncrease)}
               className="text-base sm:text-lg font-bold text-[#FDC305]"
             />
           </div>

@@ -8,7 +8,7 @@ export const fetchAllPrices = async () => {
 };
 
 export const createOrUpdatePrice = async (data) => {
-  const response = await axios.post(`${API_BASE}create_location_price_increase`, data);
+  const response = await axios.post(`${API_BASE}money/create_location_price_increase`, data);
   return response.data;
 };
 

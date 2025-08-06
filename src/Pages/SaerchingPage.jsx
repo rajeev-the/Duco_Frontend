@@ -3,11 +3,18 @@ import tshirt from "../assets/gloomy-young-black-model-clean-white-unlabeled-cot
 import { Link, useParams } from 'react-router-dom'
 import { FaFilter } from "react-icons/fa";
 import {getproductcategory} from "../Service/APIservice"
-
+import { usePriceContext } from '../ContextAPI/PriceContext';
 
 const SaerchingPage = () => {
 const[prodcuts,setProdcuts] = useState([])
 const {id,catogory_name} = useParams()
+     const { toConvert, priceIncrease  } = usePriceContext();
+  
+      function calculatePrice(currency, ac, high) {
+      const actualPrice = currency*ac
+      return  actualPrice + (actualPrice * (high / 100));
+  
+  }
 
 useEffect(() => {
  
@@ -97,7 +104,7 @@ console.log(prodcuts)
         <div className="p-4">
           <h3 className="text-sm font-semibold">{item.products_name}</h3>
     
-          <p className=" text-sm font-bold mt-2">₹{item.pricing[0].price_per}</p>
+          <p className=" text-sm font-bold mt-2">₹{calculatePrice(toConvert,item.pricing[0]?.price_per,priceIncrease)}</p>
         </div>
       </Link>
     ))}
