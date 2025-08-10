@@ -107,3 +107,15 @@ export const Updateproductcate = async (id,updates) => {
     return null;
   }
 };
+
+
+export const fetchOrdersByUser = async (userId) => {
+  try {
+    const res = await fetch(`https://duco-backend.onrender.com/api/order/user/${userId}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch orders", err);
+    return [];
+  }
+};

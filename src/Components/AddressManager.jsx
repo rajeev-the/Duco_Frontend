@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { addAddressToUser } from '../Service/UserAPI';
 
-const AddressManager = ({ user, setUser }) => {
+const AddressManager = ({ addresss,setAddresss,user, setUser }) => {
   const [address, setAddress] = useState({
     fullName: '',
     mobileNumber: '',
@@ -67,15 +67,25 @@ const AddressManager = ({ user, setUser }) => {
       <h3 className="text-lg font-semibold mb-2 text-[#E5C870]">Saved Addresses</h3>
       {user?.address && user.address?.length > 0 ? (
         <ul className="space-y-2 text-sm">
-          {user?.address.map((addr, index) => (
-            <li key={index} className="bg-gray-800 p-3 rounded-lg border border-gray-700 text-white">
-              <p className="font-semibold text-white">{addr.fullName} ({addr.addressType})</p>
-              <p>{addr.houseNumber}, {addr.street}, {addr.city}, {addr.state} - {addr.pincode}</p>
-              <p>{addr.country}{addr.landmark && `, Landmark: ${addr.landmark}`}</p>
-              <p>📞 {addr.mobileNumber}</p>
-            </li>
-          ))}
-        </ul>
+    {user?.address?.map((addr, index) => {
+      const isSelected = addresss === addr;
+      return (
+        <li
+          onClick={() => setAddresss(addr)}
+          key={index}
+          className={`p-3 rounded-lg border text-white cursor-pointer transition 
+            ${isSelected ? 'border-yellow-400 bg-gray-700' : 'border-gray-700 bg-gray-800 hover:bg-gray-700'}`}
+        >
+          <p className="font-semibold text-white">
+            {addr.fullName} ({addr.addressType})
+          </p>
+          <p>{addr.houseNumber}, {addr.street}, {addr.city}, {addr.state} - {addr.pincode}</p>
+          <p>{addr.country}{addr.landmark && `, Landmark: ${addr.landmark}`}</p>
+          <p>📞 {addr.mobileNumber}</p>
+        </li>
+      );
+    })}
+  </ul>
       ) : (
         <p className="text-gray-400 text-sm">No saved addresses yet.</p>
       )}

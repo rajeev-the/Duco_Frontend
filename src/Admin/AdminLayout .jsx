@@ -13,6 +13,7 @@ const AdminLayout = () => {
         
           <Link to="/admin/category" className="block hover:text-blue-300">Category</Link>
              <Link to="/admin/moneyset" className="block hover:text-blue-300">Set Money</Link>
+               <Link to="/admin/order" className="block hover:text-blue-300">Manage Order</Link>
         </nav>
       </aside>
 

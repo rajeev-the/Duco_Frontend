@@ -27,7 +27,7 @@ const addToCart = (product) => {
     quantity = 1,
     price = 0,
     colortext = 'white',
-    gender ="Female"
+    gender ="Male"
   } = product;
 
   const exists = cart.find(

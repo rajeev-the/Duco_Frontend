@@ -1,7 +1,8 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import OrderCart from '../Components/OrderCart'
 import {  FaShoppingBag } from "react-icons/fa";
 import BoxOfProdcuts from '../Components/BoxOfProdcuts';
+  import { fetchOrdersByUser } from "../Service/APIservice";
 
 
 
@@ -15,6 +16,29 @@ const sampleProduct = {
 };
 
 const Order = () => {
+
+  const[order,setOrder] = useState([])
+  const [user, setUser] = useState(null);
+
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      setUser(JSON.parse(stored));
+    }
+  }, []);
+
+useEffect(() => {
+  const loadOrders = async () => {
+    if (!user?._id) return; // prevent running before user loads
+    const orders = await fetchOrdersByUser(user._id);
+    console.log("User Orders:", orders);
+    setOrder(orders.data || orders); // store in state
+  };
+  loadOrders();
+}, [user]);
+
+
   const [orderStatus, setOrderStatus] = useState(true);
 
   return (
@@ -26,7 +50,10 @@ const Order = () => {
      </div>
       
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6'>
-                  <OrderCart/>
+          {order.map((o) => (
+    <OrderCart key={o._id} order={o} />
+  ))}
+                 
                 
             
                    </div>

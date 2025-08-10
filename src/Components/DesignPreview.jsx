@@ -1,8 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , color ,colortext }) => {
+const DesignPreviewModal = ({id,selectedDesign, onClose ,addtocart ,size , color ,colortext,price,gender }) => {
   if (!selectedDesign) return null;
-  console.log(selectedDesign)
+  console.log(colortext)
+
+  console.log(price)
+ const navigator = useNavigate()
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -32,12 +36,12 @@ const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , colo
                   <>
                    
                     <img
-                      src={item}
+                      src={item.url}
                       alt="Uploaded"
                       className="mx-auto rounded-md shadow-md max-w-[400px]"
                       aria-placeholder='Design Image'
                     />
-                  </>
+                    <span className='text-sm font-black'>{item.view}</span>                  </>
                
               </div>
             ))}
@@ -60,11 +64,13 @@ const DesignPreviewModal = ({ id,selectedDesign, onClose ,addtocart ,size , colo
   color,
   quantity: 1,
   colortext,
-  price: selectedDesign.price || 0,
+  price: price || 0,
+  gender
 
 });
 
                 onClose();
+                navigator("/cart")
           } }
 
           className="mt-6  ml-10 bg-green-600 text-white px-4 py-2 rounded hover:bg-gray-700"

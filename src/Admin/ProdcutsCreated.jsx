@@ -202,16 +202,21 @@ const ProductsCreated = () => {
         {currentStep === 5 && (
           <>
             <h3 className="font-semibold text-lg text-gray-700">Subcategory Reference</h3>
-            <select
-              value={formData.subcategory}
-              onChange={(e) => handleChange(e, 'subcategory')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-200 mb-4"
-            >
-              <option value="">Select a Subcategory</option>
-              {subcategories.map((cat) => (
-                <option key={cat._id} value={cat._id}>{cat.subcatogry}</option>
-              ))}
-            </select>
+         <select
+  value={formData.subcategory}
+  onChange={(e) => handleChange(e, 'subcategory')}
+  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-200 mb-4"
+>
+  <option value="">Select a Subcategory</option>
+  {subcategories.map((cat) => (
+    <option key={cat._id} value={cat._id}>
+      {cat.subcatogry}
+      {cat.categoryId?.length > 0 &&
+        ` (Belongs to: ${cat.categoryId[0]?.category})`}
+    </option>
+  ))}
+</select>
+
 
             <h3 className="font-semibold text-lg text-gray-700">Product Gender</h3>
             <select

@@ -10,11 +10,13 @@ import { usePriceContext } from '../ContextAPI/PriceContext';
 const ProductPage = () => {
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
+  const[price,setPrice] = useState(0)
+  const[print,setPrint] = useState("")
  const { toConvert, priceIncrease  } = usePriceContext();
   const [showModal, setShowModal] = useState(false);
   const [colortext,setColortext] = useState(null)
   const [selectedDesign, setSelectedDesign] = useState(null);
-  const [product, setProduct] = useState("");
+  const [product, setProduct] = useState();
   const [defaultColorGroup, setDefaultColorGroup] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [loadingDesigns, setLoadingDesigns] = useState(false);
@@ -33,31 +35,39 @@ const ProductPage = () => {
         setProduct(p);
         setDefaultColorGroup(p.image_url?.[0]);
         setSelectedColorCode(p.image_url?.[0]?.colorcode || '#ffffff');
+        setColortext(p.image_url?.[0]?.color)
+         setPrice(calculatePrice(toConvert,p?.pricing?.[0]?.price_per,priceIncrease))
+         setGender(p.gender)
 
       }
-      console.log(data)
+      
     };
     fetchProduct();
   }, [id]);
+
+ 
 
   // Load user designs when modal opens
   useEffect(() => {
     const loadDesigns = async () => {
       const stored = localStorage.getItem('user');
-      if (!showModal || !stored) return;
+      if (!stored) return;
       setLoadingDesigns(true);
       const user = JSON.parse(stored);
       const data = await fetchPreviousDesigns(user._id);
       setDesigns(data || []);
       setLoadingDesigns(false);
+     
     };
     loadDesigns();
-  }, [showModal]);
+  }, [id]);
 
   // Handle color change
   const handleColorChange = (colorcode,colortext) => {
     const matched = product?.image_url?.find((c) => c.colorcode === colorcode);
+        console.log(colortext)
     if (matched) {
+   
       setDefaultColorGroup(matched);
       setSelectedColorCode(colorcode);
       setColortext(colortext)
@@ -73,7 +83,7 @@ const ProductPage = () => {
 
 
   return (
-    <section className="p-6 text-white">
+    <section className="p-6 text-white ">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         {/* Left - Images */}
         <div className="h-auto">
@@ -98,7 +108,7 @@ const ProductPage = () => {
         {/* Right - Details */}
         <div className="space-y-6">
           <h1 className="text-3xl font-bold text-[#E5C870]">{product?.products_name}</h1>
-          <p className="text-2xl font-semibold">₹{calculatePrice(toConvert,product?.pricing?.[0]?.price_per,priceIncrease)}</p>
+          <p className="text-2xl font-semibold">₹{price}</p>
 
           <button
             onClick={() => navigate("/getbulk")}
@@ -124,7 +134,7 @@ const ProductPage = () => {
             </h3>
             <div className="flex gap-4">
               {['DTG', 'DTF', 'Vinyl', ].map((opt) => (
-                <button key={opt} className="border px-4 py-1 rounded hover:bg-green-600">{opt}</button>
+                <button onClick={()=>setPrint(opt)} key={opt} className={`border px-4 py-1 rounded ${print == opt ? "bg-green-600":""} `} >{opt}</button>
               ))}
             </div>
           </div>
@@ -137,12 +147,15 @@ const ProductPage = () => {
               {product?.image_url?.map((c, i) => (
                 <button
                   key={i}
-                  className={`w-8 h-8 rounded-full border ${selectedColorCode === c.colorcode ? 'ring-2 ring-black' : ''}`}
+                  className={`w-8 h-8 rounded-full border ${selectedColorCode === c.colorcode ? 'ring-2 ring-green-600' : ''}`}
                   style={{ backgroundColor: c.colorcode }}
+
                   onClick={() => handleColorChange(c.colorcode,c.color)  }
                 />
+              
               ))}
             </div>
+            
           </div>
 
           <div>
@@ -153,7 +166,7 @@ const ProductPage = () => {
               {defaultColorGroup?.content?.map((s, i) => (
                 <button
                   key={i}
-                  className={`px-3 py-1 border rounded ${selectedSize === s.size ? 'bg-black text-white' : ''}`}
+                  className={`px-3 py-1 border rounded ${selectedSize === s.size ? ' bg-green-600' : ' bg-black text-white'}`}
                   onClick={() => setSelectedSize(s.size)}
                 >
                   {s.size}
@@ -168,8 +181,70 @@ const ProductPage = () => {
           >
             Start Buying
           </button>
-        </div>
+            <div className="mt-6">
+    <h3 className="text-lg font-semibold text-white mb-3">Your Previous Designs</h3>
+    {loadingDesigns ? (
+      <p className="text-sm text-gray-300">Loading...</p>
+    ) : designs.length === 0 ? (
+      <p className="text-sm text-gray-400">No previous designs found.</p>
+    ) : (
+     <div className="max-h-48 overflow-y-auto space-y-3 pr-1">
+  {designs.map((d) => (
+    <div
+      key={d._id}
+      onClick={() => setSelectedDesign(d)}
+      className="cursor-pointer group flex items-center gap-4 border border-gray-700 rounded-xl p-4 
+                 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] 
+                 hover:shadow-lg transition-all duration-300 ease-out"
+    >
+      {/* Optional Thumbnail */}
+      {d.design?.[0]?.url && (
+        <img
+          src={d.design[0].url}
+          alt="Design preview"
+          className="w-12 h-12 object-contain rounded-md border border-gray-600 group-hover:border-[#E5C870] transition"
+        />
+      )}
+
+      {/* Text Content */}
+      <div className="flex flex-col flex-1">
+        <p className="text-sm font-semibold text-white">
+          Product ID:{" "}
+          <span className="text-[#E5C870] font-mono">{d.products}</span>
+        </p>
+        <p className="text-xs text-gray-300">
+          Created:{" "}
+          <span className="text-gray-400">
+            {new Date(d.createdAt).toLocaleDateString()}
+          </span>
+        </p>
       </div>
+
+      {/* Icon */}
+      <svg
+        className="w-5 h-5 text-gray-400 group-hover:text-[#E5C870] transition"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  ))}
+</div>
+
+    )}
+  </div>
+        </div>
+
+      </div>
+
+
+    
+
+
+      
 
       {/* MODAL */}
       {showModal && (
@@ -199,33 +274,7 @@ const ProductPage = () => {
               </button>
             </div>
 
-            <div className="text-left mt-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Your Previous Designs</h3>
-              {loadingDesigns ? (
-                <p className="text-sm text-gray-500">Loading...</p>
-              ) : designs.length === 0 ? (
-                <p className="text-sm text-gray-400">No previous designs found.</p>
-              ) : (
-                <div className="max-h-48 overflow-y-auto space-y-2">
-                  {designs.map((d) => (
-                    <div
-                      key={d._id}
-                      onClick={() => setSelectedDesign(d)}
-                      className="cursor-pointer border border-gray-300 rounded p-2 hover:bg-gray-100 transition"
-                    >
-                      <p className="text-sm font-medium">
-                        Product ID: <span className="text-gray-800">{d.products?._id || d.cutomerprodcuts}</span>
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Created: {new Date(d.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button
+                       <button
               onClick={() => setShowModal(false)}
               className="mt-6 text-sm text-gray-500 hover:underline"
             >
@@ -245,6 +294,7 @@ const ProductPage = () => {
         color={selectedColorCode}
         colortext={colortext}
         gender={gender}
+        price={price}
       />
     </section>
   );

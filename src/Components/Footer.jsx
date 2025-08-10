@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link } from  'react-router-dom'
 import {
   Youtube,
   Facebook,
@@ -46,11 +47,12 @@ const Footer = () => {
             {/* Terms */}
             <div>
               <h3 className="font-semibold text-lg mb-2">Term & Conditions</h3>
-              <ul className="space-y-1 text-sm">
-                <li>Store Policy</li>
-                <li>Shipping & Returns</li>
-                <li>Payment Method</li>
-              </ul>
+              <ul className="space-y-1 text-sm mb-8">
+          <li><Link to="/privacy-policy" className="hover:text-[#E5C870]">Privacy Policy</Link></li>
+          <li><Link to="/refund-return-policy" className="hover:text-[#E5C870]">Refund & Return Policy</Link></li>
+          <li><Link to="/shipping-policy" className="hover:text-[#E5C870]">Shipping Policy</Link></li>
+          <li><Link to="/terms-and-conditions" className="hover:text-[#E5C870]">Terms and Conditions</Link></li>
+        </ul>
             </div>
           </div>
         </div>

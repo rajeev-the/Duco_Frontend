@@ -25,6 +25,13 @@ import { ToastContainer } from 'react-toastify';
 import CurrentLocation from './Pages/CurrentLocation.jsx';
 import { PriceProvider } from './ContextAPI/PriceContext.jsx';
 import PaymentPage from './Pages/PaymentPage.jsx';
+import RefundReturnPolicy from './Pages/RefundReturnPolicy.jsx'
+import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx"
+import ShippingPolicy from "./Pages/ShippingPolicy.jsx"
+import
+TermsConditions from "./Pages/TermsConditions"
+import OrderProcessing  from "./Components/OrderProcessing.jsx"
+import OrderSection from "./Admin/OderSection.jsx"
 
 
 const App = () => {
@@ -57,8 +64,12 @@ const App = () => {
                       <Route  path='/design/:proid/:color' element={<TShirtDesigner/>}/>
                         <Route  path='/profile' element={<ProfilePanel/>}/>
                          <Route  path='/payment' element={<PaymentPage/>}/>
+                          <Route path="/order-processing" element={<OrderProcessing />} />
                           <Route  path='/products/subcategory/:id/:catogory_name' element={<SaerchingPage/>}/>
-
+                           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                            <Route path="/refund-return-policy" element={<RefundReturnPolicy />} />
+                            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                            <Route path="/terms-and-conditions" element={<TermsConditions />} />
 
 
 
@@ -72,6 +83,8 @@ const App = () => {
         <Route path="category" element={<Category/>} />
         <Route path='moneyset' element={<MoneySet/>} />
         <Route path='edit/:id' element={<ProductsUpdate/>}/>
+          <Route path='/admin/order' element={<OrderSection/>}/>
+     
 
       </Route>
  

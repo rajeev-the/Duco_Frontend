@@ -3,9 +3,12 @@ import PriceDisplay from "./PriceDisplay";
 import { RiEyeFill } from "react-icons/ri";
 import { useState } from "react";
 import { usePriceContext } from '../ContextAPI/PriceContext';
+
 const CartItem = ({ item, removeFromCart, updateQuantity }) => {
   const [previewImage, setPreviewImage] = useState(null);
      const { toConvert, priceIncrease  } = usePriceContext();
+
+    
   
       function calculatePrice(currency, ac, high) {
       const actualPrice = currency*ac
@@ -30,7 +33,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">{item.products_name}</h2>
             <PriceDisplay
-              price={calculatePrice(toConvert,item.pricing[0]?.price_per,priceIncrease)}
+              price={item.price}
               className="text-base sm:text-lg font-bold text-[#FDC305]"
             />
           </div>
@@ -101,12 +104,22 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
       {Array.isArray(previewImage) && previewImage.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {previewImage.map((img, index) => (
-            <img
+           
+            <div className="flex flex-col   justify-center">
+              <img
               key={index}
-              src={img}
+              src={img.url}
               alt={`Design Preview ${index + 1}`}
               className="w-full h-auto object-contain rounded border"
             />
+              <span className="text-black  text-shadow-md  font-bold text-center">
+                {img.view}
+
+              </span>
+            </div>
+            
+         
+            
           ))}
         </div>
       ) : (

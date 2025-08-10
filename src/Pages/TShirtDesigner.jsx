@@ -1,4 +1,4 @@
-// FULL MULTI-VIEW DESIGNER WITH PROPER POSITIONED SAVING
+// FULL MULTI-VIEW DESIGNER — saves only populated sides, embedding positions + if_text per view
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { toPng } from 'html-to-image';
@@ -65,18 +65,23 @@ const TshirtDesigner = () => {
   const navigate = useNavigate();
   const colorWithHash = `#${color}`;
 
-  const getViewIndex = (side) => {
+  const getViewIndex = (s) => {
     const map = { front: 0, back: 1, left: 2, right: 3 };
-    return map[side] ?? 0;
+    return map[s] ?? 0;
   };
 
   useEffect(() => {
     const getdata = async () => {
-      const data = await getproductssingle(proid);
-      const match = data?.image_url.find((e) => e.colorcode === colorWithHash);
-      setSideimage(match?.designtshirt || []);
+      try {
+        const data = await getproductssingle(proid);
+        const match = data?.image_url?.find((e) => e.colorcode === colorWithHash);
+        setSideimage(match?.designtshirt || []);
+      } catch (e) {
+        console.error('Failed to fetch product images', e);
+      }
     };
     getdata();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proid, color]);
 
   const currentDesign = allDesigns[side];
@@ -122,12 +127,19 @@ const TshirtDesigner = () => {
     }));
   }, [side]);
 
-  const uploadToImageKit = async (base64DataUrl, view) => {
+  // A view is "non-empty" if it has an uploaded image OR non-empty text
+  const viewHasContent = (view) => {
+    const d = allDesigns[view];
+    return !!(d?.uploadedImage || (d?.customText && d.customText.trim() !== ''));
+  };
+
+  // Upload any base64 image (rendered design or raw logo) to ImageKit
+  const uploadToImageKit = async (base64DataUrl, view, isUploadedLogo = false) => {
     if (!base64DataUrl || !base64DataUrl.startsWith("data:image")) {
       throw new Error("Image data is missing or invalid.");
     }
 
-    const fileName = `tshirt_${view}_${Date.now()}.png`;
+    const fileName = `${isUploadedLogo ? 'logo' : 'tshirt'}_${view}_${Date.now()}.png`;
     const authRes = await axios.get("https://duco-backend.onrender.com/api/imagekit/auth");
     const { signature, expire, token } = authRes.data;
 
@@ -135,7 +147,7 @@ const TshirtDesigner = () => {
     formData.append("file", base64DataUrl);
     formData.append("fileName", fileName);
     formData.append("token", token);
-    formData.append("expire", expire.toString());
+    formData.append("expire", String(expire));
     formData.append("signature", signature);
     formData.append("useUniqueFileName", "true");
     formData.append("folder", "/tshirt-designs");
@@ -151,64 +163,94 @@ const TshirtDesigner = () => {
     return res.data?.url;
   };
 
-  const captureAllDesigns = async () => {
+  // Capture ONLY views with content and upload them
+  const captureSelectedViews = async () => {
     setIsSaving(true);
     setUploadProgress({});
-    const designUrls = {};
+    const result = [];
+
     for (const view of views) {
-      const ref = designRefs[view].current;
+      if (!viewHasContent(view)) continue;
+
+      const ref = designRefs[view]?.current;
       if (!ref) continue;
 
-      const originalStyles = {
+      // Ensure visibility for capture
+      const original = {
         opacity: ref.style.opacity,
         pointerEvents: ref.style.pointerEvents,
         position: ref.style.position,
         zIndex: ref.style.zIndex,
       };
-
       ref.style.opacity = '1';
       ref.style.pointerEvents = 'auto';
       ref.style.position = 'relative';
       ref.style.zIndex = '50';
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise((r) => setTimeout(r, 120));
+      const dataUrl = await toPng(ref, { cacheBust: true, pixelRatio: 2 });
 
-      const dataUrl = await toPng(ref, { cacheBust: true });
+      // Restore original styles
+      ref.style.opacity = original.opacity;
+      ref.style.pointerEvents = original.pointerEvents;
+      ref.style.position = original.position;
+      ref.style.zIndex = original.zIndex;
 
-      ref.style.opacity = originalStyles.opacity;
-      ref.style.pointerEvents = originalStyles.pointerEvents;
-      ref.style.position = originalStyles.position;
-      ref.style.zIndex = originalStyles.zIndex;
+      if (!dataUrl?.startsWith("data:image")) continue;
 
-      if (!dataUrl || !dataUrl.startsWith("data:image")) continue;
-      designUrls[view] = await uploadToImageKit(dataUrl, view);
+      const url = await uploadToImageKit(dataUrl, view);
+
+      // Optional: upload the raw logo for this view as a separate asset
+      const logoBase64 = allDesigns[view]?.uploadedImage || null;
+      const logoImageUrl = logoBase64
+        ? await uploadToImageKit(logoBase64, view, true)
+        : null;
+
+      result.push({ view, url, uploadedImage: logoImageUrl });
     }
+
     setIsSaving(false);
-    return designUrls;
+    return result;
   };
 
-  const handleSaveDesign = async (designUrls) => {
-    const stored = localStorage.getItem('user');
-    if (!stored) return;
-    const user = JSON.parse(stored);
-    const designArray = views.map(view => designUrls[view] || null);
-    const payload = {
-      user: user._id,
-      cutomerprodcuts: proid,
-      design: designArray,
-      designElements: allDesigns
-    };
-    const result = await createDesign(payload);
-    if (result)  navigate(-1);
-    else console.log('Failed to save design.');
-  };
-
-  const downloadDesign = async () => {
+  // Save ONLY populated views; embed positions + if_text inside each design item
+  const saveSelectedViews = async () => {
     try {
-      const urls = await captureAllDesigns();
-      await handleSaveDesign(urls);
+      const designArrayRaw = await captureSelectedViews();
+      if (designArrayRaw.length === 0) {
+        console.warn('No views have content to save.');
+        return;
+      }
+
+      const designArrayWithDetails = designArrayRaw.map(item => {
+        const d = allDesigns[item.view];
+        return {
+          ...item,
+          positions: d?.positions || {},
+          if_text: {
+            customText: d?.customText || "",
+            textSize: d?.textSize || 0,
+            textColor: d?.textColor || "#000000",
+            font: d?.font || "font-sans"
+          }
+        };
+      });
+
+      const stored = localStorage.getItem('user');
+      const user = stored ? JSON.parse(stored) : null;
+
+      const payload = {
+        ...(user && { user: user._id }),
+        products: proid,
+        design: designArrayWithDetails
+      };
+
+      const result = await createDesign(payload);
+      if (result) navigate(-1);
+      else console.log('Failed to save design.');
     } catch (err) {
       console.error('Failed to save designs:', err);
+      setIsSaving(false);
     }
   };
 
@@ -255,15 +297,16 @@ const TshirtDesigner = () => {
 
   return (
     <>
-      {isSaving && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="text-white text-lg font-semibold bg-gray-800 px-6 py-3 rounded-lg shadow-lg">
-          Saving your design...
+      {isSaving && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="text-white text-lg font-semibold bg-gray-800 px-6 py-3 rounded-lg shadow-lg">
+            Saving your design...
+          </div>
         </div>
-      </div>}
+      )}
 
       <div className="flex flex-col lg:flex-row p-4">
-        {/* Sidebar and Control Panel here (omitted for brevity) */}
-          {/* Sidebar */}
+        {/* Sidebar */}
         <aside className="w-full lg:w-80 bg-white rounded-2xl shadow-xl p-6 border border-gray-300">
           <div className="space-y-6">
             <div>
@@ -273,11 +316,11 @@ const TshirtDesigner = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="text-xs text-gray-600">Click to upload</span>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleImageUpload} 
-                  className="hidden" 
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
                 />
               </label>
             </div>
@@ -299,42 +342,42 @@ const TshirtDesigner = () => {
 
             <div>
               <h3 className="text-sm font-semibold text-gray-800 mb-2">Custom Text</h3>
-              <input 
-                type="text" 
-                value={currentDesign.customText} 
-                onChange={(e) => updateCurrentDesign('customText', e.target.value)} 
-                placeholder="Your slogan here" 
-                className="w-full px-3 py-2 border border-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-700" 
+              <input
+                type="text"
+                value={currentDesign.customText}
+                onChange={(e) => updateCurrentDesign('customText', e.target.value)}
+                placeholder="Your slogan here"
+                className="w-full px-3 py-2 border border-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-700"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-2">Text Size</h3>
-                <input 
-                  type="number" 
-                  value={currentDesign.textSize} 
-                  onChange={(e) => updateCurrentDesign('textSize', Number(e.target.value))} 
-                  className="w-full px-3 py-2 border border-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-700" 
+                <input
+                  type="number"
+                  value={currentDesign.textSize}
+                  onChange={(e) => updateCurrentDesign('textSize', Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-700"
                 />
               </div>
 
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-2">Text Color</h3>
-                <input 
-                  type="color" 
-                  value={currentDesign.textColor} 
-                  onChange={(e) => updateCurrentDesign('textColor', e.target.value)} 
-                  className="w-10 h-10 rounded-full cursor-pointer" 
+                <input
+                  type="color"
+                  value={currentDesign.textColor}
+                  onChange={(e) => updateCurrentDesign('textColor', e.target.value)}
+                  className="w-10 h-10 rounded-full cursor-pointer"
                 />
               </div>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold text-gray-800 mb-2">Font Style</h3>
-              <select 
-                onChange={(e) => updateCurrentDesign('font', e.target.value)} 
-                value={currentDesign.font} 
+              <select
+                onChange={(e) => updateCurrentDesign('font', e.target.value)}
+                value={currentDesign.font}
                 className="w-full px-3 py-2 border border-gray-400 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-700"
               >
                 <option value="font-sans">Sans - Modern</option>
@@ -379,8 +422,8 @@ const TshirtDesigner = () => {
           </DndContext>
 
           <button
-            onClick={downloadDesign}
-            className="absolute bottom-[100px] right-7 py-2 px-5 flex  items-center justify-center bg-green-600 text-white rounded-md hover:bg-green-700"
+            onClick={saveSelectedViews}
+            className="absolute bottom-[100px] right-7 py-2 px-5 flex items-center justify-center bg-green-600 text-white rounded-md hover:bg-green-700"
           >
             Submit <MdNavigateNext />
           </button>
@@ -391,5 +434,4 @@ const TshirtDesigner = () => {
 };
 
 export default TshirtDesigner;
-
 

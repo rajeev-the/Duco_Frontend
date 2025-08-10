@@ -5,50 +5,93 @@ import Loading from '../Components/Loading';
 import { CartContext } from "../ContextAPI/CartContext";
 import { getproducts } from "../Service/APIservice";
 import { useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigator = useNavigate()
+  const [address, setAddress] = useState(null);
+  const navigate = useNavigate();
+  console.log(address)
 
   // Get user from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch (e) {
+      console.error('Invalid user in localStorage', e);
+    }
   }, []);
 
   // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
-      const fetched = await getproducts();
-      if (fetched) setProducts(fetched);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const fetched = await getproducts();
+        if (Array.isArray(fetched)) setProducts(fetched);
+      } catch (e) {
+        console.error(e);
+        toast.error("Failed to load products. Please refresh.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProducts();
   }, []);
 
   // Combine cart items with full product data
-  const actualdata = cart.map((cartItem) => {
-    const product = products.find((p) => p._id === cartItem.id);
-    if (!product) return null;
+  const actualdata = cart
+    .map((cartItem) => {
+      const product = products.find((p) => p._id === cartItem.id);
+      if (!product) return null;
+      return { ...product, ...cartItem };
+    })
+    .filter(Boolean);
 
-    return {
-      ...product,
-      ...cartItem
-    };
-  }).filter(Boolean); // remove nulls
-
-  const subtotal = actualdata.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const postage = 24.00;
+  const subtotal = actualdata.reduce((sum, item) => sum + (Number(item?.price || 0) * Number(item.quantity || 0)), 0);
+  const postage = 60.00;
   const total = subtotal + postage;
+
+  const orderPayload = {
+         // raw cart payload (ids, size, color, quantity, design)
+    items: actualdata,      // enriched items (if you want to see merged data on /payment)
+    totalPay: total,
+    address:address,
+    user:user
+  };
+
+  const handleCheckout = () => {
+    if (!user) {
+      toast.error("Please log in to continue.");
+      return;
+    }
+
+    if (!actualdata.length) {
+      toast.error("Your cart is empty. Add some products first.");
+      navigate("/home");
+      return;
+    }
+
+    if (!address || Object.keys(address || {}).length === 0) {
+      toast.error("Please Select delivery address.");
+      return;
+    }
+
+    navigate("/payment", { state: orderPayload });
+  };
+
+  console.log(orderPayload)
 
   if (loading) return <Loading />;
 
   return (
     <div className="min-h-screen text-white p-8">
+     
+
       <h1 className="text-3xl font-bold mb-8">SHOPPING CART</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -57,7 +100,7 @@ const Cart = () => {
           {actualdata.length > 0 ? (
             actualdata.map((item, i) => (
               <CartItem
-                key={i}
+                key={`${item._id}-${item.size}-${item.color}-${i}`}
                 item={item}
                 removeFromCart={() =>
                   removeFromCart(item.id, item.size, item.color, item.design)
@@ -80,7 +123,7 @@ const Cart = () => {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between">
                 <span className="text-gray-300">Subtotal</span>
-                <span className="text-white">€{subtotal.toFixed(2).replace('.', ',')}</span>
+                <span className="text-white">{subtotal.toFixed(2).replace('.', '.')}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Shipping</span>
@@ -88,27 +131,26 @@ const Cart = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Postage</span>
-                <span className="text-white">€{postage.toFixed(2).replace('.', ',')}</span>
+                <span className="text-white">{postage.toFixed(2).replace('.', '.')}</span>
               </div>
             </div>
 
             <div className="flex justify-between border-t border-gray-600 pt-4 mb-6">
               <span className="text-white font-bold">Total</span>
-              <span className="text-white font-bold">€{total.toFixed(2).replace('.', ',')}</span>
+              <span className="text-white font-bold">{total.toFixed(2).replace('.', '.')}</span>
             </div>
 
             <button
               className="w-full py-4 font-bold hover:bg-opacity-90 transition-all"
               style={{ backgroundColor: '#FDC305', color: '#112430' }}
-              onClick={ ()=>
-                navigator("/payment")
-              }
+              onClick={handleCheckout}
             >
               CHECK OUT
             </button>
           </div>
 
-          <AddressManager user={user} setUser={setUser} />
+          {/* Pass setAddress (fixed prop name) */}
+          <AddressManager  addresss={address} setAddresss={setAddress} user={user} setUser={setUser} />
         </div>
       </div>
     </div>
@@ -116,4 +158,3 @@ const Cart = () => {
 };
 
 export default Cart;
-
