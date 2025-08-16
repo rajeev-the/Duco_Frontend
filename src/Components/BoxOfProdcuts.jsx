@@ -55,7 +55,7 @@ const BoxOfProdcuts = ({ price ,title ,id ,image }) => {
             addtocart({
               id:id,
               design: [],
-              size: "m",
+              
               color: "white",
               quantity: 1,
               price: price,

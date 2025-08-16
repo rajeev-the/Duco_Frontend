@@ -246,7 +246,7 @@ const TshirtDesigner = () => {
       };
 
       const result = await createDesign(payload);
-      if (result) navigate(-1);
+      if (result) navigate(`/get_size/${user._id}`);
       else console.log('Failed to save design.');
     } catch (err) {
       console.error('Failed to save designs:', err);

@@ -32,6 +32,7 @@ import
 TermsConditions from "./Pages/TermsConditions"
 import OrderProcessing  from "./Components/OrderProcessing.jsx"
 import OrderSection from "./Admin/OderSection.jsx"
+import SizeChange from './Pages/SizeChange.jsx';
 
 
 const App = () => {
@@ -55,7 +56,9 @@ const App = () => {
  
       <Route index path='' element={<Home/>}/>
        <Route index path='/home' element={<Home/>}/>
-            <Route  path='/products' element={<Prodcuts/>}/>
+            <Route  path='/men' element={<Prodcuts/>}/>
+              <Route  path='/women' element={<Prodcuts/>}/>
+                <Route  path='/kid' element={<Prodcuts/>}/>
               <Route  path='/contact' element={<Contact/>}/>
                 <Route  path='/cart' element={<Cart/>}/>
                 <Route  path='/products/:id' element={<ProductPage/>}/>
@@ -70,6 +73,9 @@ const App = () => {
                             <Route path="/refund-return-policy" element={<RefundReturnPolicy />} />
                             <Route path="/shipping-policy" element={<ShippingPolicy />} />
                             <Route path="/terms-and-conditions" element={<TermsConditions />} />
+                             <Route path="/get_size/:id" element={<SizeChange />} />
+
+
 
 
 

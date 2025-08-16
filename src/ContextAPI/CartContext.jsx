@@ -20,20 +20,27 @@ export const CartProvider = ({ children }) => {
 
 const addToCart = (product) => {
   const {
-    id,
-    design,
-    size = 'M',
-    color = '#ffffff',
-    quantity = 1,
-    price = 0,
-    colortext = 'white',
-    gender ="Male"
-  } = product;
+  id,
+  design,
+  quantity = {
+    "S":0,
+    "M": 0,
+    "L": 0,
+    "XL": 0,
+    "2XL": 0,
+    "3XL": 0
+  },
+  color = '#ffffff',
+   
+  price = 0,
+  colortext = 'white',
+  gender = 'Male'
+} = product;
 
   const exists = cart.find(
     (item) =>
       item.id === id &&
-      item.size === size &&
+    
       item.color === color &&
       item.design === design &&
       item.colortext === colortext &&
@@ -44,7 +51,7 @@ const addToCart = (product) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.id === id &&
-        item.size === size &&
+
         item.color === color &&
         item.design === design &&
         item.colortext === colortext &&
@@ -54,20 +61,20 @@ const addToCart = (product) => {
       )
     );
   } else {
-    const data = { id, design, size, color, quantity, price, colortext,gender };
+    const data = { id, design, color, quantity, price, colortext,gender };
     setCart((prevCart) => [...prevCart, data]);
   }
 };
 
 
-const removeFromCart = (id, size = null, color = null, design = null) => {
+const removeFromCart = (id, color = null, design = null) => {
   setCart((prevCart) =>
     prevCart.filter((item) => {
       // If size/color/design are provided, match all fields
       if (size && color && design) {
         return !(
           item.id === id &&
-          item.size === size &&
+        
           item.color === color &&
           item.design === design
         );
@@ -85,19 +92,17 @@ const removeFromCart = (id, size = null, color = null, design = null) => {
     setCart([]);
   };
 
-  // Update quantity (optional utility)
-  const updateQuantity = (id, size, color, design, newQuantity) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id &&
-        item.size === size &&
-        item.color === color &&
-        item.design === design
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
-  };
+  // Example updateQuantity inside CartContext
+function updateQuantity(productId, sizeQty) {
+  setCart((prev) =>
+    prev.map((item) =>
+      item.id === productId || item._id === productId
+        ? { ...item, size: sizeQty }
+        : item
+    )
+  );
+}
+
 
   // at bottom of CartProvider.js
 return (

@@ -41,7 +41,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
           <div className="text-sm text-gray-300">{item.description}</div>
 
           <div className="flex gap-4 mt-2 flex-wrap text-sm text-gray-400">
-            <p><span className="text-white font-medium">Size:</span> {item.size.toUpperCase()}</p>
+           
             <p className="flex items-center">
               <span className="text-white font-medium mr-1">Color:</span>
               <span

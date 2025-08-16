@@ -14,7 +14,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState(null);
   const navigate = useNavigate();
-  console.log(address)
+  
 
   // Get user from localStorage
   useEffect(() => {

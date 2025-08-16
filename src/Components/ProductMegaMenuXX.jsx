@@ -1,111 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getCategories, getSubcategoriesByCategoryId } from '../Service/APIservice';
+import React, { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { getCategories, getSubcategoriesByCategoryId } from "../Service/APIservice";
 import * as FaIcons from "react-icons/fa";
-import Loading from './Loading';
+import Loading from "./Loading";
 
-const ProductMegaMenuXX = () => {
-  const [icons, setIcons] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [value, setValue] = useState([]);
+/**
+ * ProductMegaMenuXX
+ * Props:
+ *  - category: string ("Men" | "Women" | "Kid" ... from Navbar)
+ *
+ * Behavior:
+ *  - Fetch categories once, find the one that matches `category`
+ *  - Fetch subcategories for that matched category
+ *  - Render ONLY that category’s subcategories (no other categories in UI)
+ */
+const ProductMegaMenuXX = ({ category }) => {
+  const [allCategories, setAllCategories] = useState([]);
+  const [currentCat, setCurrentCat] = useState(null); // { _id, category, icons }
+  const [subcats, setSubcats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const categoriesdummy = [
-    "Men's Clothing",
-    "Women's Clothing",
-    "Kid's Clothing"
-  ];
-
-  const IconRenderer = ({ iconName, size = 24, color = "#000" }) => {
-    const IconComponent = FaIcons[iconName];
-    if (!IconComponent) return <span>Invalid Icon</span>;
-    return <IconComponent size={size} color={color} />;
+  // Fallback text if API not ready or no match
+  const fallbackMap = {
+    Men: "Men's Clothing",
+    Women: "Women's Clothing",
+    Kid: "Kid's Clothing",
+    Kids: "Kid's Clothing",
   };
 
+  const IconRenderer = ({ iconName, size = 22, color = "#0A0A0A" }) => {
+    const IconComponent = FaIcons[iconName];
+    return IconComponent ? <IconComponent size={size} color={color} /> : null;
+  };
+
+  // Normalize and match incoming `category` to API category name
+  const matchCategory = useMemo(() => {
+    const incoming = (category || "").toLowerCase();
+    if (!incoming) return null;
+
+    // Try exact-ish matches first
+    const direct =
+      allCategories.find(c =>
+        c?.category?.toLowerCase().includes(incoming)
+      ) ||
+      // Try mapping (Men -> Men's Clothing, etc.)
+      allCategories.find(c =>
+        c?.category?.toLowerCase() === (fallbackMap[category] || "").toLowerCase()
+      );
+
+    return direct || null;
+  }, [allCategories, category]);
+
+  // Fetch all categories once
   useEffect(() => {
-    const fetchData = async () => {
+    let mounted = true;
+    (async () => {
       setLoading(true);
-      const data = await getCategories();
-      if (data && data.length) {
-        setCategories(data);
-        const data1 = await getSubcategoriesByCategoryId(data[0]?._id);
-        setValue(data1);
-        setIcons(data[0]?.icons);
+      try {
+        const cats = await getCategories();
+        if (mounted && Array.isArray(cats)) setAllCategories(cats);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
-    };
-    fetchData();
+    })();
+    return () => { mounted = false; };
   }, []);
 
-  const handleclickingsub = async (id, isDummy = false) => {
-    if (isDummy) return;
-    setLoading(true);
-    const data = await getSubcategoriesByCategoryId(id);
-    setValue(data);
-    setLoading(false);
-  };
+  // When matchCategory changes, set it & fetch subcategories
+  useEffect(() => {
+    let mounted = true;
+    const fetchSubs = async () => {
+      if (!matchCategory?._id) {
+        setSubcats([]);
+        setCurrentCat(null);
+        return;
+      }
+      setLoading(true);
+      try {
+        const subs = await getSubcategoriesByCategoryId(matchCategory._id);
+        if (mounted) {
+          setCurrentCat(matchCategory);
+          setSubcats(Array.isArray(subs) ? subs : []);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchSubs();
+    return () => { mounted = false; };
+  }, [matchCategory]);
 
-  const categoriesToRender = categories.length ? categories : categoriesdummy;
-
+  // UI
   return (
-    <div className="w-[700px] h-[180px] bg-white/90 backdrop-blur-md shadow-xl rounded-lg border border-gray-200 p-5 flex gap-6 z-50">
-      {/* Left: Category List */}
-      <div className="w-1/3 border-r pr-4 overflow-y-auto">
-        <ul className="space-y-3">
-          {categoriesToRender.map((cat, i) => (
-            <li
-              key={i}
-              onClick={() => {
-                if (categories.length) {
-                  handleclickingsub(cat._id);
-                  setIcons(cat?.icons);
-                } else {
-                  handleclickingsub(null, true); // prevent API call on dummy
-                }
-              }}
-              className="text-[15px] text-[#0A0A0A] font-medium hover:font-bold flex items-center justify-between cursor-pointer"
-            >
-              <span>{categories.length ? cat.category : cat}</span>
-              <span className="text-xl">›</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Right: Featured Products */}
-      <div className="w-2/3 flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-[#0A0A0A] flex items-center gap-2">
-            All Products
-            {icons && <IconRenderer iconName={icons.trim()} />}
+    <div className="w-[800px] min-h-[350px] bg-white/95 backdrop-blur-md shadow-xl rounded-lg border border-gray-200 p-5 z-50">
+      {/* Header row: Category title + icon + View All */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-[#0A0A0A]">
+            {currentCat?.category || fallbackMap[category] || category || "Products"}
           </h3>
+          {!!currentCat?.icons && <IconRenderer iconName={currentCat.icons.trim()} />}
+        </div>
+
+        {/* Point "View All" to the category route if you have one.
+            Adjust the path as per your routing (e.g., `/category/:id/:slug`). */}
+        {currentCat?._id && (
           <Link
-            to="/products/new"
+            to={`/category/${currentCat._id}`}
             className="text-sm font-medium text-black hover:underline"
           >
             View All ›
           </Link>
-        </div>
-
-        {/* Loading spinner */}
-        {loading ? (
-          <Loading />
-        ) : (
-          <div className="grid grid-cols-2 gap-4 overflow-y-auto">
-            {value.map((item, idx) => (
-              <Link
-                to={`/products/subcategory/${item._id}/${item.subcatogry}`}
-                key={idx}
-                className="bg-[#E5C870] hover:shadow-md rounded-lg overflow-hidden p-2 text-center transition-all"
-              >
-                <p className="text-sm font-medium text-black truncate">
-                  {item.subcatogry}
-                </p>
-              </Link>
-            ))}
-          </div>
         )}
       </div>
+
+      {/* Body: Only this category's subcategories */}
+      {loading ? (
+        <Loading />
+      ) : subcats.length ? (
+        <div className="grid grid-cols-3 gap-4  overflow-y-auto">
+          {subcats.map((item) => (
+            <Link
+              key={item._id}
+              to={`/products/subcategory/${item._id}/${encodeURIComponent(item.subcatogry)}`}
+              className="bg-[#E5C870] hover:shadow-md rounded-lg p-3 text-center transition-all"
+            >
+              <p className="text-sm font-medium text-black truncate">
+                {item.subcatogry}
+              </p>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-sm text-gray-600">No subcategories found.</div>
+      )}
     </div>
   );
 };
