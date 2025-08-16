@@ -4,6 +4,7 @@ import { RiAccountCircle2Fill } from "react-icons/ri";
 import logo from "../assets/image.png"
 import { Link , useNavigate } from 'react-router-dom';
 import ProductMegaMenu from './ProductMegaMenuXX';
+import MobileSidebar from './MobileSidebar';
  const menuItems = [
     { name: "Home", link: "/" },
     { name: "Men", link: "/men", hasMegaMenu: true },
@@ -11,6 +12,14 @@ import ProductMegaMenu from './ProductMegaMenuXX';
     { name: "Kid", link: "/kid", hasMegaMenu: true },
     { name: "Order", link: "/order" }
   ];
+
+  const menuItemss = [
+  { name: "Home", link: "/" },
+  { name: "Men",   megaCategory: "Men" },    // dropdown fetched from API
+  { name: "Women", megaCategory: "Women" },  // dropdown fetched from API
+  { name: "Kids",  megaCategory: "Kids" },   // dropdown fetched from API
+
+];
 
 const Navbar = ({setIsOpenLog ,user}) => {
   const[isclick,setIsClick] = useState("Home")
@@ -131,25 +140,7 @@ const Navbar = ({setIsOpenLog ,user}) => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden px-3 flex mt-4 gap-4 text-center text-white text-sm">
-          {menuItems.map((item, idx) => (
-            <div
-              key={idx}
-              onClick={() => {
-                setIsClick(item.name);
-                setMobileMenuOpen(false);
-              }}
-              className="relative group cursor-pointer"
-            >
-              <Link to={item.link}>
-                <span className="uppercase">{item.name}</span>
-                {item.name === isclick && (
-                  <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
-                )}
-              </Link>
-            </div>
-          ))}
-        </div>
+       <MobileSidebar menuItems={menuItemss} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen}/>
       )}
     </>
 
