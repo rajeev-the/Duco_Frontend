@@ -2,6 +2,7 @@ import React from 'react'
 import heroImg from '../assets/20250624_0035_Vibrant Court Relaxation_remix_01jyf2tnt9es2vn3cs02bzdyzz.png'; // Adjust the path as necessary
 import firstImg from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
 import secondImg from "../assets/pleased-young-handsome-guy-wearing-black-t-shirt-points-up-putting-hand-hip-isolated-white-wall-removebg-preview.png"
+import { Link } from 'react-router-dom';
 
 
 const SectionHome1 = () => {
@@ -12,7 +13,7 @@ const SectionHome1 = () => {
   <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row gap-3">
 
     {/* Left big image */}
-    <div className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
+    <Link to={"/women"} className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
       <img
         src={heroImg}
         alt="Main Visual"
@@ -31,12 +32,12 @@ const SectionHome1 = () => {
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/30 z-0 rounded-2xl" />
-    </div>
+    </Link>
 
     {/* Right stacked cards */}
     <div className="flex sm:flex-col  flex-row sm:gap-3 gap-2 w-full md:w-[30%]">
       {/* Card 1 */}
-      <div className="bg-[#3a3a3a] text-[#E5C870] sm:p-6 px-2  rounded-2xl relative sm:w-full w-[40%]  h-[240px] sm:h-[260px]">
+      <Link to={"/men"} className="bg-[#3a3a3a] text-[#E5C870] sm:p-6 px-2  rounded-2xl relative sm:w-full w-[40%]  h-[240px] sm:h-[260px]">
         <p className="text-2xl sm:text-5xl font-semibold sm:leading-10  leading-6 mt-[40px] z-10 relative">
           Naturally<br />Styled
         </p>
@@ -45,10 +46,10 @@ const SectionHome1 = () => {
           alt="Styled Model"
           className="object-contain absolute bottom-0 right-4 sm:w-[140px] w-[100px]"
         />
-      </div>
+      </Link>
 
       {/* Card 2 */}
-      <div className="bg-[#e2c565] text-black sm:p-6 px-2 rounded-2xl relative h-[240px] w-[60%] sm:w-full sm:h-[325px] overflow-hidden">
+      <Link to={"/men"} className="bg-[#e2c565] text-black sm:p-6 px-2 rounded-2xl relative h-[240px] w-[60%] sm:w-full sm:h-[325px] overflow-hidden">
         <h2 className="text-3xl sm:text-5xl font-semibold leading-10 mt-[40px] z-10 relative">
           Casual <br /> Comfort
         </h2>
@@ -57,7 +58,7 @@ const SectionHome1 = () => {
           alt="Casual Comfort"
           className="absolute bottom-0 right-4 sm:w-[140px] w-[100px]  object-contain"
         />
-      </div>
+      </Link>
     </div>
   </div>
 

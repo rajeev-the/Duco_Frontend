@@ -33,6 +33,7 @@ TermsConditions from "./Pages/TermsConditions"
 import OrderProcessing  from "./Components/OrderProcessing.jsx"
 import OrderSection from "./Admin/OderSection.jsx"
 import SizeChange from './Pages/SizeChange.jsx';
+import AnalyticsDashboard from './Admin/AnalyticsDashboard.jsx';
 
 
 const App = () => {
@@ -90,6 +91,7 @@ const App = () => {
         <Route path='moneyset' element={<MoneySet/>} />
         <Route path='edit/:id' element={<ProductsUpdate/>}/>
           <Route path='/admin/order' element={<OrderSection/>}/>
+           <Route path='/admin/sales' element={<AnalyticsDashboard/>}/>
      
 
       </Route>

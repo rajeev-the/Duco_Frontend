@@ -260,7 +260,7 @@ const TshirtDesigner = () => {
     return (
       <div
         ref={designRefs[view]}
-        className={`absolute top-0 left-0 w-[40rem] h-[38rem] bg-white transition-opacity duration-300 ${
+        className={`absolute top-0 left-0 w-[40rem] h-[38rem]  transition-opacity duration-300 ${
           isActive ? 'relative z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >

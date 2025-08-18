@@ -6,18 +6,20 @@ import { Link , useNavigate } from 'react-router-dom';
 import ProductMegaMenu from './ProductMegaMenuXX';
 import MobileSidebar from './MobileSidebar';
  const menuItems = [
-    { name: "Home", link: "/" },
-    { name: "Men", link: "/men", hasMegaMenu: true },
-    { name: "Women", link: "/women", hasMegaMenu: true },
-    { name: "Kid", link: "/kid", hasMegaMenu: true },
-    { name: "Order", link: "/order" }
+    { name: "Home", link: "/" ,isbold:false},
+    { name: "Men", link: "/men", hasMegaMenu: true ,isbold:true},
+    { name: "Women", link: "/women", hasMegaMenu: true ,isbold:true},
+    { name: "Kid", link: "/kid", hasMegaMenu: true ,isbold:true},
+    { name: "Corporate", link: "/corporate" ,hasMegaMenu: true,isbold:true}
   ];
 
   const menuItemss = [
   { name: "Home", link: "/" },
   { name: "Men",   megaCategory: "Men" },    // dropdown fetched from API
   { name: "Women", megaCategory: "Women" },  // dropdown fetched from API
-  { name: "Kids",  megaCategory: "Kids" },   // dropdown fetched from API
+  { name: "Kids",  megaCategory: "Kids" },
+  { name: "Corporate",  megaCategory: "Corporate T-shirt" },
+     // dropdown fetched from API
 
 ];
 
@@ -44,7 +46,7 @@ const Navbar = ({setIsOpenLog ,user}) => {
               onMouseLeave={() => setIsClick("Home")}
             >
               <Link to={item.link}>
-                <span className="uppercase">{item.name}</span>
+                <span className={`${item.isbold ? "font-bold" :"font-medium" } uppercase `} >{item.name}</span>
               </Link>
 
               {item.name === isclick && (

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiX, FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import logo from "../assets/image.png";
 import { getCategories, getSubcategoriesByCategoryId } from "../Service/APIservice";
+import AccountQuickActions from "./AccountQuickActions"
 
 const fallbackMap = {
   Men: "Men's Clothing",
@@ -21,7 +22,7 @@ const MobileSidebar = ({ menuItems, setMobileMenuOpen, mobileMenuOpen }) => {
   const imageRef = useRef(null);
   const navigate = useNavigate();
 
-  console.log(menuItems)
+  
 
   // Load all categories once
   useEffect(() => {
@@ -123,6 +124,9 @@ const MobileSidebar = ({ menuItems, setMobileMenuOpen, mobileMenuOpen }) => {
               <div className="h-px bg-white/10" />
             </div>
           ))}
+            <div className=" pt-3">
+      <AccountQuickActions />
+    </div>
         </div>
 
         {/* RIGHT-SIDE SHEET: shows API subcategories */}

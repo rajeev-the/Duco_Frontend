@@ -31,6 +31,7 @@ const Footer = () => {
                 <li>New</li>
                 <li>Women</li>
                 <li>Men</li>
+                <li>Kid</li>
               </ul>
             </div>
 
@@ -39,8 +40,16 @@ const Footer = () => {
               <h3 className="font-semibold text-lg mb-2">Our Store</h3>
               <ul className="space-y-1 text-sm">
                 <li>About</li>
-                <li>Subscription</li>
+                <li><Link to="/order" className="hover:text-[#E5C870]">My Order</Link></li>
+                <li><Link to="/contact" className="hover:text-[#E5C870]">Contact Us</Link></li>
                 <li>FAQ</li>
+                <li>
+  <a href="mailto:ducoart@12.com" className="hover:text-[#E5C870]">
+    Help and support
+  </a>
+</li>
+
+                
               </ul>
             </div>
 

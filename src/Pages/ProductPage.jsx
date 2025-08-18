@@ -6,6 +6,7 @@ import { fetchPreviousDesigns, getproductssingle } from '../Service/APIservice';
 import DesignPreviewModal from '../Components/DesignPreview';
 import { CartContext } from "../ContextAPI/CartContext";
 import { usePriceContext } from '../ContextAPI/PriceContext';
+import ImageMagnifier from "../Components/ImageMagnifier"
 
 const ProductPage = () => {
   const [selectedColorCode, setSelectedColorCode] = useState('');
@@ -98,11 +99,12 @@ const handleQty = (k, v) => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         {/* Left - Images */}
         <div className="h-auto">
-          <img
-            src={defaultColorGroup?.url?.[iscount]}
-            alt="T-Shirt"
-            className="w-full sm:h-[52%] max-w-[500px] md:max-w-full object-contain rounded-xl bg-white shadow-md"
-          />
+          <ImageMagnifier
+      src={defaultColorGroup?.url?.[iscount]}
+      zoom={2.5}        // tweak as you like
+      lensSize={160}    // tweak lens size
+    />
+
           <div className="flex gap-2 mt-4">
             {defaultColorGroup?.url?.map((img, i) => (
               <img
@@ -139,7 +141,7 @@ const handleQty = (k, v) => {
             <li><FaCheckCircle className="inline mr-1 text-green-600" />No Minimums</li>
           </ul>
 
-          <div>
+          {/* <div>
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <MdOutlinePrint /> Printing Options
             </h3>
@@ -148,7 +150,7 @@ const handleQty = (k, v) => {
                 <button onClick={()=>setPrint(opt)} key={opt} className={`border px-4 py-1 rounded ${print == opt ? "bg-green-600":""} `} >{opt}</button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div>
             <h3 className="font-semibold mb-2 flex items-center gap-2">
