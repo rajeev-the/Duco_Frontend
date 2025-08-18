@@ -29,7 +29,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
         </div>
 
         {/* Product Info */}
-        <div className="flex-1 flex flex-col gap-2 text-white">
+        <div className="flex-1 flex flex-col gap-1 text-white">
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">{item.products_name}</h2>
             <PriceDisplay
@@ -39,6 +39,15 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
           </div>
 
           <div className="text-sm text-gray-300">{item.description}</div>
+           <div className="flex flex-wrap gap-1">
+  {Object.entries(item.quantity).map(([size, count]) =>
+    count > 0 ? (
+      <span key={size} className="px-1 py-0.5  text-sm rounded border">
+        {size} × {count}
+      </span>
+    ) : null
+  )}
+</div>
 
           <div className="flex gap-4 mt-2 flex-wrap text-sm text-gray-400">
            
@@ -49,19 +58,13 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
                 style={{ backgroundColor: item.color }}
               ></span>
             </p>
-            <p><span className="text-white font-medium">Gender:</span> {item.Gender}</p>
-            <QuantityControlss
-              quantity={item.quantity}
-              onIncrease={() =>
-                updateQuantity(item.quantity + 1)
-              }
-              onDecrease={() =>
-                item.quantity > 1 && updateQuantity(item.quantity - 1)
-              }
-            />
-          </div>
+            <p><span className="text-white font-medium">Gender:</span> {item?.gender}</p>
+           
 
-          <div className="flex flex-wrap items-center gap-3 mt-4">
+          </div>
+         
+
+          <div className="flex flex-wrap items-center gap-3 mt-2">
             {/* Quantity Controls */}
            
 

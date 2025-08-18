@@ -20,11 +20,16 @@ const ProductPage = () => {
   const [defaultColorGroup, setDefaultColorGroup] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [loadingDesigns, setLoadingDesigns] = useState(false);
-  const { addtocart } = useContext(CartContext);
+  const { addtocart ,updateQuantity } = useContext(CartContext);
   const { id } = useParams();
+    const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
+  const initialQty = SIZES.reduce((acc, k) => ({ ...acc, [k]: 0 }), {});
   const navigate = useNavigate();
+  const [qty, setQty] = useState(initialQty);
   const[gender,setGender] = useState("")
+
   const[iscount,setIscount]= useState(0)
+
 
   // Fetch product
   useEffect(() => {
@@ -80,6 +85,12 @@ const ProductPage = () => {
     return  actualPrice + (actualPrice * (high / 100));
 
 }
+
+const handleQty = (k, v) => {
+  const n = Math.max(0, Math.min(9999, Number(v.replace(/[^0-9]/g, "")) || 0));
+  setQty((p) => ({ ...p, [k]: n }));
+};
+
 
 
   return (
@@ -162,17 +173,22 @@ const ProductPage = () => {
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <MdOutlineStraighten /> Available Sizes
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {defaultColorGroup?.content?.map((s, i) => (
-                <button
-                  key={i}
-                  className={`px-3 py-1 border rounded ${selectedSize === s.size ? ' bg-green-600' : ' bg-black text-white'}`}
-                  onClick={() => setSelectedSize(s.size)}
-                >
-                  {s.size}
-                </button>
-              ))}
-            </div>
+          <div className="flex text-white flex-wrap gap-3 mt-2">
+  {SIZES.map((s) => (
+    <label key={s} className="flex flex-col items-center gap-1">
+      <span className="text-sm text-white">{s}</span>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={0}
+        className="h-12 w-16 rounded-xl border border-slate-300 text-center focus:outline-none focus:ring-2 focus:ring-sky-400"
+        value={qty[s]}
+        onChange={(e) => handleQty(s, e.target.value)}
+      />
+    </label>
+  ))}
+</div>
+
           </div>
 
           <button
@@ -290,7 +306,7 @@ const ProductPage = () => {
         onClose={() => setSelectedDesign(null)}
         id={id}
         addtocart={addtocart}
-        size={selectedSize}
+        size={qty}
         color={selectedColorCode}
         colortext={colortext}
         gender={gender}
