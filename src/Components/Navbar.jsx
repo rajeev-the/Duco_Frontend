@@ -61,11 +61,16 @@ const [islineclick, setIslineClick] = useState("home");
       onMouseLeave={() => setIsClick("home")}  // <-- keep lowercase default
     >
       <Link to={item.link}>
-        <span
-          className={`${item.isbold ? "font-extrabold" : "font-thin text-gray-200"} uppercase`}
-        >
-          {item.name}
-        </span>
+      <span
+  className={`font-['Poppins',ui-sans-serif,system-ui,sans-serif]  ${
+    item.isbold ? "font-bold leading-[1.1]" : "font-medium text-gray-200"
+  } uppercase`}
+>
+  {item.name}
+</span>
+
+
+
       </Link>
 
       {key === islineclick && (                         // <-- compare lowercase
