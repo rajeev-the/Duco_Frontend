@@ -6,14 +6,34 @@ import { fetchPreviousDesigns, getproductssingle } from '../Service/APIservice';
 import DesignPreviewModal from '../Components/DesignPreview';
 import { CartContext } from "../ContextAPI/CartContext";
 import { usePriceContext } from '../ContextAPI/PriceContext';
-import ImageMagnifier from "../Components/ImageMagnifier"
+import Zoom from 'react-medium-image-zoom';
+import { toast } from "react-toastify";
+import 'react-medium-image-zoom/dist/styles.css';
+import { useOutletContext } from 'react-router-dom';
+import PriceTiers from '../Components/PriceTiers';
+
+
+function useLayoutCtx() {
+  return useOutletContext(); // { setIsOpenLog, isLogin, setIsLogin, login, user }
+}
+const PRICE_TIERS = [
+  { range: "1", price: 510 },
+  { range: "2 - 4", price: 467 },
+  { range: "5 - 10", price: 408, recommended: true },
+  { range: "11 - 20", price: 380 },
+  { range: "21 - 50", price: 371 },
+];
 
 const ProductPage = () => {
+    const { setIsOpenLog } = useLayoutCtx();
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
   const[price,setPrice] = useState(0)
   const[print,setPrint] = useState("")
- const { toConvert, priceIncrease  } = usePriceContext();
+
+   const stored = localStorage.getItem('user');
+    const user = JSON.parse(stored);
+ const { toConvert, priceIncrease ,setLocation } = usePriceContext();
   const [showModal, setShowModal] = useState(false);
   const [colortext,setColortext] = useState(null)
   const [selectedDesign, setSelectedDesign] = useState(null);
@@ -21,7 +41,7 @@ const ProductPage = () => {
   const [defaultColorGroup, setDefaultColorGroup] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [loadingDesigns, setLoadingDesigns] = useState(false);
-  const { addtocart ,updateQuantity } = useContext(CartContext);
+  const { addtocart } = useContext(CartContext);
   const { id } = useParams();
     const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
   const initialQty = SIZES.reduce((acc, k) => ({ ...acc, [k]: 0 }), {});
@@ -46,20 +66,30 @@ const ProductPage = () => {
          setGender(p.gender)
 
       }
+      if(!priceIncrease){
+        navigate("/")
+      }
       
     };
     fetchProduct();
   }, [id]);
+
+  console.log(priceIncrease)
+
+
+  // ✨ Just works out of the box!
+
+
 
  
 
   // Load user designs when modal opens
   useEffect(() => {
     const loadDesigns = async () => {
-      const stored = localStorage.getItem('user');
+     
       if (!stored) return;
       setLoadingDesigns(true);
-      const user = JSON.parse(stored);
+     
       const data = await fetchPreviousDesigns(user._id);
       setDesigns(data || []);
       setLoadingDesigns(false);
@@ -99,11 +129,16 @@ const handleQty = (k, v) => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         {/* Left - Images */}
         <div className="h-auto">
-          <ImageMagnifier
-      src={defaultColorGroup?.url?.[iscount]}
+          {/* <ImageMagnifier
+      src=
       zoom={2.5}        // tweak as you like
       lensSize={160}    // tweak lens size
-    />
+    /> */}
+   <Zoom>
+  <img className='bg-white w-full sm:h-[600px] max-w-[500px] md:max-w-full   object-contain shadow-md overflow-hidden   rounded-2xl' src={defaultColorGroup?.url?.[iscount] ?? ''} alt="Product" />
+</Zoom>
+ 
+  
 
           <div className="flex gap-2 mt-4">
             {defaultColorGroup?.url?.map((img, i) => (
@@ -117,6 +152,7 @@ const handleQty = (k, v) => {
             ))}
           </div>
         </div>
+        
 
         {/* Right - Details */}
         <div className="space-y-6">
@@ -194,7 +230,17 @@ const handleQty = (k, v) => {
           </div>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() =>{
+           
+              if(!user){
+                  toast.error("Log In / Sign Up")
+                  setIsOpenLog(true)
+              }
+              else{
+                   setShowModal(true)
+              }
+            }
+            }
             className="bg-[#E5C870] hover:bg-green-600 text-black w-full text-xl font-bold py-3 rounded"
           >
             Start Buying
@@ -255,8 +301,10 @@ const handleQty = (k, v) => {
     )}
   </div>
         </div>
+       
 
       </div>
+       <PriceTiers tiers={PRICE_TIERS} currencySymbol="₹" />
 
 
     

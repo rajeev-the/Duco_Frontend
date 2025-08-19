@@ -84,18 +84,19 @@ export default function ImageMagnifier({ src, zoom = 2.5, lensSize = 160 }) {
 
       {show && imgLoaded && (
         <div
-          className="absolute pointer-events-none rounded-full border-2 border-[#E5C870] shadow-lg overflow-hidden"
-          style={{
-            width: `${lensSize}px`,
-            height: `${lensSize}px`,
-            top: `${lensTop}px`,
-            left: `${lensLeft}px`,
-            backgroundImage: `url(${src})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: `${imgNatural.width * zoom}px ${imgNatural.height * zoom}px`,
-            backgroundPositionX: `${-pos.imageX * zoom + lensSize/2}px`,
-            backgroundPositionY: `${-pos.imageY * zoom + lensSize/2}px`,
-          }}
+          className="absolute pointer-events-none  rounded-full border-2 border-[#E5C870] shadow-lg overflow-hidden"
+         style={{
+  width: `${lensSize}px`,
+  height: `${lensSize}px`,
+  top: `${lensTop}px`,
+  left: `${lensLeft}px`,
+  backgroundImage: `url(${src})`,
+  backgroundRepeat: "no-repeat",
+  backgroundSize: `${imgNatural.width * zoom}px ${imgNatural.height * zoom}px`,
+  backgroundPositionX: `${-(pos.imageX * zoom - lensSize / 2)}px`,
+  backgroundPositionY: `${-(pos.imageY * zoom - lensSize / 2)}px`,
+}}
+
         />
       )}
     </div>

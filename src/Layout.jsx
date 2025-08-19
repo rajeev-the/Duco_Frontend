@@ -27,7 +27,7 @@ const Layout = () => {
         />
 
         <div>
-          <Outlet />
+          <Outlet context={ {setIsOpenLog} } />
         </div>
 
         {/* Example: Conditional login/signup modal */}

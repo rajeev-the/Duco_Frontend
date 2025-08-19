@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 const OrderDetailsCard = ({ orderId }) => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [qikink,setQikink] = useState("")
 
   const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
@@ -18,6 +19,18 @@ const OrderDetailsCard = ({ orderId }) => {
       console.error("Failed to update status", err);
     }
   };
+const handleQlinkOrderIdChange = async (newId) => {
+  setOrder(prev => ({ ...prev, qlinkOrderId: newId }));
+  try {
+    await fetch(`https://duco-backend.onrender.com/api/order/update/${orderId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qlinkOrderId: newId?.trim() || null }),
+    });
+  } catch (err) {
+    console.error("Failed to update qlinkOrderId", err);
+  }
+};
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -111,6 +124,10 @@ const OrderDetailsCard = ({ orderId }) => {
             <p className={`font-medium ${order.razorpayPaymentId ? "text-green-600" : "text-yellow-600"}`}>
               Payment Status: {order.razorpayPaymentId ? "Paid" : "Unpaid"}
             </p>
+            <div className="flex justify-start  gap-1  items-center">
+              <p>Qikink</p>: <input  type="text"  onBlur={(e) => handleQlinkOrderIdChange (e.target.value)}  value={order?.qlinkOrderId} className="bg-green-100  text-black" />
+            </div>
+            
           </div>
         </div>
       </div>

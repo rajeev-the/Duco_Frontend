@@ -46,7 +46,7 @@ const Navbar = ({setIsOpenLog ,user}) => {
               onMouseLeave={() => setIsClick("Home")}
             >
               <Link to={item.link}>
-                <span className={`${item.isbold ? "font-bold" :"font-medium" } uppercase `} >{item.name}</span>
+                <span className={`${item.isbold ? "font-bold "  : "   font-extralight " } uppercase `} >{item.name}</span>
               </Link>
 
               {item.name === isclick && (
