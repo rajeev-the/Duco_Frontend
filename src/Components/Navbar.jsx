@@ -2,7 +2,8 @@ import React,{useState} from 'react'
 import { FaSearch, FaShoppingBag, FaBars, FaTimes   } from "react-icons/fa";
 import { RiAccountCircle2Fill } from "react-icons/ri";
 import logo from "../assets/image.png"
-import { Link , useNavigate } from 'react-router-dom';
+
+import { NavLink, useLocation ,Link , useNavigate } from "react-router-dom";
 import ProductMegaMenu from './ProductMegaMenuXX';
 import MobileSidebar from './MobileSidebar';
  const menuItems = [
@@ -23,13 +24,20 @@ import MobileSidebar from './MobileSidebar';
 
 ];
 
+
 const Navbar = ({setIsOpenLog ,user}) => {
-  const[isclick,setIsClick] = useState("Home")
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const [mobileMegaOpen, setMobileMegaOpen] = useState(false);
 
+  // helper to normalize to lowercase safely
+const toKey = (s) => (s ?? "").toLowerCase();
+
+// state (start lowercase if you want a default)
+const [isclick, setIsClick] = useState("home");
+const [islineclick, setIslineClick] = useState("home");
 
 
   return (
@@ -38,29 +46,40 @@ const Navbar = ({setIsOpenLog ,user}) => {
         
         {/* Left Nav */}
         <div className="hidden md:flex items-center gap-6 text-sm">
-          {menuItems.map((item, idx) => (
-            <div
-              key={idx}
-              className="relative group cursor-pointer"
-              onMouseEnter={() => setIsClick(item.name)}
-              onMouseLeave={() => setIsClick("Home")}
-            >
-              <Link to={item.link}>
-                <span className={`${item.isbold ? "font-bold "  : "   font-extralight " } uppercase `} >{item.name}</span>
-              </Link>
+      {menuItems.map((item) => {
+  const key = toKey(item.name);
 
-              {item.name === isclick && (
-                <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
-              )}
+  return (
+    <div
+      key={item.link}
+      className="relative group cursor-pointer"
+      onMouseEnter={() => {
+           setIsClick(key)
+        setIslineClick(key)
+      }
+      }     // <-- store lowercase
+      onMouseLeave={() => setIsClick("home")}  // <-- keep lowercase default
+    >
+      <Link to={item.link}>
+        <span
+          className={`${item.isbold ? "font-extrabold" : "font-thin text-gray-200"} uppercase`}
+        >
+          {item.name}
+        </span>
+      </Link>
 
-              {/* MegaMenu on hover */}
-              {item.hasMegaMenu && isclick === item.name && (
-                <div className="absolute top-full  left-[-20px] mt-1 z-50">
-                  <ProductMegaMenu category={item.name} />
-                </div>
-              )}
-            </div>
-          ))}
+      {key === islineclick && (                         // <-- compare lowercase
+        <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
+      )}
+
+      {item.hasMegaMenu && isclick === key && (     // <-- compare lowercase
+        <div className="absolute top-full left-[-20px] mt-1 z-50">
+          <ProductMegaMenu category={item.name} />
+        </div>
+      )}
+    </div>
+  );
+})}
         </div>
 
         {/* Center Logo */}

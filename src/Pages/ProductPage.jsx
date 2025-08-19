@@ -11,6 +11,8 @@ import { toast } from "react-toastify";
 import 'react-medium-image-zoom/dist/styles.css';
 import { useOutletContext } from 'react-router-dom';
 import PriceTiers from '../Components/PriceTiers';
+import CropTanksTabs from '../Components/CropTanksTabs';
+import CropTankSizeChart from '../Components/CropTankSizeChart';
 
 
 function useLayoutCtx() {
@@ -305,6 +307,9 @@ const handleQty = (k, v) => {
 
       </div>
        <PriceTiers tiers={PRICE_TIERS} currencySymbol="₹" />
+        <CropTankSizeChart/>
+       <CropTanksTabs/>
+      
 
 
     
