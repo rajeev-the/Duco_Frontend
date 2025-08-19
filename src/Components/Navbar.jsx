@@ -62,9 +62,7 @@ const [islineclick, setIslineClick] = useState("home");
     >
       <Link to={item.link}>
       <span
-  className={`font-['Poppins',ui-sans-serif,system-ui,sans-serif]  ${
-    item.isbold ? "font-bold leading-[1.1]" : "font-medium text-gray-200"
-  } uppercase`}
+  className={`font-['Poppins',ui-sans-serif,system-ui,sans-serif]  font-bold leading-[1.1]  uppercase`}
 >
   {item.name}
 </span>
