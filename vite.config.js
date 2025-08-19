@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig /*, splitVendorChunkPlugin */ } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -9,6 +9,8 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    // If you want mild auto-splitting later, uncomment:
+    // splitVendorChunkPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -28,6 +30,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+        // Keep JS out of precache to avoid the 2 MiB Workbox limit.
         globPatterns: ['**/*.{html,css,svg,png,ico,webp}'],
         runtimeCaching: [
           {
@@ -44,20 +47,12 @@ export default defineConfig({
   ],
 
   build: {
+    // Only affects CLI warnings, not PWA limits
     chunkSizeWarningLimit: 1200,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-          if (/node_modules\/react-router(\/|\\)/.test(id)) return 'vendor-router';
-          if (/node_modules\/(react|react-dom|scheduler)(\/|\\)/.test(id)) return 'vendor-react';
-          if (/node_modules\/@dnd-kit(\/|\\)/.test(id)) return 'vendor-dnd';
-          if (/node_modules\/recharts(\/|\\)/.test(id)) return 'vendor-charts';
-          if (/node_modules\/lucide-react(\/|\\)/.test(id)) return 'vendor-icons';
-          return 'vendor';
-        }
-      }
-    },
+
+    // Let Vite/Rollup decide chunking to prevent TDZ/cycle issues
+    // (Removed custom rollupOptions.output.manualChunks)
+
     commonjsOptions: { transformMixedEsModules: true }
   }
 });
