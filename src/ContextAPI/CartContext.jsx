@@ -67,11 +67,11 @@ const addToCart = (product) => {
 };
 
 
-const removeFromCart = (id, color = null, design = null) => {
+const removeFromCart = (id,quantity, color = null, design = null) => {
   setCart((prevCart) =>
     prevCart.filter((item) => {
       // If size/color/design are provided, match all fields
-      if (size && color && design) {
+      if (quantity && color && design) {
         return !(
           item.id === id &&
         
@@ -97,7 +97,7 @@ function updateQuantity(productId, sizeQty) {
   setCart((prev) =>
     prev.map((item) =>
       item.id === productId || item._id === productId
-        ? { ...item, size: sizeQty }
+        ? { ...item, quantity: sizeQty }
         : item
     )
   );

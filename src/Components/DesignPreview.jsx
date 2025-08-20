@@ -60,11 +60,10 @@ const DesignPreviewModal = ({id,selectedDesign, onClose ,addtocart ,size , color
            addtocart({
   id,
   design: selectedDesign.design,
-  size,
   color,
   quantity: size,
   colortext,
-  price: price || 0,
+  price: price,
   gender
 
 });

@@ -15,12 +15,13 @@ const continentMapping = {
   "AU": "Australia",
   // Add more country codes and their continents as needed
 };
+const BASE_URL = 'https://duco-backend.onrender.com'
 
 const Home = () => {
  const { toConvert, priceIncrease ,setLocation } = usePriceContext();
       useEffect(() => {
     // Fetch location details from ip-api API using Axios
-    axios.get('http://ip-api.com/json')
+    axios.get(`${BASE_URL}/api/ip`)
       .then((response) => {
         const data = response.data;
         const continent = continentMapping[data.countryCode] || 'Not available';

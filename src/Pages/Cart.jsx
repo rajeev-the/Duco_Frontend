@@ -7,6 +7,7 @@ import { getproducts } from "../Service/APIservice";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 
+
 const Cart = () => {
   const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
   const [user, setUser] = useState(null);
@@ -52,9 +53,12 @@ const Cart = () => {
     })
     .filter(Boolean);
 
-  const subtotal = actualdata.reduce((sum, item) => sum + (Number(item?.price || 0) * Number(item.quantity || 0)), 0);
-  const postage = 60.00;
-  const total = subtotal + postage;
+
+  const subtotal = actualdata.reduce((sum, item) => sum + (Number(item?.price || 0) * Number( Object.values(item.quantity).reduce((sum,qty)=> sum+qty,0 ) || 0)), 0);
+  const DELIVERY_CHARGE  = 60.00;
+  const PRINING_CHARGE  = 50;
+  const PACKING_CHARGE = 50; 
+  const total = subtotal + DELIVERY_CHARGE + PRINING_CHARGE + PACKING_CHARGE
 
   const orderPayload = {
          // raw cart payload (ids, size, color, quantity, design)
@@ -103,10 +107,10 @@ const Cart = () => {
                 key={`${item._id}-${item.size}-${item.color}-${i}`}
                 item={item}
                 removeFromCart={() =>
-                  removeFromCart(item.id, item.size, item.color, item.design)
+                  removeFromCart(item.id, item.quantity, item.color, item.design)
                 }
                 updateQuantity={(newQty) =>
-                  updateQuantity(item.id, item.size, item.color, item.design, newQty)
+                  updateQuantity(item.id, item.quantity, item.color, item.design, newQty)
                 }
               />
             ))
@@ -126,12 +130,16 @@ const Cart = () => {
                 <span className="text-white">{subtotal.toFixed(2).replace('.', '.')}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Shipping</span>
-                <span className="text-white">Free</span>
+                <span className="text-gray-300">Delivery Charge</span>
+                <span className="text-white">{DELIVERY_CHARGE.toFixed(2).replace('.', '.')}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Postage</span>
-                <span className="text-white">{postage.toFixed(2).replace('.', '.')}</span>
+               <div className="flex justify-between">
+                <span className="text-gray-300">Packing Charge</span>
+                <span className="text-white">{PACKING_CHARGE.toFixed(2).replace('.', '.')}</span>
+              </div>
+               <div className="flex justify-between">
+                <span className="text-gray-300">Printing Charge</span>
+                <span className="text-white">{PRINING_CHARGE.toFixed(2).replace('.', '.')}</span>
               </div>
             </div>
 

@@ -76,7 +76,7 @@ const ProductPage = () => {
     fetchProduct();
   }, [id]);
 
-  console.log(priceIncrease)
+
 
 
   // ✨ Just works out of the box!
@@ -326,8 +326,17 @@ const handleQty = (k, v) => {
             <div className="space-y-4 mb-6">
               <button
                 onClick={() => {
-                  navigate("/buy-regular");
-                  setShowModal(false);
+                 addtocart({
+                id,
+                design:[],
+                color:selectedColorCode,
+                quantity: qty,
+                colortext,
+                price: price,
+                gender
+                 })
+                 setShowModal(false);
+                 navigate("/cart")
                 }}
                 className="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-all"
               >
