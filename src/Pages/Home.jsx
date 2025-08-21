@@ -15,24 +15,24 @@ const continentMapping = {
   "AU": "Australia",
   // Add more country codes and their continents as needed
 };
-const BASE_URL = 'https://duco-backend.onrender.com'
+
 
 const Home = () => {
  const { toConvert, priceIncrease ,setLocation } = usePriceContext();
-      useEffect(() => {
-    // Fetch location details from ip-api API using Axios
-    axios.get(`${BASE_URL}/api/ip`)
-      .then((response) => {
-        const data = response.data;
-        const continent = continentMapping[data.countryCode] || 'Not available';
-        
-        setLocation(continent);
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setLocation("Asia")
-      });
-  }, []);
+useEffect(() => {
+  axios.get("https://ipapi.co/json/")
+    .then((response) => {
+      const data = response.data;
+      
+      setLocation(continentMapping[data?.country] || "Not available");
+    })
+    .catch((error) => {
+      console.log(error.message);
+      setLocation("Asia");
+    });
+}, []);
+
+
 
   return (
     <div className='h-full bg-[#0A0A0A] w-full  '>

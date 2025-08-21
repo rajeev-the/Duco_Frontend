@@ -26,7 +26,7 @@ const PRICE_TIERS = [
   { range: "21 - 50", price: 371 },
 ];
 
-const ProductPage = () => {
+const ProductPageBulk = () => {
     const { setIsOpenLog } = useLayoutCtx();
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
@@ -217,7 +217,7 @@ const handleQty = (k, v) => {
   {SIZES.map((s) => (
     <label key={s} className="flex flex-col items-center gap-1">
       <span className="text-sm text-white">{s}</span>
-     <input
+        <input
   type="number"
   inputMode="numeric"
   min={0}
@@ -247,7 +247,7 @@ const handleQty = (k, v) => {
             }
             className="bg-[#E5C870] hover:bg-green-600 text-black w-full text-xl font-bold py-3 rounded"
           >
-            Start Buying
+            Get BulkOrder
           </button>
             <div className="mt-6">
     <h3 className="text-lg font-semibold text-white mb-3">Your Previous Designs</h3>
@@ -382,4 +382,4 @@ const handleQty = (k, v) => {
   );
 };
 
-export default ProductPage;
+export default ProductPageBulk;

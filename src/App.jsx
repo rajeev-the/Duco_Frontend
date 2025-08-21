@@ -34,6 +34,7 @@ import OrderProcessing  from "./Components/OrderProcessing.jsx"
 import OrderSection from "./Admin/OderSection.jsx"
 import SizeChange from './Pages/SizeChange.jsx';
 import AnalyticsDashboard from './Admin/AnalyticsDashboard.jsx';
+import ProductRouter from './Pages/ProductRouter.jsx';
 
 
 const App = () => {
@@ -63,7 +64,7 @@ const App = () => {
                   <Route  path='/corporate' element={<Prodcuts/>}/>
               <Route  path='/contact' element={<Contact/>}/>
                 <Route  path='/cart' element={<Cart/>}/>
-                <Route  path='/products/:id' element={<ProductPage/>}/>
+                <Route  path='/products/:id' element={<ProductRouter/>}/>
                   <Route  path='/getbulk' element={<GetBulk/>}/>
                      <Route  path='/order' element={<Order/>}/>
                       <Route  path='/design/:proid/:color' element={<TShirtDesigner/>}/>

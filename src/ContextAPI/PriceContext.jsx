@@ -36,6 +36,7 @@ export const PriceProvider = ({ children }) => {
     fetchPriceData();
   }, [location]); // Dependency on location to trigger the effect when it changes
 
+  console.log(location)
   return (
     <PriceContext.Provider value={{ toConvert, priceIncrease, setLocation }}>
       {children}

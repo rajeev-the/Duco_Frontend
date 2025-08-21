@@ -24,6 +24,16 @@ export const fetchPreviousDesigns = async (userId) => {
     return [];
   }
 };
+export const fetchPreviousDesignswithpreoduts = async (userId,productId) => {
+  try {
+    const res = await fetch(`https://duco-backend.onrender.com/api/designs/user/${userId}/${productId}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch designs", err);
+    return [];
+  }
+};
 
 
 export const createDesign = async (payload) => {

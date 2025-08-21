@@ -6,7 +6,7 @@ import { CartContext } from "../ContextAPI/CartContext";
 import { getproducts } from "../Service/APIservice";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
-
+import { usePriceContext } from '../ContextAPI/PriceContext.jsx'
 
 const Cart = () => {
   const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
@@ -15,6 +15,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState(null);
   const navigate = useNavigate();
+   const { toConvert} = usePriceContext();
   
 
   // Get user from localStorage
@@ -55,9 +56,9 @@ const Cart = () => {
 
 
   const subtotal = actualdata.reduce((sum, item) => sum + (Number(item?.price || 0) * Number( Object.values(item.quantity).reduce((sum,qty)=> sum+qty,0 ) || 0)), 0);
-  const DELIVERY_CHARGE  = 60.00;
-  const PRINING_CHARGE  = 50;
-  const PACKING_CHARGE = 50; 
+  const DELIVERY_CHARGE  = 60.00*toConvert;
+  const PRINING_CHARGE  = 50*toConvert;
+  const PACKING_CHARGE = 50*toConvert; 
   const total = subtotal + DELIVERY_CHARGE + PRINING_CHARGE + PACKING_CHARGE
 
   const orderPayload = {

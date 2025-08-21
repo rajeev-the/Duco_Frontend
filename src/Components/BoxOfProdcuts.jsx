@@ -48,14 +48,16 @@ const BoxOfProdcuts = ({ price ,title ,id ,image }) => {
         </p>
 
         <div className="flex justify-between items-center">
-          <span className="text-lg font-bold text-gray-900">₹{calculatePrice(toConvert,price,priceIncrease)}</span>
+          <span className="text-lg font-bold text-gray-900">₹{toConvert && price && priceIncrease 
+  ? calculatePrice(toConvert, price, priceIncrease) 
+  : "..."}
+</span>
           <button onClick={(e)=>{
             e.preventDefault();       // prevent Link default
     e.stopPropagation();  
             addtocart({
               id:id,
               design: [],
-              
               color: "white",
               quantity: 1,
               price: price,
