@@ -241,69 +241,27 @@ const handleQty = (k, v) => {
                   setIsOpenLog(true)
               }
               else{
-                   setShowModal(true)
-              }
-            }
+              
+                 addtocart({
+                id,
+                design:[],
+                color:selectedColorCode,
+                quantity: qty,
+                colortext,
+                price: price,
+                gender
+                 })
+                 setShowModal(false);
+                 navigate("/cart")
+                }}
+     
+          
             }
             className="bg-[#E5C870] hover:bg-green-600 text-black w-full text-xl font-bold py-3 rounded"
           >
             Start Buying
           </button>
-            <div className="mt-6">
-    <h3 className="text-lg font-semibold text-white mb-3">Your Previous Designs</h3>
-    {loadingDesigns ? (
-      <p className="text-sm text-gray-300">Loading...</p>
-    ) : designs.length === 0 ? (
-      <p className="text-sm text-gray-400">No previous designs found.</p>
-    ) : (
-     <div className="max-h-48 overflow-y-auto space-y-3 pr-1">
-  {designs.map((d) => (
-    <div
-      key={d._id}
-      onClick={() => setSelectedDesign(d)}
-      className="cursor-pointer group flex items-center gap-4 border border-gray-700 rounded-xl p-4 
-                 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] 
-                 hover:shadow-lg transition-all duration-300 ease-out"
-    >
-      {/* Optional Thumbnail */}
-      {d.design?.[0]?.url && (
-        <img
-          src={d.design[0].url}
-          alt="Design preview"
-          className="w-12 h-12 object-contain rounded-md border border-gray-600 group-hover:border-[#E5C870] transition"
-        />
-      )}
-
-      {/* Text Content */}
-      <div className="flex flex-col flex-1">
-        <p className="text-sm font-semibold text-white">
-          Product ID:{" "}
-          <span className="text-[#E5C870] font-mono">{d.products}</span>
-        </p>
-        <p className="text-xs text-gray-300">
-          Created:{" "}
-          <span className="text-gray-400">
-            {new Date(d.createdAt).toLocaleDateString()}
-          </span>
-        </p>
-      </div>
-
-      {/* Icon */}
-      <svg
-        className="w-5 h-5 text-gray-400 group-hover:text-[#E5C870] transition"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-      </svg>
-    </div>
-  ))}
-</div>
-
-    )}
-  </div>
+           
         </div>
        
 
@@ -319,65 +277,8 @@ const handleQty = (k, v) => {
 
       
 
-      {/* MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-md mx-auto text-center">
-            <h2 className="text-xl font-bold mb-4">Choose T-Shirt Type</h2>
+   
 
-            <div className="space-y-4 mb-6">
-              <button
-                onClick={() => {
-                 addtocart({
-                id,
-                design:[],
-                color:selectedColorCode,
-                quantity: qty,
-                colortext,
-                price: price,
-                gender
-                 })
-                 setShowModal(false);
-                 navigate("/cart")
-                }}
-                className="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-all"
-              >
-                Regular T-Shirt
-              </button>
-              <button
-                onClick={() => {
-                 navigate(`/design/${id}/${selectedColorCode.replace('#', '')}`);
-
-                  setShowModal(false);
-                }}
-                className="w-full bg-[#E5C870] text-black py-2 rounded-md hover:bg-green-600 transition-all"
-              >
-                Design T-Shirt
-              </button>
-            </div>
-
-                       <button
-              onClick={() => setShowModal(false)}
-              className="mt-6 text-sm text-gray-500 hover:underline"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Preview Modal */}
-      <DesignPreviewModal
-        selectedDesign={selectedDesign}
-        onClose={() => setSelectedDesign(null)}
-        id={id}
-        addtocart={addtocart}
-        size={qty}
-        color={selectedColorCode}
-        colortext={colortext}
-        gender={gender}
-        price={price}
-      />
     </section>
   );
 };

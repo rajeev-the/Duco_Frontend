@@ -11,7 +11,7 @@ import MobileSidebar from './MobileSidebar';
     { name: "Men", link: "/men", hasMegaMenu: true ,isbold:true},
     { name: "Women", link: "/women", hasMegaMenu: true ,isbold:true},
     { name: "Kid", link: "/kid", hasMegaMenu: true ,isbold:true},
-    { name: "Corporate", link: "/corporate" ,hasMegaMenu: true,isbold:true}
+    { name: "Order", link: "/order" ,isbold:true}
   ];
 
   const menuItemss = [
@@ -19,7 +19,7 @@ import MobileSidebar from './MobileSidebar';
   { name: "Men",   megaCategory: "Men" },    // dropdown fetched from API
   { name: "Women", megaCategory: "Women" },  // dropdown fetched from API
   { name: "Kids",  megaCategory: "Kids" },
-  { name: "Corporate",  megaCategory: "Corporate T-shirt" },
+  { name: "Order",  megaCategory: "Corporate T-shirt" },
      // dropdown fetched from API
 
 ];
@@ -42,7 +42,7 @@ const [islineclick, setIslineClick] = useState("home");
 
   return (
    <>
-      <nav className="w-full flex sm:items-center sm:justify-center sm:gap-[250px] gap-[180px] items-center justify-evenly sm:px-6 py-4 bg-[#0A0A0A] text-white font-semibold">
+      <nav className="w-full flex sm:items-center sm:justify-center sm:gap-[250px] gap-[180px] items-center justify-evenly sm:px-6 py-4 bg-[#0B0F1A] text-[#cbd5e1] font-semibold">
         
         {/* Left Nav */}
         <div className="hidden md:flex items-center gap-6 text-sm">
@@ -72,7 +72,7 @@ const [islineclick, setIslineClick] = useState("home");
       </Link>
 
       {key === islineclick && (                         // <-- compare lowercase
-        <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#E5C870]" />
+        <div className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#2563EB]" />
       )}
 
       {item.hasMegaMenu && isclick === key && (     // <-- compare lowercase
@@ -94,31 +94,33 @@ const [islineclick, setIslineClick] = useState("home");
         <div className="flex items-center gap-4">
           {/* Search */}
           <div className="hidden md:flex items-center border-b border-white gap-2 px-2 py-1">
-            <FaSearch className="text-white" />
+            <FaSearch className="text-[#F9FAFB]" />
             <input
               type="text"
               placeholder="Search For Products..."
-              className="bg-transparent placeholder-white text-white outline-none"
+              className="bg-transparent placeholder-white text-[#CBD5E1]outline-none"
             />
           </div>
 
           {/* Cart & Login/Profile */}
           <div className="flex items-center justify-center gap-4">
             <FaShoppingBag
+            size={20}
               onClick={() => navigate("/cart")}
-              className="text-white text-xl cursor-pointer"
+              className="text-[#CBD5E1]text-xl cursor-pointer"
             />
             {!user ? (
               <div
                 onClick={() => setIsOpenLog(true)}
-                className="text-white text-sm cursor-pointer border hidden md:flex border-white px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-sm"
+                className="text-[#CBD5E1]text-sm cursor-pointer border hidden md:flex border-white px-3 py-1 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-sm"
               >
                 Login
               </div>
             ) : (
               <RiAccountCircle2Fill
                 onClick={() => navigate("/profile")}
-                className="text-white text-3xl hidden md:flex cursor-pointer"
+                size={25}
+                className="text-[#CBD5E1]text-3xl hidden md:flex cursor-pointer"
               />
             )}
 
@@ -129,9 +131,9 @@ const [islineclick, setIslineClick] = useState("home");
                 className="flex items-center justify-center"
               >
                 {mobileMenuOpen ? (
-                  <FaTimes className="text-white text-xl" />
+                  <FaTimes className="text-[#CBD5E1]text-xl" />
                 ) : (
-                  <FaBars className="text-white text-xl" />
+                  <FaBars className="text-[#CBD5E1]text-xl" />
                 )}
               </button>
             </div>
@@ -141,23 +143,23 @@ const [islineclick, setIslineClick] = useState("home");
 
       {/* Mobile Search */}
       <div className="md:hidden mt-2 relative flex items-center gap-2 px-2 py-1">
-        <FaSearch className="text-white" />
+        <FaSearch className="text-[#F9FAFB]" />
         <input
           type="text"
           placeholder="Search For Products..."
-          className="bg-transparent placeholder-white text-white outline-none w-full"
+          className="bg-transparent placeholder-white text-[#CBD5E1]outline-none w-full"
         />
         {!user ? (
           <div
             onClick={() => setIsOpenLog(true)}
-            className="text-white text-sm cursor-pointer border border-white px-2 py-1 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-sm"
+            className="text-[#CBD5E1]text-sm cursor-pointer border border-white px-2 py-1 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-sm"
           >
             Login
           </div>
         ) : (
           <RiAccountCircle2Fill
             onClick={() => navigate("/profile")}
-            className="text-white text-3xl cursor-pointer"
+            className="text-[#CBD5E1]text-3xl cursor-pointer"
           />
         )}
       </div>
