@@ -21,11 +21,11 @@ const SectionHome1 = () => {
       />
 
       {/* Text Overlay */}
-      <div className="absolute top-8 left-6 z-10 text-[#CBD5E1]">
+      <div className="absolute top-8 left-6 z-10 text-white">
         <p className="text-4xl md:text-6xl font-semibold leading-tight md:leading-[3.2rem]">
           Color Of <br /> Summer <br /> Outfit
         </p>
-        <button className="mt-4 px-6 py-2 bg-[#2563EB] text-[#CBD5E1] rounded-full shadow-lg text-sm md:text-base">
+        <button className="mt-4 px-6 py-2 bg-[#E5C870] text-black rounded-full shadow-lg text-sm md:text-base">
           Shop the Look →
         </button>
       </div>
@@ -37,7 +37,7 @@ const SectionHome1 = () => {
     {/* Right stacked cards */}
     <div className="flex sm:flex-col  flex-row sm:gap-3 gap-2 w-full md:w-[30%]">
       {/* Card 1 */}
-      <Link to={"/men"} className="bg-[#111827] text-[#2563EB] sm:p-6 px-2  rounded-2xl relative sm:w-full w-[40%]  h-[240px] sm:h-[260px]">
+      <Link to={"/men"} className="bg-[#3a3a3a] text-[#E5C870] sm:p-6 px-2  rounded-2xl relative sm:w-full w-[40%]  h-[240px] sm:h-[260px]">
         <p className="text-2xl sm:text-5xl font-semibold sm:leading-10  leading-6 mt-[40px] z-10 relative">
           Naturally<br />Styled
         </p>
@@ -49,7 +49,7 @@ const SectionHome1 = () => {
       </Link>
 
       {/* Card 2 */}
-      <Link to={"/men"} className="bg-[#2563EB] text-[#111827] sm:p-6 px-2 rounded-2xl relative h-[240px] w-[60%] sm:w-full sm:h-[325px] overflow-hidden">
+      <Link to={"/men"} className="bg-[#e2c565] text-black sm:p-6 px-2 rounded-2xl relative h-[240px] w-[60%] sm:w-full sm:h-[325px] overflow-hidden">
         <h2 className="text-3xl sm:text-5xl font-semibold leading-10 mt-[40px] z-10 relative">
           Casual <br /> Comfort
         </h2>
