@@ -35,6 +35,7 @@ import OrderSection from "./Admin/OderSection.jsx"
 import SizeChange from './Pages/SizeChange.jsx';
 import AnalyticsDashboard from './Admin/AnalyticsDashboard.jsx';
 import ProductRouter from './Pages/ProductRouter.jsx';
+import UserInfo from './Admin/UserInfo.jsx';
 
 
 const App = () => {
@@ -94,6 +95,7 @@ const App = () => {
         <Route path='edit/:id' element={<ProductsUpdate/>}/>
           <Route path='/admin/order' element={<OrderSection/>}/>
            <Route path='/admin/sales' element={<AnalyticsDashboard/>}/>
+              <Route path='/admin/users' element={<UserInfo/>}/>
      
 
       </Route>

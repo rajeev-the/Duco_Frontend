@@ -234,17 +234,24 @@ const handleQty = (k, v) => {
           </div>
 
           <button
-            onClick={() =>{
-           
-              if(!user){
-                  toast.error("Log In / Sign Up")
-                  setIsOpenLog(true)
-              }
-              else{
-                   setShowModal(true)
-              }
-            }
-            }
+          onClick={() => {
+  if (!user) {
+    toast.error("Log In / Sign Up");
+    setIsOpenLog(true);
+    return; // stop here if not logged in
+  }
+
+   const allZero = Object.values(qty).every(value => value <= 0);
+
+  if (allZero) {
+    toast.error("Please select at least one size");
+    return;
+  }
+
+  // ✅ only runs if user exists & size is set
+  setShowModal(true);
+}}
+
             className="bg-[#E5C870] hover:bg-green-600 text-black w-full text-xl font-bold py-3 rounded"
           >
             Start Buying

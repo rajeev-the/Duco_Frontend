@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useMemo } from 'react';
 import PaymentButton from '../Components/PaymentButton'; // Import the component
 import { useLocation } from 'react-router-dom';
 
@@ -6,24 +6,15 @@ const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showPayNow, setShowPayNow] = useState(false);
   const [netbankingType,setNetbankingType] = useState("")
+  // const [bulk,SetBulkorder] = useState(false);
   const locations = useLocation();
  
    const orderpayload = locations.state
 
 
-  
-  const orderData = {
-    totalAmount: 1, // in INR
-    items: [
-      { name: 'T-shirt', qty: 1, price: 999 },
-    ],
-    shippingAddress: {
-      name: 'John Doe',
-      address: '123, Main Street',
-      city: 'Delhi',
-      pincode: '110001',
-    },
-  };
+  // console.log(orderpayload)
+
+
 
   const handlePaymentChange = (method) => {
     setPaymentMethod(method);
@@ -41,6 +32,15 @@ const PaymentPage = () => {
       alert('Please select a payment method');
     }
   };
+ 
+const isBulkOrder = useMemo(() => {
+  const items = orderpayload?.items ?? [];
+  return items.some(item =>
+    Object.values(item?.quantity ?? {}).some(qty => Number(qty) > 50)
+  );
+}, [orderpayload]);
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] px-4">
@@ -79,7 +79,11 @@ const PaymentPage = () => {
           </div>
           
            {/* Replace your existing COD block with this */}
-<div>
+
+        {
+          isBulkOrder &&
+          (
+            <div>
   <label className="flex items-start gap-3 text-lg text-[#0A0A0A]">
     <input
       type="radio"
@@ -140,6 +144,12 @@ const PaymentPage = () => {
     </div>
   </label>
 </div>
+          )
+            
+
+          
+        }   
+
 
           {/* Buttons */}
           {!showPayNow && (
