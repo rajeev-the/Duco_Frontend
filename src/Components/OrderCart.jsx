@@ -76,12 +76,20 @@ const OrderCart = ({ order }) => {
 
         {/* Price & Quantity */}
         <div className="mt-3 flex items-center justify-between">
+          <div className=" bg-amber-300 flex-wrap gap-1">
+  {Object.entries(order?.quantity || {}).map(([size, count]) =>
+    Number(count) > 0 ? (
+      <span key={size} className="px-1 py-0.5 bg-black text-sm rounded border">
+        {size} × {count}
+      </span>
+    ) : null
+  )}
+</div>
           <p className="text-gray-800 text-sm sm:text-base font-semibold">
             ₹{order.price.toFixed(2)}
           </p>
-          <p className="text-gray-600 text-xs sm:text-sm">
-            Qty: {order.products[0]?.quantity || 1}
-          </p>
+         
+
         </div>
       </div>
     </div>

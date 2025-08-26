@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const OrderProcessing = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { paymentId, orderData ,paymentmode } = location.state || {};
+  console.log("OrderProcessing:", { paymentId, orderData ,paymentmode });
     const API_BASE = 'https://duco-backend.onrender.com/';
+  
   useEffect(() => {
     if (!paymentId || !orderData) {
       navigate('/'); // Redirect if data missing
@@ -21,8 +24,10 @@ const OrderProcessing = () => {
           paymentmode
         });
 
+
         if (data.success) {
           // You can redirect to order success page or home
+         toast.success('Order completed successfully!');
           navigate('/');
         } else {
           alert("Order failed. Please try again.");

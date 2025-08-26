@@ -37,6 +37,7 @@ import AnalyticsDashboard from './Admin/AnalyticsDashboard.jsx';
 import ProductRouter from './Pages/ProductRouter.jsx';
 import UserInfo from './Admin/UserInfo.jsx';
 import Banner from './Admin/Components/Banner.jsx';
+import OrderBulk from './Admin/OrderBulk.jsx';
 
 
 const App = () => {
@@ -95,6 +96,7 @@ const App = () => {
         <Route path='moneyset' element={<MoneySet/>} />
         <Route path='edit/:id' element={<ProductsUpdate/>}/>
           <Route path='/admin/order' element={<OrderSection/>}/>
+            <Route path='/admin/bulkorder' element={<OrderBulk/>}/>
            <Route path='/admin/sales' element={<AnalyticsDashboard/>}/>
               <Route path='/admin/users' element={<UserInfo/>}/>
                <Route path='/admin/bannersetup' element={<Banner/>}/>

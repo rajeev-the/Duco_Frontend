@@ -129,33 +129,38 @@ export const fetchOrdersByUser = async (userId) => {
     return [];
   }
 };
-// /Service/APIservice.js (ESSENTIAL SHAPE)
-export async function addString(text) {
+// /Service/APIservi
+
+
+// CREATE: POST /api/banners  -> { success, banner }
+export async function createBanner(link) {
   try {
-    const { data } = await axios.post(`${API_BASE}api/strings`, { text });
-    return { success: true, data: data.storage, error: null };
+    const { data } = await axios.post(`${API_BASE}api/banners`, { link });
+    return { success: true, data: data.banner, error: null };
   } catch (err) {
-    const message = err.response?.data?.error || err.message || "Failed to add string";
+    const message = err.response?.data?.error || err.message || "Failed to create banner";
     return { success: false, data: null, error: message };
   }
 }
 
-export async function listStrings() {
+// READ: GET /api/banners  -> { success, banners:[{_id, link}] }
+export async function listBanners() {
   try {
-    const { data } = await axios.get(`${API_BASE}api/strings`);
-    return { success: true, data: data.storage, error: null };
+    const { data } = await axios.get(`${API_BASE}api/banners`);
+    return { success: true, data: data.banners, error: null };
   } catch (err) {
-    const message = err.response?.data?.error || err.message || "Failed to fetch strings";
+    const message = err.response?.data?.error || err.message || "Failed to fetch banners";
     return { success: false, data: null, error: message };
   }
 }
 
-export async function removeStringByValue(text) {
+// UPDATE: PUT /api/banners/:id  -> { success, banner:{_id, link} }
+export async function updateBanner(id, link) {
   try {
-    const { data } = await axios.delete(`${API_BASE}api/strings`, { data: { text } });
-    return { success: true, data: { removedCount: data.removedCount, storage: data.storage }, error: null };
+    const { data } = await axios.put(`${API_BASE}api/banners/${id}`, { link });
+    return { success: true, data: data.banner, error: null };
   } catch (err) {
-    const message = err.response?.data?.error || err.message || "Failed to remove string";
+    const message = err.response?.data?.error || err.message || "Failed to update banner";
     return { success: false, data: null, error: message };
   }
 }

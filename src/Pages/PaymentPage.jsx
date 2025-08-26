@@ -1,6 +1,6 @@
 import React, { useState ,useMemo } from 'react';
 import PaymentButton from '../Components/PaymentButton'; // Import the component
-import { useLocation } from 'react-router-dom';
+import { useLocation , useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const PaymentPage = () => {
@@ -12,6 +12,7 @@ const PaymentPage = () => {
  
    const orderpayload = locations.state
 
+     const navigate = useNavigate();
 
   // console.log(orderpayload)
 
@@ -24,11 +25,19 @@ const PaymentPage = () => {
 
   const handleSubmit = () => {
     if (paymentMethod === 'netbanking') {
-      
+       navigate('/order-processing', {
+              state: {
+               
+                orderData: orderpayload,
+                paymentmode:"online"
+              }});
+              
       
 
       // TODO: Call API to place COD order here
-      alert('COD Order Placed!');
+      toast.success('Order Placed!');
+      
+
     } else if (paymentMethod === '') {
       toast.error('Please select a payment method');
     }
@@ -154,7 +163,16 @@ const isBulkOrder = useMemo(() => {
 
           {!showPayNow && (
             <button
-              onClick={handleSubmit}
+           onClick={() =>
+  navigate("/order-processing", {
+    state: {
+      paymentId: "test_transtion",  // make sure this exists
+      orderData: orderpayload,
+      paymentmode: "netbanking"                // match backend check (case-sensitive)
+    },
+  })
+}
+
               className="w-full mt-6 py-2 px-4 bg-[#E5C870] text-black rounded-lg hover:bg-[#D4B752] font-semibold"
             >
               Continue

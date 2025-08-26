@@ -1,41 +1,63 @@
+// components/Banner.jsx
 import { useEffect, useState } from "react";
-import { listStrings, addString, removeStringByValue } from "../../Service/APIservice";
+import { listBanners, createBanner, updateBanner } from "../../Service/APIservice";
 
 export default function Banner() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]);       // [{_id, link}]
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState({});   // { [id]: tempValue }
 
   useEffect(() => {
     (async () => {
-      const res = await listStrings();
-      if (res.success) setItems(res.data);
+      const res = await listBanners();
+      if (res.success) setItems(res.data || []);
       else setError(res.error);
     })();
   }, []);
 
   const handleAdd = async () => {
     setError("");
-    if (!text.trim()) return setError("Please paste an image URL.");
+    const val = text.trim();
+    if (!val) return setError("Please paste an image URL.");
     try {
-      new URL(text); // basic URL validation
+      new URL(val);
     } catch {
       return setError("Invalid URL.");
     }
-    const res = await addString(text.trim());
+    const res = await createBanner(val);
     if (res.success) {
-      setItems(res.data);
+      setItems((prev) => [res.data, ...prev]); // prepend new
       setText("");
     } else setError(res.error);
   };
 
-  const handleRemove = async (t) => {
-    const res = await removeStringByValue(t);
-    if (res.success) setItems(res.data.storage);
-    else setError(res.error);
+  const startEdit = (id, current) => {
+    setEditing((e) => ({ ...e, [id]: current }));
   };
 
+  const cancelEdit = (id) => {
+    setEditing((e) => {
+      const copy = { ...e };
+      delete copy[id];
+      return copy;
+    });
+  };
 
+  const saveEdit = async (id) => {
+    const newVal = (editing[id] || "").trim();
+    if (!newVal) return setError("URL cannot be empty.");
+    try {
+      new URL(newVal);
+    } catch {
+      return setError("Invalid URL.");
+    }
+    const res = await updateBanner(id, newVal);
+    if (res.success) {
+      setItems((prev) => prev.map((b) => (b._id === id ? res.data : b)));
+      cancelEdit(id);
+    } else setError(res.error);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 py-10">
@@ -43,14 +65,12 @@ export default function Banner() {
         {/* Header */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Image URL Library</h1>
-            <p className="text-sm text-slate-500">Add, preview, and remove image URLs.</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Banner Images</h1>
+            <p className="text-sm text-slate-500">Create, preview, and update banner image URLs.</p>
           </div>
-     
-         
         </div>
 
-        {/* Input row */}
+        {/* Input row (Create) */}
         <div className="mb-4 rounded-xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm">
           <div className="flex flex-col gap-3 sm:flex-row">
             <input
@@ -66,53 +86,91 @@ export default function Banner() {
               Add
             </button>
           </div>
-          {error && (
-            <p className="mt-2 text-sm text-rose-600">
-              {error}
-            </p>
-          )}
+          {error && <p className="mt-2 text-sm text-rose-600">{error}</p>}
         </div>
 
         {/* Grid */}
         {items.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
-            No images yet. Paste a URL above and click <span className="font-medium text-slate-700">Add</span>.
+            No banners yet. Paste a URL above and click <span className="font-medium text-slate-700">Add</span>.
           </div>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((url, i) => (
-              <li key={`${url}-${i}`} className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <div className="relative aspect-[4/3] bg-slate-100">
-                  {/* Image preview with fallback */}
-                  <img
-                    src={url}
-                    alt={`img-${i}`}
-                    className="h-full w-full object-cover"
-                    onError={(e) => { e.currentTarget.src = "data:image/svg+xml;utf8,\
-                      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>\
-                      <rect width='200' height='150' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-size='14'>Preview failed</text></svg>"; }}
-                  />
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs text-slate-700 shadow hover:bg-white"
-                  >
-                    Open
-                  </a>
-                </div>
+            {items.map(({ _id, link }) => {
+              const isEditing = editing[_id] !== undefined;
+              const displayLink = isEditing ? editing[_id] : link;
 
-                <div className="flex items-start justify-between gap-2 p-3">
-                  <p className="line-clamp-2 w-full pr-2 text-xs text-slate-600">{url}</p>
-                  <button
-                    onClick={() => handleRemove(url)}
-                    className="shrink-0 rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </li>
-            ))}
+              return (
+                <li key={_id} className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                  <div className="relative aspect-[4/3] bg-slate-100">
+                    <img
+                      src={displayLink}
+                      alt={`banner-${_id}`}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "data:image/svg+xml;utf8,\
+                           <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>\
+                           <rect width='200' height='150' fill='%23e5e7eb'/>\
+                           <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-size='14'>Preview failed</text></svg>";
+                      }}
+                    />
+                    {!isEditing && (
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="absolute left-2 top-2 rounded-md bg-white/90 px-2 py-1 text-xs text-slate-700 shadow hover:bg-white"
+                      >
+                        Open
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2 p-3">
+                    {isEditing ? (
+                      <>
+                        <input
+                          className="w-full rounded-md border border-slate-300 px-2 py-1 text-xs"
+                          value={editing[_id]}
+                          onChange={(e) =>
+                            setEditing((prev) => ({ ...prev, [_id]: e.target.value }))
+                          }
+                          placeholder="https://new-url..."
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => saveEdit(_id)}
+                            className="rounded-md bg-slate-900 px-3 py-1 text-xs text-white hover:bg-slate-800"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => cancelEdit(_id)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="line-clamp-2 text-xs text-slate-600">{link}</p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => startEdit(_id, link)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-100"
+                          >
+                            Edit
+                          </button>
+                          {/* No delete per your requirement */}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
