@@ -7,6 +7,7 @@ import axios from "axios";
 const Home = () => {
   const [products, setProducts] = useState([]);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -16,8 +17,10 @@ const Home = () => {
         console.error("Failed to fetch products:", err);
       }
     };
+    
 
     fetchData();
+   
   }, []);
 
   console.log(products)

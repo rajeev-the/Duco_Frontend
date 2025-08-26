@@ -1,6 +1,7 @@
 import React, { useState ,useMemo } from 'react';
 import PaymentButton from '../Components/PaymentButton'; // Import the component
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -22,14 +23,14 @@ const PaymentPage = () => {
   };
 
   const handleSubmit = () => {
-    if (paymentMethod === 'cod') {
-      // ⛳ COD submission logic
-      console.log('Cash on Delivery selected');
+    if (paymentMethod === 'netbanking') {
+      
+      
 
       // TODO: Call API to place COD order here
       alert('COD Order Placed!');
     } else if (paymentMethod === '') {
-      alert('Please select a payment method');
+      toast.error('Please select a payment method');
     }
   };
  
@@ -151,7 +152,6 @@ const isBulkOrder = useMemo(() => {
         }   
 
 
-          {/* Buttons */}
           {!showPayNow && (
             <button
               onClick={handleSubmit}

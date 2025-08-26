@@ -19,6 +19,7 @@ const continentMapping = {
 
 const Home = () => {
  const { toConvert, priceIncrease ,setLocation } = usePriceContext();
+ const [banner, setBanner] = React.useState([]);
 useEffect(() => {
   axios.get("https://ipapi.co/json/")
     .then((response) => {
@@ -30,13 +31,23 @@ useEffect(() => {
       console.log(error.message);
       setLocation("Asia");
     });
+    const pagebanner = async () => {
+          try { 
+            const res = await axios.get("https://duco-backend.onrender.com/api/strings");
+           
+            setBanner(res.data.storage);
+          } catch (err) {
+            console.error("Failed to fetch banner data:", err);
+          }
+        };
+        pagebanner();
 }, []);
 
 
 
   return (
     <div className='h-full bg-[#0A0A0A] w-full  '>
-        <SectionHome1/>
+        <SectionHome1 imglink={banner[0]}/>
         < SectionHome2 />
           < TrendingHome/>
         <SectionHome3/>

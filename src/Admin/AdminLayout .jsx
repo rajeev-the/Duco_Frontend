@@ -24,6 +24,7 @@ const AdminLayout = () => {
   Qikink
 </Link>
 <Link to="/admin/sales" className="block hover:text-blue-300">Analysis</Link>
+<Link to="/admin/bannersetup" className="block hover:text-blue-300">Banner</Link>
 
         </nav>
       </aside>

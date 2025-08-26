@@ -5,7 +5,7 @@ import axios from 'axios';
 const OrderProcessing = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { paymentId, orderData } = location.state || {};
+  const { paymentId, orderData ,paymentmode } = location.state || {};
     const API_BASE = 'https://duco-backend.onrender.com/';
   useEffect(() => {
     if (!paymentId || !orderData) {
@@ -18,6 +18,7 @@ const OrderProcessing = () => {
         const { data } = await axios.post(`${API_BASE}api/completedorder`, {
           paymentId,
           orderData,
+          paymentmode
         });
 
         if (data.success) {

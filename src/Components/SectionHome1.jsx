@@ -5,7 +5,7 @@ import secondImg from "../assets/pleased-young-handsome-guy-wearing-black-t-shir
 import { Link } from 'react-router-dom';
 
 
-const SectionHome1 = () => {
+const SectionHome1 = ({imglink}) => {
 
   return (
     <>
@@ -15,7 +15,7 @@ const SectionHome1 = () => {
     {/* Left big image */}
     <Link to={"/women"} className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
       <img
-        src={heroImg}
+        src={imglink }
         alt="Main Visual"
         className="w-full h-full object-cover rounded-2xl"
       />

@@ -36,6 +36,7 @@ import SizeChange from './Pages/SizeChange.jsx';
 import AnalyticsDashboard from './Admin/AnalyticsDashboard.jsx';
 import ProductRouter from './Pages/ProductRouter.jsx';
 import UserInfo from './Admin/UserInfo.jsx';
+import Banner from './Admin/Components/Banner.jsx';
 
 
 const App = () => {
@@ -96,7 +97,8 @@ const App = () => {
           <Route path='/admin/order' element={<OrderSection/>}/>
            <Route path='/admin/sales' element={<AnalyticsDashboard/>}/>
               <Route path='/admin/users' element={<UserInfo/>}/>
-     
+               <Route path='/admin/bannersetup' element={<Banner/>}/>
+                      
 
       </Route>
  

@@ -56,6 +56,7 @@ const PaymentButton = ({ orderData }) => {
               state: {
                 paymentId: razorpay_payment_id,
                 orderData: orderData,
+                paymentmode:"online"
               },
             });
           } else {
