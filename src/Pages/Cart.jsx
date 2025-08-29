@@ -1,109 +1,185 @@
-import React, { useState, useEffect, useContext } from 'react';
-import CartItem from '../Components/CartItem ';
-import AddressManager from '../Components/AddressManager';
-import Loading from '../Components/Loading';
+import React, { useState, useEffect, useContext, useMemo } from "react";
+import CartItem from "../Components/CartItem .jsx";
+import AddressManager from "../Components/AddressManager";
+import Loading from "../Components/Loading";
 import { CartContext } from "../ContextAPI/CartContext";
-import { getproducts } from "../Service/APIservice";
-import { useNavigate } from 'react-router-dom';
+import { getproducts, getChargePlanRates } from "../Service/APIservice";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { usePriceContext } from '../ContextAPI/PriceContext.jsx'
+import { usePriceContext } from "../ContextAPI/PriceContext.jsx";
+
+const safeNum = (v, fallback = 0) => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+};
 
 const Cart = () => {
   const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingRates, setLoadingRates] = useState(false);
   const [address, setAddress] = useState(null);
-  const navigate = useNavigate();
-   const { toConvert} = usePriceContext();
-  
 
-  // Get user from localStorage
+  const navigate = useNavigate();
+  const { toConvert } = usePriceContext();
+
+  // per-unit charges from /chargeplan/rates
+  const [pfPerUnit, setPfPerUnit] = useState(0);
+  const [printPerUnit, setPrintPerUnit] = useState(0);
+  const [gstPerUnit, setGstPerUnit] = useState(0);
+
+  // read user from localStorage once
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('user');
+      const stored = localStorage.getItem("user");
       if (stored) setUser(JSON.parse(stored));
     } catch (e) {
-      console.error('Invalid user in localStorage', e);
+      console.error("Invalid user in localStorage", e);
     }
   }, []);
 
-  // Fetch products from API
+  // fetch products
   useEffect(() => {
-    const fetchProducts = async () => {
+    const run = async () => {
       try {
-        setLoading(true);
+        setLoadingProducts(true);
         const fetched = await getproducts();
         if (Array.isArray(fetched)) setProducts(fetched);
       } catch (e) {
         console.error(e);
         toast.error("Failed to load products. Please refresh.");
       } finally {
-        setLoading(false);
+        setLoadingProducts(false);
       }
     };
-    fetchProducts();
+    run();
   }, []);
 
-  // Combine cart items with full product data
-  const actualdata = cart
-    .map((cartItem) => {
-      const product = products.find((p) => p._id === cartItem.id);
-      if (!product) return null;
-      return { ...product, ...cartItem };
-    })
-    .filter(Boolean);
+  // enrich cart items with product data
+  const actualData = useMemo(() => {
+    if (!Array.isArray(cart) || !Array.isArray(products)) return [];
+    return cart
+      .map((ci) => {
+        const p = products.find((x) => x._id === ci.id);
+        if (!p) return null;
+        return { ...p, ...ci }; // merge product fields + cart fields
+      })
+      .filter(Boolean);
+  }, [cart, products]);
 
+  // total quantity across all items (sum of nested quantity object values)
+  const totalQuantity = useMemo(() => {
+    return actualData.reduce((sum, item) => {
+      const inner = Object.values(item.quantity || {}).reduce(
+        (acc, q) => acc + safeNum(q, 0),
+        0
+      );
+      return sum + inner;
+    }, 0);
+  }, [actualData]);
 
-  const subtotal = actualdata.reduce((sum, item) => sum + (Number(item?.price || 0) * Number( Object.values(item.quantity).reduce((sum,qty)=> sum+qty,0 ) || 0)), 0);
-  const DELIVERY_CHARGE  = 60.00*toConvert;
-  const PRINING_CHARGE  = 50*toConvert;
-  const PACKING_CHARGE = 50*toConvert; 
-  const total = subtotal + DELIVERY_CHARGE + PRINING_CHARGE + PACKING_CHARGE
+  // subtotal of products (price * per-item quantities)
+  const subtotal = useMemo(() => {
+    return actualData.reduce((sum, item) => {
+      const qty = Object.values(item.quantity || {}).reduce(
+        (acc, q) => acc + safeNum(q, 0),
+        0
+      );
+      return sum + safeNum(item.price, 0) * qty;
+    }, 0);
+  }, [actualData]);
 
-  const orderPayload = {
-         // raw cart payload (ids, size, color, quantity, design)
-    items: actualdata,      // enriched items (if you want to see merged data on /payment)
-    totalPay: total,
-    address:address,
-    user:user
-  };
+  // fetch per-unit rates when totalQuantity changes (≥ 1)
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        setLoadingRates(true);
+        const qty = totalQuantity > 0 ? totalQuantity : 0;
+        const res = await getChargePlanRates(qty);
+        if (res?.success) {
+          setPfPerUnit(safeNum(res.data?.perUnit?.pakageingandforwarding, 0));
+          setPrintPerUnit(safeNum(res.data?.perUnit?.printingcost, 0));
+          setGstPerUnit(safeNum(res.data?.perUnit?.gst, 0));
+        } else {
+          // If backend uses different shape, fall back to zeros
+          setPfPerUnit(0);
+          setPrintPerUnit(0);
+          setGstPerUnit(0);
+        }
+      } catch (e) {
+        console.error(e);
+        toast.error("Failed to load charges. Please refresh.");
+        setPfPerUnit(0);
+        setPrintPerUnit(0);
+        setGstPerUnit(0);
+      } finally {
+        setLoadingRates(false);
+      }
+    };
+
+    // If there are no items, don't call the API; zero out charges
+    if (totalQuantity > 0) {
+      fetchRates();
+    } else {
+      setPfPerUnit(0);
+      setPrintPerUnit(0);
+      setGstPerUnit(0);
+    }
+  }, [totalQuantity]);
+
+  // totals for charges (per-unit * totalQuantity)
+  const pfTotal = useMemo(() => pfPerUnit , [pfPerUnit, totalQuantity]);
+  const printTotal = useMemo(() => printPerUnit , [printPerUnit, totalQuantity]);
+  const gstTotal = useMemo(() => gstPerUnit , [gstPerUnit, totalQuantity]);
+
+  // grand total in base units
+  const grandTotal = useMemo(() => {
+    return safeNum(subtotal, 0) + safeNum(pfTotal, 0) + safeNum(printTotal, 0) + safeNum(gstTotal, 0);
+  }, [subtotal, pfTotal, printTotal, gstTotal]);
+
+  // conversion helper for display
+  const convert = (amount) => (safeNum(amount, 0) * safeNum(toConvert, 0)).toFixed(2);
+
+  const orderPayload = useMemo(
+    () => ({
+      items: actualData, // enriched items (frontend only)
+      totalPay: safeNum(grandTotal, 0) * safeNum(toConvert, 0),
+      address,
+      user,
+    }),
+    [actualData, grandTotal, toConvert, address, user]
+  );
 
   const handleCheckout = () => {
     if (!user) {
       toast.error("Please log in to continue.");
       return;
     }
-
-    if (!actualdata.length) {
+    if (!actualData.length) {
       toast.error("Your cart is empty. Add some products first.");
       navigate("/home");
       return;
     }
-
     if (!address || Object.keys(address || {}).length === 0) {
-      toast.error("Please Select delivery address.");
+      toast.error("Please select a delivery address.");
       return;
     }
-
     navigate("/payment", { state: orderPayload });
   };
 
-  console.log(orderPayload)
-
-  if (loading) return <Loading />;
+  const isLoading = loadingProducts || loadingRates;
+  if (isLoading) return <Loading />;
 
   return (
     <div className="min-h-screen text-white p-8">
-     
-
       <h1 className="text-3xl font-bold mb-8">SHOPPING CART</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Cart Items */}
         <div className="flex-1">
-          {actualdata.length > 0 ? (
-            actualdata.map((item, i) => (
+          {actualData.length > 0 ? (
+            actualData.map((item, i) => (
               <CartItem
                 key={`${item._id}-${item.size}-${item.color}-${i}`}
                 item={item}
@@ -116,50 +192,60 @@ const Cart = () => {
               />
             ))
           ) : (
-            <div className="text-gray-400 text-center mt-16 text-xl">Your cart is empty.</div>
+            <div className="text-gray-400 text-center mt-16 text-xl">
+              Your cart is empty.
+            </div>
           )}
         </div>
 
         {/* Order Summary */}
         <div className="lg:w-96 flex flex-col">
-          <div className="lg:w-96 h-fit rounded-sm p-6" style={{ backgroundColor: '#112430' }}>
+          <div
+            className="lg:w-96 h-fit rounded-sm p-6"
+            style={{ backgroundColor: "#112430" }}
+          >
             <h2 className="text-2xl font-bold mb-6 text-white">ORDER SUMMARY</h2>
 
             <div className="space-y-4 mb-8">
               <div className="flex justify-between">
                 <span className="text-gray-300">Subtotal</span>
-                <span className="text-white">{subtotal.toFixed(2).replace('.', '.')}</span>
+                <span className="text-white">₹{convert(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Delivery Charge</span>
-                <span className="text-white">{DELIVERY_CHARGE.toFixed(2).replace('.', '.')}</span>
+                <span className="text-gray-300">P&F Charges</span>
+                <span className="text-white">₹{convert(pfTotal)}</span>
               </div>
-               <div className="flex justify-between">
-                <span className="text-gray-300">Packing Charge</span>
-                <span className="text-white">{PACKING_CHARGE.toFixed(2).replace('.', '.')}</span>
-              </div>
-               <div className="flex justify-between">
+              <div className="flex justify-between">
                 <span className="text-gray-300">Printing Charge</span>
-                <span className="text-white">{PRINING_CHARGE.toFixed(2).replace('.', '.')}</span>
+                <span className="text-white">₹{convert(printTotal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-300">GST Charge</span>
+                <span className="text-white">₹{convert(gstTotal)}</span>
               </div>
             </div>
 
             <div className="flex justify-between border-t border-gray-600 pt-4 mb-6">
               <span className="text-white font-bold">Total</span>
-              <span className="text-white font-bold">{total.toFixed(2).replace('.', '.')}</span>
+              <span className="text-white font-bold">₹{convert(grandTotal)}</span>
             </div>
 
             <button
               className="w-full py-4 font-bold hover:bg-opacity-90 transition-all"
-              style={{ backgroundColor: '#FDC305', color: '#112430' }}
+              style={{ backgroundColor: "#FDC305", color: "#112430" }}
               onClick={handleCheckout}
             >
               CHECK OUT
             </button>
           </div>
 
-          {/* Pass setAddress (fixed prop name) */}
-          <AddressManager  addresss={address} setAddresss={setAddress} user={user} setUser={setUser} />
+          {/* Address */}
+          <AddressManager
+            addresss={address}
+            setAddresss={setAddress}
+            user={user}
+            setUser={setUser}
+          />
         </div>
       </div>
     </div>

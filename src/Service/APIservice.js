@@ -169,3 +169,8 @@ export async function adminLogin(userid, password) {
   const { data } = await axios.post("https://duco-backend.onrender.com/api/admin/check", { userid, password });
   return !!data?.ok;          // boolean true/false
 }
+
+export const getChargePlanRates = async (qty) => {
+  const res = await axios.get(`${API_BASE}api/chargeplan/rates?qty=${qty}`);
+  return res.data;
+};
