@@ -164,3 +164,8 @@ export async function updateBanner(id, link) {
     return { success: false, data: null, error: message };
   }
 }
+
+export async function adminLogin(userid, password) {
+  const { data } = await axios.post("https://duco-backend.onrender.com/api/admin/check", { userid, password });
+  return !!data?.ok;          // boolean true/false
+}

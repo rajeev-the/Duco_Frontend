@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const OrderCart = ({ order }) => {
   const [image, setImage] = useState("");
@@ -17,7 +18,7 @@ const OrderCart = ({ order }) => {
   }, [order]);
 
   return (
-    <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5 bg-[#E5C870] rounded-xl p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-300 border border-slate-200/40 w-full max-w-full sm:max-w-3xl">
+    <Link to={`/get/logistics/${order._id}`} className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5 bg-[#E5C870] rounded-xl p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-300 border border-slate-200/40 w-full max-w-full sm:max-w-3xl">
       
       {/* Product Image */}
       <div className="w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center bg-white rounded-lg overflow-hidden border border-slate-200">
@@ -92,7 +93,7 @@ const OrderCart = ({ order }) => {
 
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

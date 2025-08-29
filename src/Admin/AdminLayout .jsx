@@ -15,6 +15,10 @@ const AdminLayout = () => {
              <Link to="/admin/moneyset" className="block hover:text-blue-300">Set Money</Link>
                <Link to="/admin/order" className="block hover:text-blue-300">Manage Order</Link>
                 <Link to="/admin/bulkorder" className="block hover:text-blue-300">Bulk Order</Link>
+                       <Link to="/admin/logistic" className="block hover:text-blue-300">Logistic</Link>
+                           <Link to="/admin/charges" className="block hover:text-blue-300">charges Paln</Link>
+                         <Link to="/admin/" className="block hover:text-blue-300">Logistic</Link>
+                
                  <Link to="/admin/users" className="block hover:text-blue-300">Users</Link>
                    <Link
   to="https://dashboard.qikink.com/index.php/client/orders/newOrder"

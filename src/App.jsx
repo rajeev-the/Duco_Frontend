@@ -38,6 +38,11 @@ import ProductRouter from './Pages/ProductRouter.jsx';
 import UserInfo from './Admin/UserInfo.jsx';
 import Banner from './Admin/Components/Banner.jsx';
 import OrderBulk from './Admin/OrderBulk.jsx';
+import AdminGuard from "./Admin/auth/AdminGuard.jsx"
+import AdminLogin from './Admin/AdminLogin.jsx';
+import LogisticsManager from './Admin/LogisticsManager.jsx';
+import TrackOrder from './Pages/TrackOrder.jsx';
+import ChargePlanManager from './Admin/ChargePlanManager.jsx';
 
 
 const App = () => {
@@ -70,6 +75,7 @@ const App = () => {
                 <Route  path='/products/:id' element={<ProductRouter/>}/>
                   <Route  path='/getbulk' element={<GetBulk/>}/>
                      <Route  path='/order' element={<Order/>}/>
+                       <Route  path='/get/logistics/:id' element={<TrackOrder/>}/>
                       <Route  path='/design/:proid/:color' element={<TShirtDesigner/>}/>
                         <Route  path='/profile' element={<ProfilePanel/>}/>
                          <Route  path='/payment' element={<PaymentPage/>}/>
@@ -89,6 +95,9 @@ const App = () => {
       
 
    
+    <Route path="/admin/login" element={<AdminLogin />} />
+
+
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Adminhome />} />
         <Route path="products" element={<ProdcutsCreated />} />
@@ -100,9 +109,14 @@ const App = () => {
            <Route path='/admin/sales' element={<AnalyticsDashboard/>}/>
               <Route path='/admin/users' element={<UserInfo/>}/>
                <Route path='/admin/bannersetup' element={<Banner/>}/>
-                      
+                   <Route path='/admin/logistic' element={<LogisticsManager/>}/>
+                    <Route path='/admin/charges' element={<ChargePlanManager/>}/>
+                   
+              </Route>        
 
-      </Route>
+    
+   
+
  
       
     </Routes>
