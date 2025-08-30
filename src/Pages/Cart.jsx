@@ -209,25 +209,25 @@ const Cart = () => {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between">
                 <span className="text-gray-300">Subtotal</span>
-                <span className="text-white">₹{convert(subtotal)}</span>
+                <span className="text-white">{convert(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">P&F Charges</span>
-                <span className="text-white">₹{convert(pfTotal)}</span>
+                <span className="text-white">{convert(pfTotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Printing Charge</span>
-                <span className="text-white">₹{convert(printTotal)}</span>
+                <span className="text-white">{convert(printTotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">GST Charge</span>
-                <span className="text-white">₹{convert(gstTotal)}</span>
+                <span className="text-white">{convert(gstTotal)}</span>
               </div>
             </div>
 
             <div className="flex justify-between border-t border-gray-600 pt-4 mb-6">
               <span className="text-white font-bold">Total</span>
-              <span className="text-white font-bold">₹{convert(grandTotal)}</span>
+              <span className="text-white font-bold">{convert(grandTotal)}</span>
             </div>
 
             <button

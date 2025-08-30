@@ -18,6 +18,9 @@ const AdminLayout = () => {
                        <Link to="/admin/logistic" className="block hover:text-blue-300">Logistic</Link>
                            <Link to="/admin/charges" className="block hover:text-blue-300">charges Paln</Link>
                          <Link to="/admin/" className="block hover:text-blue-300">Logistic</Link>
+                           <Link to="/admin/bankdetails" className="block hover:text-blue-300">Bank Details</Link>
+                             <Link to="/admin/employess" className="block hover:text-blue-300">Employess Mangamnets</Link>
+                           
                 
                  <Link to="/admin/users" className="block hover:text-blue-300">Users</Link>
                    <Link

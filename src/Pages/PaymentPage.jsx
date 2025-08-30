@@ -2,6 +2,7 @@ import React, { useState ,useMemo } from 'react';
 import PaymentButton from '../Components/PaymentButton'; // Import the component
 import { useLocation , useNavigate} from 'react-router-dom';
 import { toast } from 'react-toastify';
+import NetbankingPanel from '../Components/NetbankingPanel.jsx';
 
 const PaymentPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -90,75 +91,43 @@ const isBulkOrder = useMemo(() => {
           
            {/* Replace your existing COD block with this */}
 
-        {
-          isBulkOrder &&
-          (
+       {isBulkOrder && (
             <div>
-  <label className="flex items-start gap-3 text-lg text-[#0A0A0A]">
-    <input
-      type="radio"
-      name="paymentMethod"
-      value="netbanking"
-      checked={paymentMethod === "netbanking"}
-      onChange={() => handlePaymentChange("netbanking")}
-      className="mt-1"
-    />
-    <div className="w-full">
-      <div className="flex items-center justify-between">
-        <span className="font-semibold">Netbanking</span>
+              <label className="flex items-start gap-3 text-lg text-[#0A0A0A]">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="netbanking"
+                  checked={paymentMethod === "netbanking"}
+                  onChange={() => handlePaymentChange("netbanking")}
+                  className="mt-1"
+                />
+                <div className="w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <span className="font-semibold">Netbanking</span>
 
-        {/* Inline dropdown for UPI / Account Details */}
-        <select
-          value={netbankingType}
-          onChange={(e) => setNetbankingType(e.target.value)}
-          className="ml-3 rounded-lg border border-gray-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E5C870]"
-        >
-          <option value="upi">UPI</option>
-          <option value="bank">Account Details</option>
-        </select>
-      </div>
+                    {/* UPI / Account details selector */}
+                    <select
+                      value={netbankingType}
+                      onChange={(e) => setNetbankingType(e.target.value)}
+                      className="sm:ml-3 rounded-lg border border-gray-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E5C870]"
+                      disabled={paymentMethod !== "netbanking"}            // enable only when chosen
+                    >
+                      <option value="upi">UPI</option>
+                      <option value="bank">Account Details</option>
+                    </select>
+                  </div>
 
-      {/* Details panel (only shows when Netbanking is selected) */}
-      {paymentMethod === "netbanking" && (
-        <div className="mt-3 rounded-xl border border-gray-200 bg-white p-4">
-          {netbankingType === "upi" ? (
-            <div className="space-y-2 text-sm">
-              <div className="font-medium text-[#0A0A0A]">Pay via UPI</div>
-              <div className="  grid-cols-2 space-y-2  gap-2">
-                <CopyRow label="Primary UPI ID" value="webdesino@upi" />
-                <CopyRow label="Backup UPI ID" value="ambassadorperk@okicici" />
-              </div>
-              {/* Optional QR section (drop in your QR image URL) */}
-              {/* <div className="pt-2">
-                <img src="/your-qr.png" alt="UPI QR" className="h-36 w-36 rounded-lg border" />
-              </div> */}
-              <p className="text-gray-500">
-                Use any UPI app (GPay/PhonePe/Paytm). Add your order ID in the notes.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2 text-sm">
-              <div className="font-medium text-[#0A0A0A]">Bank Transfer Details</div>
-              <DetailRow label="Account Name" value="WebDesino Pvt. Ltd." />
-              <DetailRow label="Bank Name" value="HDFC Bank" />
-              <DetailRow label="Account Number" value="1234 5678 9012" canCopy />
-              <DetailRow label="IFSC" value="HDFC0001234" canCopy />
-              <DetailRow label="Branch" value="Uttam Nagar, New Delhi" />
-              <p className="text-gray-500">
-                After transfer, upload the receipt on the order confirmation page. Payments are verified within 1–3 hours.
-              </p>
+                  {/* ✅ Show panel only when netbanking is selected */}
+                  <NetbankingPanel
+                    paymentMethod={paymentMethod}
+                    netbankingType={netbankingType}
+                  />
+                </div>
+              </label>
             </div>
           )}
-        </div>
-      )}
-    </div>
-  </label>
-</div>
-          )
-            
 
-          
-        }   
 
 
           {!showPayNow && (

@@ -1,13 +1,17 @@
 // components/Banner.jsx
 import { useEffect, useState } from "react";
 import { listBanners, createBanner, updateBanner } from "../../Service/APIservice";
+import { useLocation } from "react-router-dom";
 
 export default function Banner() {
   const [items, setItems] = useState([]);       // [{_id, link}]
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [editing, setEditing] = useState({});   // { [id]: tempValue }
+const location = useLocation();
 
+  // full pathname
+  console.log("Current path:", location.pathname);
   useEffect(() => {
     (async () => {
       const res = await listBanners();

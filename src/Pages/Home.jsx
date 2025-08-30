@@ -5,6 +5,7 @@ import SectionHome3 from '../Components/SectionHome3.jsx'
 import TrendingHome from '../Components/TrendingHome.jsx'
 
 import axios from 'axios'
+
 import { usePriceContext } from '../ContextAPI/PriceContext.jsx'
 
 
@@ -20,26 +21,34 @@ const continentMapping = {
 const Home = () => {
  const { toConvert, priceIncrease ,setLocation } = usePriceContext();
  const [banner, setBanner] = React.useState("");
+ const[Loading,setLoading] = React.useState(true)
+
 useEffect(() => {
   axios.get("https://ipapi.co/json/")
     .then((response) => {
       const data = response.data;
-      
+     
       setLocation(continentMapping[data?.country] || "Not available");
     })
     .catch((error) => {
       console.log(error.message);
       setLocation("Asia");
     });
+    
     const pagebanner = async () => {
     try {
       const res = await axios.get("https://duco-backend.onrender.com/api/banners");
       // backend sends { success:true, banners:[{_id, link}, ...] }
       setBanner(res.data.banners?.[0]?.link || "");
+       setLoading(false)
     } catch (err) {
       console.error("Failed to fetch banner data:", err);
       setBanner([]); // fallback empty
     }
+    finally{
+      setLoading(false)
+    }
+    
   };
 
   pagebanner();
@@ -49,7 +58,7 @@ useEffect(() => {
 
   return (
     <div className='h-full bg-[#0A0A0A] w-full  '>
-        <SectionHome1 imglink={banner}/>
+        <SectionHome1 imglink={banner} Loading={Loading} />
         < SectionHome2 />
           < TrendingHome/>
         <SectionHome3/>

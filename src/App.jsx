@@ -44,6 +44,12 @@ import LogisticsManager from './Admin/LogisticsManager.jsx';
 import TrackOrder from './Pages/TrackOrder.jsx';
 import ChargePlanManager from './Admin/ChargePlanManager.jsx';
 
+import BankDetailsManager from './Admin/BankDetailsManager.jsx';
+import EmployessLayout from './Admin/EmployessLayout.jsx';
+import EmployeesAccManager from './Admin/EmployeesAccManager.jsx';
+import EmployeeLogin from "./Admin/Components/EmployeeLogin.jsx"
+import EmployeePrivateRoute from './Admin/Components/EmployeePrivateRoute.jsx';
+
 
 const App = () => {
   return (
@@ -111,9 +117,28 @@ const App = () => {
                <Route path='/admin/bannersetup' element={<Banner/>}/>
                    <Route path='/admin/logistic' element={<LogisticsManager/>}/>
                     <Route path='/admin/charges' element={<ChargePlanManager/>}/>
+                      <Route path='/admin/bankdetails' element={<BankDetailsManager/>}/>
+                       <Route path='/admin/employess' element={<EmployeesAccManager/>}/>
                    
-              </Route>        
+              </Route>   
 
+            
+
+
+
+
+   
+         
+  <Route path="/employee-login" element={<EmployeeLogin />} />
+
+  {/* Protected group */}
+  <Route path="/employess" element={<EmployeePrivateRoute />}>
+    <Route element={<EmployessLayout />}>
+      <Route path="banners" element={<Banner />} />
+      <Route path="products" element={<ProdcutsCreated />} />
+      <Route path="category" element={<Category />} />
+    </Route>
+  </Route>
     
    
 

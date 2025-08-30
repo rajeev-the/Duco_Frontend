@@ -174,3 +174,31 @@ export const getChargePlanRates = async (qty) => {
   const res = await axios.get(`${API_BASE}api/chargeplan/rates?qty=${qty}`);
   return res.data;
 };
+
+
+
+
+
+
+
+async function handle(res) {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = data?.message || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+/** GET all bank details */
+export async function getBankDetails(signal) {
+  const res = await fetch(`${API_BASE}api/bankdetails`, { signal });
+  return handle(res);
+}
+
+/** Convenience: return FIRST record with isactive === true (or null) */
+export async function getActiveBankDetails(signal) {
+  const data = await getBankDetails(signal);
+  const list = Array.isArray(data) ? data : data?.items || data?.data || [];
+  return list.find((x) => x?.isactive === true) || null;
+}

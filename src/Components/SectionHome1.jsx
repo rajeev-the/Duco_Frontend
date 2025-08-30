@@ -3,6 +3,7 @@ import heroImg from '../assets/20250624_0035_Vibrant Court Relaxation_remix_01jy
 import firstImg from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
 import secondImg from "../assets/pleased-young-handsome-guy-wearing-black-t-shirt-points-up-putting-hand-hip-isolated-white-wall-removebg-preview.png"
 import { Link } from 'react-router-dom';
+import Loading from '../Components/LoadingMain';
 
 
 const SectionHome1 = ({imglink}) => {
@@ -14,6 +15,10 @@ const SectionHome1 = ({imglink}) => {
 
     {/* Left big image */}
     <Link to={"/women"} className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
+{
+      !imglink && <Loading />
+} 
+  
       <img
         src={imglink }
         alt="Main Visual"
