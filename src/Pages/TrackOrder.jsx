@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getLogisticsByOrder } from "../Service/logisticsApi";
 
 const ACCENT = "#E5C870";
@@ -7,8 +7,12 @@ const BG = "#0A0A0A";
 
 const Badge = ({ children }) => (
   <span
-    className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-    style={{ backgroundColor: "rgba(229,200,112,0.15)", color: ACCENT, border: `1px solid ${ACCENT}33` }}
+    className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] md:text-xs font-semibold"
+    style={{
+      backgroundColor: "rgba(229,200,112,0.15)",
+      color: ACCENT,
+      border: `1px solid ${ACCENT}33`,
+    }}
   >
     {children}
   </span>
@@ -25,9 +29,10 @@ const CopyBtn = ({ text }) => {
           setTimeout(() => setCopied(false), 1200);
         } catch {}
       }}
-      className="rounded-lg border px-2 py-1 text-xs"
+      className="rounded-lg border px-3 py-2 text-xs md:text-sm active:scale-[0.98]"
       style={{ borderColor: ACCENT, color: ACCENT }}
       title="Copy"
+      aria-live="polite"
     >
       {copied ? "Copied" : "Copy"}
     </button>
@@ -41,6 +46,8 @@ export default function TrackOrder() {
   // Accept /track/:orderId OR /track/:id
   const { orderId: p1, id: p2 } = useParams();
   const orderId = p1 || p2 || "";
+
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
@@ -78,30 +85,32 @@ export default function TrackOrder() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: BG }}>
-      <div className="mx-auto max-w-4xl px-4 py-8 text-white">
+      <div className="mx-auto w-full max-w-4xl px-3 sm:px-4 md:px-6 py-4 md:py-8 text-white">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Order Tracking</h1>
-            <p className="mt-1 text-sm text-gray-300">
+        <div className="mb-4 md:mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold leading-tight">Order Tracking</h1>
+            <p className="mt-1 text-xs md:text-sm text-gray-300 truncate">
               Order ID:&nbsp;
               <span className="font-mono">{orderSummary?.id || orderId || "-"}</span>
             </p>
             {orderSummary?.status && (
-              <div className="mt-2">
+              <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Badge>Status: {orderSummary.status}</Badge>
                 {typeof orderSummary.total !== "undefined" && (
-                  <span className="ml-2 text-sm text-gray-300">
+                  <span className="text-xs md:text-sm text-gray-300">
                     Total: ₹{Number(orderSummary.total).toLocaleString()}
                   </span>
                 )}
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <button
               onClick={fetchData}
-              className="rounded-xl px-4 py-2 font-semibold transition"
+              className="rounded-xl px-4 py-2 font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
                 backgroundColor: ACCENT,
                 color: "#0A0A0A",
@@ -110,22 +119,33 @@ export default function TrackOrder() {
             >
               Refresh
             </button>
+
+            <button
+              onClick={() => navigate(`/invoice/${orderId}`)}
+              className="rounded-xl px-4 py-2 font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{ backgroundColor: "transparent", color: ACCENT, border: `1px solid ${ACCENT}` }}
+            >
+              Download Invoice
+            </button>
           </div>
         </div>
 
         {/* States */}
         {loading && (
-          <div className="rounded-2xl p-6" style={{ backgroundColor: "#111", border: `1px solid ${ACCENT}33` }}>
+          <div
+            className="rounded-2xl p-4 md:p-6 space-y-2"
+            style={{ backgroundColor: "#111", border: `1px solid ${ACCENT}33` }}
+          >
             <div className="h-4 w-40 animate-pulse rounded bg-gray-700" />
-            <div className="mt-3 h-3 w-full animate-pulse rounded bg-gray-800" />
-            <div className="mt-2 h-3 w-5/6 animate-pulse rounded bg-gray-800" />
-            <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-gray-800" />
+            <div className="h-3 w-full animate-pulse rounded bg-gray-800" />
+            <div className="h-3 w-5/6 animate-pulse rounded bg-gray-800" />
+            <div className="h-3 w-2/3 animate-pulse rounded bg-gray-800" />
           </div>
         )}
 
         {!loading && err && (
           <div
-            className="rounded-2xl border p-4 text-sm"
+            className="rounded-2xl border p-3 md:p-4 text-sm"
             style={{ borderColor: "#ff4d4f66", backgroundColor: "#2a1414" }}
           >
             {err}
@@ -143,25 +163,25 @@ export default function TrackOrder() {
 
         {/* Timeline */}
         {!loading && !err && rows.length > 0 && (
-          <div className="relative mt-4">
+          <div className="relative mt-3 md:mt-4">
             {/* vertical line */}
             <div
-              className="absolute left-4 top-0 h-full w-px"
+              className="absolute left-3 md:left-4 top-0 h-full w-px"
               style={{ background: `linear-gradient(${ACCENT}, transparent)` }}
             />
-            <ul className="space-y-4">
+            <ul className="space-y-3 md:space-y-4">
               {rows.map((l) => {
                 const imgs = Array.isArray(l.img) ? l.img : [];
                 const awb = l.trackingNumber || "";
                 return (
                   <li
                     key={l._id}
-                    className="relative ml-10 rounded-2xl p-4"
+                    className="relative ml-8 md:ml-10 rounded-2xl p-3 md:p-4"
                     style={{ backgroundColor: "#101010", border: `1px solid ${ACCENT}22` }}
                   >
                     {/* node dot */}
                     <span
-                      className="absolute -left-6 top-5 block h-3 w-3 rounded-full ring-4"
+                      className="absolute -left-5 md:-left-6 top-4 md:top-5 block h-2.5 w-2.5 md:h-3 md:w-3 rounded-full ring-4"
                       style={{
                         backgroundColor: ACCENT,
                         ringColor: "#0A0A0A",
@@ -169,23 +189,23 @@ export default function TrackOrder() {
                       }}
                     />
 
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-semibold">Logistic Update</h3>
+                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-sm md:text-base font-semibold">Logistic Update</h3>
                         <Badge>{fmtDate(l.createdAt)}</Badge>
                       </div>
                       {awb && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-300">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs md:text-sm text-gray-300">
                             Tracking:&nbsp;
-                            <span className="font-mono text-white">{awb}</span>
+                            <span className="font-mono text-white break-all">{awb}</span>
                           </span>
                           <CopyBtn text={awb} />
                         </div>
                       )}
                     </div>
 
-                    <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <InfoRow label="Carrier" value={l.carrier || "-"} />
                       <InfoRow label="Estimated Delivery" value={fmtDateOnly(l.estimatedDelivery)} />
                       <InfoRow label="Updated At" value={fmtDate(l.updatedAt)} />
@@ -209,7 +229,8 @@ export default function TrackOrder() {
                     {imgs.length > 0 && (
                       <div className="mt-4">
                         <Label>Images</Label>
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        {/* Mobile: horizontal scroll; Desktop: wrap */}
+                        <div className="mt-2 flex gap-2 overflow-x-auto md:overflow-visible md:flex-wrap md:gap-2 pb-1">
                           {imgs.map((im, idx) => {
                             const src = typeof im === "string" ? im : im?.URL;
                             if (!src) return null;
@@ -220,12 +241,12 @@ export default function TrackOrder() {
                                 target="_blank"
                                 rel="noreferrer"
                                 title={src}
-                                className="block"
+                                className="block shrink-0"
                               >
                                 <img
                                   src={src}
                                   alt=""
-                                  className="h-16 w-16 rounded-lg object-cover ring-1"
+                                  className="h-16 w-16 md:h-16 md:w-16 rounded-lg object-cover ring-1"
                                   style={{ ringColor: `${ACCENT}44` }}
                                   onError={(e) => (e.currentTarget.style.display = "none")}
                                 />
@@ -241,6 +262,13 @@ export default function TrackOrder() {
             </ul>
           </div>
         )}
+
+        {/* Mobile sticky actions */}
+        <div className="md:hidden h-16" />
+        <MobileActionBar
+          onRefresh={fetchData}
+          onInvoice={() => navigate(`/invoice/${orderId}`)}
+        />
       </div>
     </div>
   );
@@ -248,7 +276,7 @@ export default function TrackOrder() {
 
 function Label({ children }) {
   return (
-    <div className="text-xs font-semibold uppercase tracking-wide" style={{ color: ACCENT }}>
+    <div className="text-[10px] md:text-xs font-semibold uppercase tracking-wide" style={{ color: ACCENT }}>
       {children}
     </div>
   );
@@ -258,7 +286,37 @@ function InfoRow({ label, value }) {
   return (
     <div>
       <Label>{label}</Label>
-      <div className="mt-1 text-sm text-gray-200">{value || "-"}</div>
+      <div className="mt-1 text-sm text-gray-200 break-words">{value || "-"}</div>
+    </div>
+  );
+}
+
+function MobileActionBar({ onRefresh, onInvoice }) {
+  return (
+    <div
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t backdrop-blur supports-[backdrop-filter]:bg-black/50 bg-black/70"
+      style={{ borderColor: `${ACCENT}22` }}
+    >
+      <div className="mx-auto max-w-4xl px-3 py-3 grid grid-cols-2 gap-2">
+        <button
+          onClick={onRefresh}
+          className="w-full rounded-xl px-4 py-3 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-2"
+          style={{
+            backgroundColor: ACCENT,
+            color: "#0A0A0A",
+            boxShadow: "0 0 0 1px rgba(229,200,112,0.25) inset",
+          }}
+        >
+          Refresh
+        </button>
+        <button
+          onClick={onInvoice}
+          className="w-full rounded-xl px-4 py-3 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-2"
+          style={{ backgroundColor: "transparent", color: ACCENT, border: `1px solid ${ACCENT}` }}
+        >
+          Invoice
+        </button>
+      </div>
     </div>
   );
 }

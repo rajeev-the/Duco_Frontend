@@ -47,10 +47,11 @@ const PaymentPage = () => {
 const isBulkOrder = useMemo(() => {
   const items = orderpayload?.items ?? [];
   return items.some(item =>
-    Object.values(item?.quantity ?? {}).some(qty => Number(qty) > 50)
+    Object.values(item?.quantity ?? {}).some(qty => Number(qty) >= 50)
   );
 }, [orderpayload]);
 
+console.log(isBulkOrder)
 
 
   return (

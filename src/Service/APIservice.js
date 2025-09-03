@@ -202,3 +202,11 @@ export async function getActiveBankDetails(signal) {
   const list = Array.isArray(data) ? data : data?.items || data?.data || [];
   return list.find((x) => x?.isactive === true) || null;
 }
+
+export async function getInvoiceByOrder(orderId) {
+  if (!orderId) throw new Error("orderId is required");
+ 
+    const res = await axios.get(`${API_BASE}api/invoice/${orderId}`);
+    return res.data; // { invoice, totals }
+ 
+}

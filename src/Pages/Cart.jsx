@@ -27,7 +27,7 @@ const Cart = () => {
   // per-unit charges from /chargeplan/rates
   const [pfPerUnit, setPfPerUnit] = useState(0);
   const [printPerUnit, setPrintPerUnit] = useState(0);
-  const [gstPerUnit, setGstPerUnit] = useState(0);
+  const [gstPercent, setGstPercent] = useState(0);
 
   // read user from localStorage once
   useEffect(() => {
@@ -100,19 +100,28 @@ const Cart = () => {
         if (res?.success) {
           setPfPerUnit(safeNum(res.data?.perUnit?.pakageingandforwarding, 0));
           setPrintPerUnit(safeNum(res.data?.perUnit?.printingcost, 0));
-          setGstPerUnit(safeNum(res.data?.perUnit?.gst, 0));
+          setGstPercent(
+    safeNum(
+         res?.data?.gstPercent ??
+         res?.data?.percent?.gst ??
+         res?.data?.perUnit?.gst,
+         0
+       )
+     );
+          
         } else {
           // If backend uses different shape, fall back to zeros
           setPfPerUnit(0);
           setPrintPerUnit(0);
-          setGstPerUnit(0);
+                  setGstPercent(0);
+       
         }
       } catch (e) {
         console.error(e);
         toast.error("Failed to load charges. Please refresh.");
         setPfPerUnit(0);
         setPrintPerUnit(0);
-        setGstPerUnit(0);
+
       } finally {
         setLoadingRates(false);
       }
@@ -124,14 +133,17 @@ const Cart = () => {
     } else {
       setPfPerUnit(0);
       setPrintPerUnit(0);
-      setGstPerUnit(0);
+      setGstPercent(0);
     }
   }, [totalQuantity]);
 
   // totals for charges (per-unit * totalQuantity)
   const pfTotal = useMemo(() => pfPerUnit , [pfPerUnit, totalQuantity]);
   const printTotal = useMemo(() => printPerUnit , [printPerUnit, totalQuantity]);
-  const gstTotal = useMemo(() => gstPerUnit , [gstPerUnit, totalQuantity]);
+  const gstTotal = useMemo(
+   () => (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100,
+   [subtotal, gstPercent]
+ );
 
   // grand total in base units
   const grandTotal = useMemo(() => {
@@ -147,9 +159,14 @@ const Cart = () => {
       totalPay: safeNum(grandTotal, 0) * safeNum(toConvert, 0),
       address,
       user,
+      pf:pfPerUnit,
+      gst:gstPercent,
+      printing:printPerUnit
     }),
     [actualData, grandTotal, toConvert, address, user]
   );
+  console.log(orderPayload)
+  
 
   const handleCheckout = () => {
     if (!user) {
@@ -221,7 +238,7 @@ const Cart = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">GST Charge</span>
-                <span className="text-white">{convert(gstTotal)}</span>
+              <span className="text-white">{convert(gstTotal)}</span>
               </div>
             </div>
 

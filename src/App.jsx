@@ -50,6 +50,9 @@ import EmployeesAccManager from './Admin/EmployeesAccManager.jsx';
 import EmployeeLogin from "./Admin/Components/EmployeeLogin.jsx"
 import EmployeePrivateRoute from './Admin/Components/EmployeePrivateRoute.jsx';
 
+import Invoice from './Admin/Invoice.jsx';
+import InvoiceSet from './Pages/InvoiceSet.jsx';
+
 
 const App = () => {
   return (
@@ -92,13 +95,15 @@ const App = () => {
                             <Route path="/shipping-policy" element={<ShippingPolicy />} />
                             <Route path="/terms-and-conditions" element={<TermsConditions />} />
                              <Route path="/get_size/:id" element={<SizeChange />} />
+                            
+                              
 
 
 
 
 
       </Route>
-      
+         <Route path="/invoice/:id" element={<InvoiceSet />} />
 
    
     <Route path="/admin/login" element={<AdminLogin />} />
@@ -119,6 +124,8 @@ const App = () => {
                     <Route path='/admin/charges' element={<ChargePlanManager/>}/>
                       <Route path='/admin/bankdetails' element={<BankDetailsManager/>}/>
                        <Route path='/admin/employess' element={<EmployeesAccManager/>}/>
+                        <Route path='/admin/invoice' element={<Invoice/>}/>
+                       
                    
               </Route>   
 

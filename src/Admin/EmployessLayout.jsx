@@ -13,14 +13,16 @@ const EmployessLayout = () => {
   };
 
   return (
-    <div style={{ backgroundColor: BG, color: "#fff", minHeight: "100vh" }}>
+    <div style={{ minHeight: "100vh" }}>
   {/* Top Bar with only Logout */}
   <header
     className="flex justify-between items-center px-6 py-4 shadow-md"
     style={{ borderBottom: `1px solid ${ACCENT}` }}
   >
     {/* Heading */}
-    <h1 className="text-2xl font-bold" style={{ color: ACCENT }}>
+    <h1 className="text-2xl font-bold" 
+  
+  >
       Employees
     </h1>
 
@@ -28,7 +30,8 @@ const EmployessLayout = () => {
     <button
       onClick={handleLogout}
       className="px-4 py-2 rounded-lg font-medium"
-      style={{ backgroundColor: ACCENT, color: BG }}
+      
+      
     >
       Logout
     </button>
