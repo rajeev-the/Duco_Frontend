@@ -19,7 +19,7 @@ const Footer = () => {
       <div className="flex flex-col md:flex-row gap-2 bg-black  w-full  ">
         {/* Left - Contact Info */}
         <div className="bg-white p-6 rounded-2xl flex-[1] min-w-[250px]">
-          <img src={logo} alt="DUCO ART" className="w-32 mb-4" />
+        <Link to={'/'}>  <img src={logo} alt="DUCO ART" className="w-32 mb-4" /></Link>
           <p className="mb-1">Phone : xxxxxxxxxx</p>
           <p>Email : ducoart@12.com</p>
         </div>
