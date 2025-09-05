@@ -12,7 +12,7 @@ const Prodcuts = () => {
       {/* Heading and product count */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl md:block hidden  font-bold">Filters</h1>
-        <span className="text-gray-500">82 Products</span>
+        <span className="text-gray-500">120 Products</span>
       </div>
 
       {/* Main content */}
