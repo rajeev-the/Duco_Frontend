@@ -220,9 +220,11 @@ export async function getInvoiceByOrder(orderId) {
 export async function getWallet(userId) {
   if (!userId) throw new Error("Missing userId for getWallet");
   const url = `${API_BASE}api/wallet/${userId}`;
-  const res = await axios.get(url, { withCredentials: true });
+  const res = await axios.get(url);
   return res.data; // { _id, user, balance?, transactions: [...] }
 }
+
+
 
 export const deleteProduct = async (productId) => {
   if (!productId) throw new Error("productId is required");
