@@ -22,6 +22,7 @@ const PaymentPage = () => {
   const handlePaymentChange = (method) => {
     setPaymentMethod(method);
     setShowPayNow(method === 'online');
+    setShowPayNow(method === '50%');
   };
 
   const handleSubmit = () => {
@@ -32,8 +33,7 @@ const PaymentPage = () => {
                 orderData: orderpayload,
                 paymentmode:"online"
               }});
-              
-      
+
 
       // TODO: Call API to place COD order here
       toast.success('Order Placed!');
@@ -42,6 +42,7 @@ const PaymentPage = () => {
     } else if (paymentMethod === '') {
       toast.error('Please select a payment method');
     }
+
   };
  
 const isBulkOrder = useMemo(() => {
@@ -75,6 +76,7 @@ console.log(isBulkOrder)
               />
               Pay Online
             </label>
+
           </div>
             <div>
             <label className="flex items-center text-lg text-[#0A0A0A]">
@@ -86,13 +88,33 @@ console.log(isBulkOrder)
                 onChange={() => handlePaymentChange('cod')}
                 className="mr-2"
               />
-              Cash on Delivery
+              Pickup from Shop
             </label>
           </div>
+
+
+          
           
            {/* Replace your existing COD block with this */}
 
        {isBulkOrder && (
+        
+<>  <div>
+            <label className="flex items-center text-lg text-[#0A0A0A]">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="online"
+                checked={paymentMethod === '50%'}
+                onChange={() => handlePaymentChange('50%')}
+                className="mr-2"
+              />
+              50% pay  Online
+            </label>
+            
+          </div>
+
+
             <div>
               <label className="flex items-start gap-3 text-lg text-[#0A0A0A]">
                 <input
@@ -127,12 +149,15 @@ console.log(isBulkOrder)
                 </div>
               </label>
             </div>
+            </>
           )}
 
 
 
           {!showPayNow && (
-            <button
+
+           
+           (paymentMethod ==="netbanking") ?  <button
            onClick={() =>
   navigate("/order-processing", {
     state: {
@@ -147,11 +172,30 @@ console.log(isBulkOrder)
             >
               Continue
             </button>
+            :
+        <button
+           onClick={() =>
+  navigate("/order-processing", {
+    state: {
+      paymentId: "test_transtion",  // make sure this exists
+      orderData: orderpayload,
+      paymentmode: "50%"                // match backend check (case-sensitive)
+    },
+  })
+}
+
+              className="w-full mt-6 py-2 px-4 bg-[#E5C870] text-black rounded-lg hover:bg-[#D4B752] font-semibold"
+            >
+              Continue
+            </button>
+
+
+
           )}
 
           {showPayNow && (
             <div className="mt-6">
-              <PaymentButton orderData={orderpayload} />
+              <PaymentButton orderData={orderpayload} paymentMethod={paymentMethod}/>
             </div>
           )}
         </div>

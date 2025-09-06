@@ -4,6 +4,8 @@ import AdminCartItem from './Components/AdminCartItem';
 import tshirt from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
 import axios from "axios";
 
+
+
 const Home = () => {
   const [products, setProducts] = useState([]);
 
@@ -23,7 +25,9 @@ const Home = () => {
    
   }, []);
 
-  console.log(products)
+
+
+
 
   return (
     <>
@@ -42,6 +46,7 @@ const Home = () => {
               fulldetails:p
             }}
             onEdit={(id) => console.log("Edit clicked for:", id)}
+          
           />
         ))}
       </div>

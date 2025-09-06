@@ -24,6 +24,11 @@ export const fetchPreviousDesigns = async (userId) => {
     return [];
   }
 };
+
+
+
+
+
 export const fetchPreviousDesignswithpreoduts = async (userId,productId) => {
   try {
     const res = await fetch(`https://duco-backend.onrender.com/api/designs/user/${userId}/${productId}`);
@@ -34,6 +39,8 @@ export const fetchPreviousDesignswithpreoduts = async (userId,productId) => {
     return [];
   }
 };
+
+
 
 
 export const createDesign = async (payload) => {
@@ -210,3 +217,24 @@ export async function getInvoiceByOrder(orderId) {
     return res.data; // { invoice, totals }
  
 }
+export async function getWallet(userId) {
+  if (!userId) throw new Error("Missing userId for getWallet");
+  const url = `${API_BASE}api/wallet/${userId}`;
+  const res = await axios.get(url, { withCredentials: true });
+  return res.data; // { _id, user, balance?, transactions: [...] }
+}
+
+export const deleteProduct = async (productId) => {
+  if (!productId) throw new Error("productId is required");
+  try {
+    const res = await axios.delete(`${API_BASE}/products/deleted/${productId}`);
+    return res.data;
+  } catch (err) {
+    // Normalize error
+    const msg =
+      err?.response?.data?.message ||
+      err?.message ||
+      "Failed to delete product";
+    throw new Error(msg);
+  }
+};

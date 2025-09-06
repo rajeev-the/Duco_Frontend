@@ -52,6 +52,7 @@ import EmployeePrivateRoute from './Admin/Components/EmployeePrivateRoute.jsx';
 
 import Invoice from './Admin/Invoice.jsx';
 import InvoiceSet from './Pages/InvoiceSet.jsx';
+import WalletPage from './Pages/WalletPage.jsx';
 
 
 const App = () => {
@@ -95,7 +96,7 @@ const App = () => {
                             <Route path="/shipping-policy" element={<ShippingPolicy />} />
                             <Route path="/terms-and-conditions" element={<TermsConditions />} />
                              <Route path="/get_size/:id" element={<SizeChange />} />
-                            
+                             <Route path="/wallet/:userId" element={<WalletPage />} />
                               
 
 

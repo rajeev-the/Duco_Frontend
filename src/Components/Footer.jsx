@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import {Link } from  'react-router-dom'
 import {
   Youtube,
@@ -12,7 +12,17 @@ import logo from "../assets/image.png"
 
 
 
+
 const Footer = () => {
+    const [user, setUser] = useState(null);
+
+  
+    useEffect(() => {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+    }, []);
   return (
  <footer className="w-full text-black mt-20  px-4">
       {/* Top Section */}
@@ -20,8 +30,8 @@ const Footer = () => {
         {/* Left - Contact Info */}
         <div className="bg-white p-6 rounded-2xl flex-[1] min-w-[250px]">
         <Link to={'/'}>  <img src={logo} alt="DUCO ART" className="w-32 mb-4" /></Link>
-          <p className="mb-1">Phone : xxxxxxxxxx</p>
-          <p>Email : ducoart@12.com</p>
+          <p className="mb-1">Phone :+91 9827245678</p>
+          <p>Email : ducoart1@gmail.com</p>
         </div>
 
         {/* Right - Navigation */}
@@ -45,7 +55,8 @@ const Footer = () => {
                 <li>About</li>
                 <li><Link to="/order" className="hover:text-[#E5C870]">My Order</Link></li>
                 <li><Link to="/contact" className="hover:text-[#E5C870]">Contact Us</Link></li>
-                <li>FAQ</li>
+                  <li><Link to={`/wallet/${user?._id}`} className="hover:text-[#E5C870]">Wallet</Link></li>
+                
                 <li>
   <a href="mailto:ducoart@12.com" className="hover:text-[#E5C870]">
     Help and support
@@ -64,6 +75,7 @@ const Footer = () => {
           <li><Link to="/refund-return-policy" className="hover:text-[#E5C870]">Refund & Return Policy</Link></li>
           <li><Link to="/shipping-policy" className="hover:text-[#E5C870]">Shipping Policy</Link></li>
           <li><Link to="/terms-and-conditions" className="hover:text-[#E5C870]">Terms and Conditions</Link></li>
+          <li>FAQ</li>
         </ul>
             </div>
           </div>

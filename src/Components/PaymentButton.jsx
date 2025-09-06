@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const PaymentButton = ({ orderData }) => {
+const PaymentButton = ({ orderData,paymentMethod }) => {
   const navigate = useNavigate();
   const API_BASE = 'https://duco-backend.onrender.com/';
 
@@ -29,6 +29,7 @@ const PaymentButton = ({ orderData }) => {
       // 1. Create Razorpay order
       const { data } = await axios.post(`${API_BASE}api/payment/create-order`, {
         amount: orderData.totalPay,
+        half:paymentMethod=="50%" ? true : false
       });
 
       const { orderId, amount } = data;
@@ -56,7 +57,7 @@ const PaymentButton = ({ orderData }) => {
               state: {
                 paymentId: razorpay_payment_id,
                 orderData: orderData,
-                paymentmode:"online"
+                paymentmode:paymentMethod
               },
             });
           } else {
