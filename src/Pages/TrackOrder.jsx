@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getLogisticsByOrder } from "../Service/logisticsApi";
+import { getWallet } from "../Service/APIservice";
+import { FaWallet } from "react-icons/fa";
 
 const ACCENT = "#E5C870";
 const BG = "#0A0A0A";
@@ -53,6 +55,10 @@ export default function TrackOrder() {
   const [err, setErr] = useState("");
   const [rows, setRows] = useState([]);
 
+  // Wallet state (JS-friendly)
+  const [walletBalance, setWalletBalance] = useState(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+
   const orderSummary = useMemo(() => {
     const first = rows?.[0];
     const o = first?.orderId;
@@ -78,10 +84,49 @@ export default function TrackOrder() {
     }
   };
 
+  // Fetch wallet balance (best-effort)
+  const fetchWallet = async () => {
+    try {
+      setWalletLoading(true);
+      const raw = localStorage.getItem("userId") || localStorage.getItem("user");
+      let uid = undefined; // <-- FIXED: declare it
+
+      if (raw) {
+        try {
+          // If it's a JSON user object
+          const parsed = JSON.parse(raw);
+          uid = parsed?.id || parsed?._id || parsed?.userId;
+        } catch {
+          // If it's just the id string
+          uid = raw;
+        }
+      }
+
+      if (!uid) {
+        setWalletBalance(null);
+        return;
+      }
+
+      const w = await getWallet(uid);
+      const balance = Number(
+        (w && (w.balance ?? w?.data?.balance ?? w?.wallet?.balance)) ?? 0
+      );
+      setWalletBalance(Number.isFinite(balance) ? balance : 0);
+    } catch {
+      setWalletBalance(null);
+    } finally {
+      setWalletLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: BG }}>
@@ -102,12 +147,31 @@ export default function TrackOrder() {
                     Total: ₹{Number(orderSummary.total).toLocaleString()}
                   </span>
                 )}
+                {walletBalance !== null && (
+                  <Badge>Wallet: ₹{walletBalance.toLocaleString()}</Badge>
+                )}
               </div>
             )}
           </div>
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => navigate("/wallet")}
+              className="inline-flex items-center gap-2 rounded-xl px-3 py-2 font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{ backgroundColor: "transparent", color: ACCENT, border: `1px solid ${ACCENT}` }}
+              title="Open Wallet"
+            >
+              <FaWallet className="text-lg md:text-xl" />
+              <span className="text-sm md:text-base">
+                {walletLoading
+                  ? "Loading..."
+                  : walletBalance === null
+                  ? "Wallet"
+                  : `₹${walletBalance.toLocaleString()}`}
+              </span>
+            </button>
+
             <button
               onClick={fetchData}
               className="rounded-xl px-4 py-2 font-semibold transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
@@ -184,7 +248,6 @@ export default function TrackOrder() {
                       className="absolute -left-5 md:-left-6 top-4 md:top-5 block h-2.5 w-2.5 md:h-3 md:w-3 rounded-full ring-4"
                       style={{
                         backgroundColor: ACCENT,
-                        ringColor: "#0A0A0A",
                         boxShadow: "0 0 0 2px rgba(229,200,112,0.3)",
                       }}
                     />
@@ -229,7 +292,6 @@ export default function TrackOrder() {
                     {imgs.length > 0 && (
                       <div className="mt-4">
                         <Label>Images</Label>
-                        {/* Mobile: horizontal scroll; Desktop: wrap */}
                         <div className="mt-2 flex gap-2 overflow-x-auto md:overflow-visible md:flex-wrap md:gap-2 pb-1">
                           {imgs.map((im, idx) => {
                             const src = typeof im === "string" ? im : im?.URL;
@@ -268,6 +330,9 @@ export default function TrackOrder() {
         <MobileActionBar
           onRefresh={fetchData}
           onInvoice={() => navigate(`/invoice/${orderId}`)}
+          onWallet={() => navigate(`/wallet`)}
+          walletLoading={walletLoading}
+          walletBalance={walletBalance}
         />
       </div>
     </div>
@@ -291,13 +356,13 @@ function InfoRow({ label, value }) {
   );
 }
 
-function MobileActionBar({ onRefresh, onInvoice }) {
+function MobileActionBar({ onRefresh, onInvoice, onWallet, walletLoading, walletBalance }) {
   return (
     <div
       className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t backdrop-blur supports-[backdrop-filter]:bg-black/50 bg-black/70"
       style={{ borderColor: `${ACCENT}22` }}
     >
-      <div className="mx-auto max-w-4xl px-3 py-3 grid grid-cols-2 gap-2">
+      <div className="mx-auto max-w-4xl px-3 py-3 grid grid-cols-3 gap-2">
         <button
           onClick={onRefresh}
           className="w-full rounded-xl px-4 py-3 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-2"
@@ -315,6 +380,20 @@ function MobileActionBar({ onRefresh, onInvoice }) {
           style={{ backgroundColor: "transparent", color: ACCENT, border: `1px solid ${ACCENT}` }}
         >
           Invoice
+        </button>
+        <button
+          onClick={onWallet}
+          className="w-full rounded-xl px-4 py-3 text-sm font-semibold transition active:scale-[0.99] focus:outline-none focus:ring-2 inline-flex items-center justify-center gap-2"
+          style={{ backgroundColor: "transparent", color: ACCENT, border: `1px solid ${ACCENT}` }}
+        >
+          <FaWallet className="text-base" />
+          <span className="truncate">
+            {walletLoading
+              ? "Wallet…"
+              : walletBalance === null
+              ? "Wallet"
+              : `₹${walletBalance.toLocaleString()}`}
+          </span>
         </button>
       </div>
     </div>

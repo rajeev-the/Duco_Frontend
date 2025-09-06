@@ -7,6 +7,7 @@ import TrendingHome from '../Components/TrendingHome.jsx'
 import axios from 'axios'
 
 import { usePriceContext } from '../ContextAPI/PriceContext.jsx'
+import BannerHome from '../Components/BannerHome.jsx'
 
 
 const continentMapping = {
@@ -59,7 +60,8 @@ useEffect(() => {
   return (
     <div className='h-full bg-[#0A0A0A] w-full  '>
         <SectionHome1 imglink={banner} Loading={Loading} />
-        < SectionHome2 />
+        < SectionHome2 />'
+         <BannerHome link={"https://ik.imagekit.io/vuavxn05l/5213288.jpg?updatedAt=1757162698605"}/>
           < TrendingHome/>
         <SectionHome3/>
    

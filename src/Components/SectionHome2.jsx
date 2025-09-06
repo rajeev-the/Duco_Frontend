@@ -15,7 +15,7 @@ const SectionHome2 = () => {
       setLoading(true);
       const data = await getproducts();
       if (data) {
-        setProdcuts(data);
+        setProdcuts(data.slice(0,8));
       } else {
         console.log("Data is not Present in Products Calling");
       }
