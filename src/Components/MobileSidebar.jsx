@@ -125,7 +125,7 @@ const MobileSidebar = ({ menuItems, setMobileMenuOpen, mobileMenuOpen }) => {
             </div>
           ))}
             <div className=" pt-3">
-      <AccountQuickActions />
+      <AccountQuickActions setMobileMenuOpen={setMobileMenuOpen} />
     </div>
         </div>
 
