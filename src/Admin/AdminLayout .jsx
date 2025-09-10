@@ -1,7 +1,21 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link ,useNavigate } from 'react-router-dom';
+import {clearAdmin} from  './auth/adminAuth'
+
 
 const AdminLayout = () => {
+
+  const navigate = useNavigate()
+
+    const handleLogout = async () => {
+  
+    clearAdmin();
+  
+    localStorage.removeItem('user');
+
+ 
+    navigate('/admin/login', { replace: true });
+  };
   return (
     <div className="min-h-screen flex">
       {/* Sidebar */}
@@ -36,6 +50,12 @@ const AdminLayout = () => {
 <Link to="/admin/bannersetup" className="block hover:text-blue-300">Banner</Link>
 
         </nav>
+          <button
+          onClick={handleLogout}
+          className="mt-4 w-full rounded-lg bg-red-600 py-2 font-medium text-white hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
       </aside>
 
       {/* Main content */}

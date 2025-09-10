@@ -109,7 +109,7 @@ const App = () => {
    
     <Route path="/admin/login" element={<AdminLogin />} />
 
-
+          <Route element={<AdminGuard/>}>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Adminhome />} />
         <Route path="products" element={<ProdcutsCreated />} />
@@ -129,6 +129,7 @@ const App = () => {
                        
                    
               </Route>   
+              </Route>
 
             
 
