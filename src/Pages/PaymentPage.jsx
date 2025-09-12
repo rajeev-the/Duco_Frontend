@@ -19,11 +19,11 @@ const PaymentPage = () => {
 
 
 
-  const handlePaymentChange = (method) => {
-    setPaymentMethod(method);
-    setShowPayNow(method === 'online');
-    setShowPayNow(method === '50%');
-  };
+ const handlePaymentChange = (method) => {
+  setPaymentMethod(method);
+  setShowPayNow(method === 'online' || method === '50%'); 
+};
+
 
   const handleSubmit = () => {
     if (paymentMethod === 'netbanking') {
@@ -31,7 +31,7 @@ const PaymentPage = () => {
               state: {
                
                 orderData: orderpayload,
-                paymentmode:"online"
+                paymentmode:"netbanking"
               }});
 
 
