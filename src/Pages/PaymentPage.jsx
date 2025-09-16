@@ -104,7 +104,7 @@ console.log(isBulkOrder)
               <input
                 type="radio"
                 name="paymentMethod"
-                value="online"
+                value="50%"
                 checked={paymentMethod === '50%'}
                 onChange={() => handlePaymentChange('50%')}
                 className="mr-2"
