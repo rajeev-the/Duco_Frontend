@@ -41,10 +41,11 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold text-lg mb-2">Shop</h3>
               <ul className="space-y-1  text-sm">
-                <li>New</li>
-                <li>Women</li>
-                <li>Men</li>
-                <li>Kid</li>
+              <li><Link to="/" className="hover:text-[#E5C870]">New</Link></li>
+              <li><Link to ="/women" className='hover:text-[#E5C870]'>Women</Link></li>
+              <li><Link to ="/men" className='hover:text-[#E5C870]'>Men</Link></li>
+              <li><Link to ="/kid" className='hover:text-[#E5C870]'>Kid</Link></li>
+
               </ul>
             </div>
 
@@ -52,10 +53,10 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold text-lg mb-2">Our Store</h3>
               <ul className="space-y-1 text-sm">
-                <li>About</li>
-                <li><Link to="/order" className="hover:text-[#E5C870]">My Order</Link></li>
-                <li><Link to="/contact" className="hover:text-[#E5C870]">Contact Us</Link></li>
-                  <li><Link to={`/wallet/${user?._id}`} className="hover:text-[#E5C870]">Wallet</Link></li>
+              <li><Link to ="/about" className='hover:text-[#E5C870]'>About</Link></li>
+              <li><Link to="/order" className="hover:text-[#E5C870]">My Order</Link></li>
+              <li><Link to="/contact" className="hover:text-[#E5C870]">Contact Us</Link></li>
+              <li><Link to={`/wallet/${user?._id}`} className="hover:text-[#E5C870]">Wallet</Link></li>
                 
                 <li>
   <a href="mailto:ducoart@12.com" className="hover:text-[#E5C870]">
@@ -115,11 +116,11 @@ const Footer = () => {
         <Linkedin className="w-6 h-6 hover:text-blue-700 transition-colors" />
       </a>
      <a
-  href="https://in.pinterest.com/ducoart1"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="hover:text-red-500 transition-colors"
->
+        href="https://in.pinterest.com/ducoart1"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-red-500 transition-colors"
+      >
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 640 640"
@@ -134,19 +135,19 @@ const Footer = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Twitter className="w-6 h-6 hover:text-black transition-colors" />
-      </a>
+<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 30 30">
+<path d="M26.37,26l-8.795-12.822l0.015,0.012L25.52,4h-2.65l-6.46,7.48L11.28,4H4.33l8.211,11.971L12.54,15.97L3.88,26h2.65 l7.182-8.322L19.42,26H26.37z M10.23,6l12.34,18h-2.1L8.12,6H10.23z"></path>
+</svg>  </a>
     </div>
 
         {/* Footer Text */}
         <div className="bg-[#E5C870] text-center p-4 rounded-2xl flex-[3]">
           <p className="text-black font-medium text-sm">
-            © 2035 by T Shop. Powered and secured
-          </p>
+          © 2025 Ducoart. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
-  )
+  ) 
 }
 
 export default Footer

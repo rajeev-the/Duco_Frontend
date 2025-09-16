@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
-import { MdOutlinePrint, MdOutlineColorLens, MdOutlineStraighten } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router-dom';
-import { fetchPreviousDesigns, getproductssingle ,fetchPreviousDesignswithpreoduts} from '../Service/APIservice';
+import { MdOutlineColorLens, MdOutlineStraighten } from 'react-icons/md';
+import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
+import { fetchPreviousDesignswithpreoduts, getproductssingle } from '../Service/APIservice';
 import DesignPreviewModal from '../Components/DesignPreview';
 import { CartContext } from "../ContextAPI/CartContext";
 import { usePriceContext } from '../ContextAPI/PriceContext';
 import Zoom from 'react-medium-image-zoom';
 import { toast } from "react-toastify";
 import 'react-medium-image-zoom/dist/styles.css';
-import { useOutletContext } from 'react-router-dom';
 import PriceTiers from '../Components/PriceTiers';
 import CropTanksTabs from '../Components/CropTanksTabs';
 import CropTankSizeChart from '../Components/CropTankSizeChart';
 
-
 function useLayoutCtx() {
-  return useOutletContext(); // { setIsOpenLog, isLogin, setIsLogin, login, user }
+  return useOutletContext();
 }
+
 const PRICE_TIERS = [
   { range: "1", price: 510 },
   { range: "2 - 4", price: 467 },
@@ -27,17 +26,16 @@ const PRICE_TIERS = [
 ];
 
 const ProductPage = () => {
-    const { setIsOpenLog } = useLayoutCtx();
+  const { setIsOpenLog } = useLayoutCtx();
   const [selectedColorCode, setSelectedColorCode] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
-  const[price,setPrice] = useState(0)
-  const[print,setPrint] = useState("")
-
-   const stored = localStorage.getItem('user');
-    const user = JSON.parse(stored);
- const { toConvert, priceIncrease ,setLocation } = usePriceContext();
+  const [price, setPrice] = useState(0);
+  const [print, setPrint] = useState("");
+  const stored = localStorage.getItem('user');
+  const user = stored ? JSON.parse(stored) : null;
+  const { toConvert, priceIncrease } = usePriceContext();
   const [showModal, setShowModal] = useState(false);
-  const [colortext,setColortext] = useState(null)
+  const [colortext, setColortext] = useState(null);
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [product, setProduct] = useState();
   const [defaultColorGroup, setDefaultColorGroup] = useState(null);
@@ -45,14 +43,12 @@ const ProductPage = () => {
   const [loadingDesigns, setLoadingDesigns] = useState(false);
   const { addtocart } = useContext(CartContext);
   const { id } = useParams();
-    const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
+  const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
   const initialQty = SIZES.reduce((acc, k) => ({ ...acc, [k]: 0 }), {});
   const navigate = useNavigate();
   const [qty, setQty] = useState(initialQty);
-  const[gender,setGender] = useState("")
-
-  const[iscount,setIscount]= useState(0)
-
+  const [gender, setGender] = useState("");
+  const [iscount, setIscount] = useState(0);
 
   // Fetch product
   useEffect(() => {
@@ -63,98 +59,75 @@ const ProductPage = () => {
         setProduct(p);
         setDefaultColorGroup(p.image_url?.[0]);
         setSelectedColorCode(p.image_url?.[0]?.colorcode || '#ffffff');
-        setColortext(p.image_url?.[0]?.color)
-         setPrice(calculatePrice(toConvert,p?.pricing?.[0]?.price_per,priceIncrease))
-         setGender(p.gender)
+        setColortext(p.image_url?.[0]?.color);
+        setGender(p.gender);
 
+        const calculated = calculatePrice(toConvert, p?.pricing?.[0]?.price_per, priceIncrease);
+        setPrice(Math.round(calculated)); // 👈 always round to integer
       }
-      if(!priceIncrease){
-        navigate("/")
+      if (!priceIncrease) {
+        navigate("/");
       }
-      
     };
     fetchProduct();
   }, [id]);
 
-
-
-
-  // ✨ Just works out of the box!
-
-
-
- 
-
-  // Load user designs when modal opens
+  // Load previous designs
   useEffect(() => {
     const loadDesigns = async () => {
-     
-      if (!stored) return;
+      if (!user) return;
       setLoadingDesigns(true);
-     
-      const data = await fetchPreviousDesignswithpreoduts(user._id,id);
+      const data = await fetchPreviousDesignswithpreoduts(user._id, id);
       setDesigns(data || []);
       setLoadingDesigns(false);
-     
     };
     loadDesigns();
   }, [id]);
 
-  // Handle color change
-  const handleColorChange = (colorcode,colortext) => {
+  const handleColorChange = (colorcode, colortext) => {
     const matched = product?.image_url?.find((c) => c.colorcode === colorcode);
-        console.log(colortext)
     if (matched) {
-   
       setDefaultColorGroup(matched);
       setSelectedColorCode(colorcode);
-      setColortext(colortext)
-      setIscount(0)
+      setColortext(colortext);
+      setIscount(0);
     }
-  }; 
+  };
 
-  function calculatePrice(currency, ac, high) {
-    const actualPrice = currency*ac
-    return  actualPrice + (actualPrice * (high / 100));
+  const calculatePrice = (currency, basePrice, high) => {
+    const actualPrice = currency * basePrice;
+    return actualPrice + (actualPrice * (high / 100));
+  };
 
-}
-
-const handleQty = (k, v) => {
-  const n = Math.max(0, Math.min(9999, Number(v.replace(/[^0-9]/g, "")) || 0));
-  setQty((p) => ({ ...p, [k]: n }));
-};
-
-
+  const handleQty = (k, v) => {
+    const n = Math.max(0, Math.min(9999, Number(v.replace(/[^0-9]/g, "")) || 0));
+    setQty((p) => ({ ...p, [k]: n }));
+  };
 
   return (
-    <section className="p-6 text-white ">
+    <section className="p-6 text-white">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         {/* Left - Images */}
         <div className="h-auto">
-          {/* <ImageMagnifier
-      src=
-      zoom={2.5}        // tweak as you like
-      lensSize={160}    // tweak lens size
-    /> */}
-   <Zoom>
-  <img className='bg-white w-full sm:h-[600px] max-w-[500px] md:max-w-full   object-contain shadow-md overflow-hidden   rounded-2xl' src={defaultColorGroup?.url?.[iscount] ?? ''} alt="Product" />
-</Zoom>
- 
-  
-
+          <Zoom>
+            <img
+              className='bg-white w-full sm:h-[600px] max-w-[500px] md:max-w-full object-contain shadow-md overflow-hidden rounded-2xl'
+              src={defaultColorGroup?.url?.[iscount] ?? ''}
+              alt="Product"
+            />
+          </Zoom>
           <div className="flex gap-2 mt-4">
             {defaultColorGroup?.url?.map((img, i) => (
               <img
                 key={i}
                 src={img}
-                onClick={()=> setIscount(i)}
+                onClick={() => setIscount(i)}
                 alt="Thumbnail"
-                className={`w-16 h-16 object-cover rounded-md  ${iscount == i ? "border-3 border-[#E5C870]  scale-1.5 ":""} `}
+                className={`w-16 h-16 object-cover rounded-md ${iscount === i ? "border-3 border-[#E5C870] scale-1.5" : ""}`}
               />
             ))}
           </div>
         </div>
-        
 
         {/* Right - Details */}
         <div className="space-y-6">
@@ -179,17 +152,7 @@ const handleQty = (k, v) => {
             <li><FaCheckCircle className="inline mr-1 text-green-600" />No Minimums</li>
           </ul>
 
-          {/* <div>
-            <h3 className="font-semibold mb-2 flex items-center gap-2">
-              <MdOutlinePrint /> Printing Options
-            </h3>
-            <div className="flex gap-4">
-              {['DTG', 'DTF', 'Vinyl', ].map((opt) => (
-                <button onClick={()=>setPrint(opt)} key={opt} className={`border px-4 py-1 rounded ${print == opt ? "bg-green-600":""} `} >{opt}</button>
-              ))}
-            </div>
-          </div> */}
-
+          {/* Available Colors */}
           <div>
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <MdOutlineColorLens /> Available Colors
@@ -200,152 +163,121 @@ const handleQty = (k, v) => {
                   key={i}
                   className={`w-8 h-8 rounded-full border ${selectedColorCode === c.colorcode ? 'ring-2 ring-green-600' : ''}`}
                   style={{ backgroundColor: c.colorcode }}
-
-                  onClick={() => handleColorChange(c.colorcode,c.color)  }
+                  onClick={() => handleColorChange(c.colorcode, c.color)}
                 />
-              
               ))}
             </div>
-            
           </div>
 
+          {/* Sizes */}
           <div>
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <MdOutlineStraighten /> Available Sizes
             </h3>
-          <div className="flex text-white flex-wrap gap-3 mt-2">
-  {SIZES.map((s) => (
-    <label key={s} className="flex flex-col items-center gap-1">
-      <span className="text-sm text-white">{s}</span>
-     <input
-  type="number"
-  inputMode="numeric"
-  min={0}
-  className="h-12 w-16 rounded-xl border border-slate-300 text-center focus:outline-none focus:ring-2 focus:ring-sky-400"
-  value={qty[s] === 0 ? "" : qty[s]}   // 👈 show empty if 0
-  onChange={(e) => handleQty(s, e.target.value)}
-  placeholder="0"
-/>
-
-    </label>
-  ))}
-</div>
-
+            <div className="flex text-white flex-wrap gap-3 mt-2">
+              {SIZES.map((s) => (
+                <label key={s} className="flex flex-col items-center gap-1">
+                  <span className="text-sm text-white">{s}</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    className="h-12 w-16 rounded-xl border border-slate-300 text-center focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    value={qty[s] === 0 ? "" : qty[s]}
+                    onChange={(e) => handleQty(s, e.target.value)}
+                    placeholder="0"
+                  />
+                </label>
+              ))}
+            </div>
           </div>
 
           <button
-          onClick={() => {
-  if (!user) {
-    toast.error("Log In / Sign Up");
-    setIsOpenLog(true);
-    return; // stop here if not logged in
-  }
+            onClick={() => {
+              if (!user) {
+                toast.error("Log In / Sign Up");
+                setIsOpenLog(true);
+                return;
+              }
 
-   const allZero = Object.values(qty).every(value => value <= 0);
+              const allZero = Object.values(qty).every(value => value <= 0);
+              if (allZero) {
+                toast.error("Please select at least one size");
+                return;
+              }
 
-  if (allZero) {
-    toast.error("Please select at least one size");
-    return;
-  }
-
-  // ✅ only runs if user exists & size is set
-  setShowModal(true);
-}}
-
+              setShowModal(true);
+            }}
             className="bg-[#E5C870] hover:bg-green-600 text-black w-full text-xl font-bold py-3 rounded"
           >
             Start Buying
           </button>
-            <div className="mt-6">
-    <h3 className="text-lg font-semibold text-white mb-3">Your Previous Designs</h3>
-    {loadingDesigns ? (
-      <p className="text-sm text-gray-300">Loading...</p>
-    ) : designs.length === 0 ? (
-      <p className="text-sm text-gray-400">No previous designs found.</p>
-    ) : (
-     <div className="max-h-48 overflow-y-auto space-y-3 pr-1">
-  {designs.map((d) => (
-    <div
-      key={d._id}
-      onClick={() => setSelectedDesign(d)}
-      className="cursor-pointer group flex items-center gap-4 border border-gray-700 rounded-xl p-4 
-                 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] 
-                 hover:shadow-lg transition-all duration-300 ease-out"
-    >
-      {/* Optional Thumbnail */}
-      {d.design?.[0]?.url && (
-        <img
-          src={d.design[0].url}
-          alt="Design preview"
-          className="w-12 h-12 object-contain rounded-md border border-gray-600 group-hover:border-[#E5C870] transition"
-        />
-      )}
 
-      {/* Text Content */}
-      <div className="flex flex-col flex-1">
-        <p className="text-sm font-semibold text-white">
-          Product ID:{" "}
-          <span className="text-[#E5C870] font-mono">{d.products}</span>
-        </p>
-        <p className="text-xs text-gray-300">
-          Created:{" "}
-          <span className="text-gray-400">
-            {new Date(d.createdAt).toLocaleDateString()}
-          </span>
-        </p>
-      </div>
-
-      {/* Icon */}
-      <svg
-        className="w-5 h-5 text-gray-400 group-hover:text-[#E5C870] transition"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-      </svg>
-    </div>
-  ))}
-</div>
-
-    )}
-  </div>
+          {/* Previous Designs */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-3">Your Previous Designs</h3>
+            {loadingDesigns ? (
+              <p className="text-sm text-gray-300">Loading...</p>
+            ) : designs.length === 0 ? (
+              <p className="text-sm text-gray-400">No previous designs found.</p>
+            ) : (
+              <div className="max-h-48 overflow-y-auto space-y-3 pr-1">
+                {designs.map((d) => (
+                  <div
+                    key={d._id}
+                    onClick={() => setSelectedDesign(d)}
+                    className="cursor-pointer group flex items-center gap-4 border border-gray-700 rounded-xl p-4 bg-white/10 backdrop-blur-md hover:bg-white/20 hover:scale-[1.02] hover:shadow-lg transition-all duration-300 ease-out"
+                  >
+                    {d.design?.[0]?.url && (
+                      <img
+                        src={d.design[0].url}
+                        alt="Design preview"
+                        className="w-12 h-12 object-contain rounded-md border border-gray-600 group-hover:border-[#E5C870] transition"
+                      />
+                    )}
+                    <div className="flex flex-col flex-1">
+                      <p className="text-sm font-semibold text-white">
+                        Product ID: <span className="text-[#E5C870] font-mono">{d.products}</span>
+                      </p>
+                      <p className="text-xs text-gray-300">
+                        Created: <span className="text-gray-400">{new Date(d.createdAt).toLocaleDateString()}</span>
+                      </p>
+                    </div>
+                    <svg className="w-5 h-5 text-gray-400 group-hover:text-[#E5C870] transition" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-       
-
       </div>
-       <PriceTiers tiers={PRICE_TIERS} currencySymbol="₹" />
-        <CropTankSizeChart/>
-       <CropTanksTabs/>
-      
 
-
-    
-
-
-      
+      <PriceTiers tiers={PRICE_TIERS} currencySymbol="₹" />
+      <CropTankSizeChart />
+      <CropTanksTabs />
 
       {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white text-black p-6 rounded-xl shadow-xl w-full max-w-md mx-auto text-center">
             <h2 className="text-xl font-bold mb-4">Choose T-Shirt Type</h2>
-
             <div className="space-y-4 mb-6">
               <button
                 onClick={() => {
-                 addtocart({
-                id,
-                design:[],
-                color:selectedColorCode,
-                quantity: qty,
-                colortext,
-                price: price,
-                gender
-                 })
-                 setShowModal(false);
-                 navigate("/cart")
+                  // 👈 always store integer price
+                  addtocart({
+                    id,
+                    design: [],
+                    color: selectedColorCode,
+                    quantity: qty,
+                    colortext,
+                    price: Math.round(price),
+                    gender
+                  });
+                  setShowModal(false);
+                  navigate("/cart");
                 }}
                 className="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-all"
               >
@@ -353,8 +285,7 @@ const handleQty = (k, v) => {
               </button>
               <button
                 onClick={() => {
-                 navigate(`/design/${id}/${selectedColorCode.replace('#', '')}`);
-
+                  navigate(`/design/${id}/${selectedColorCode.replace('#', '')}`);
                   setShowModal(false);
                 }}
                 className="w-full bg-[#E5C870] text-black py-2 rounded-md hover:bg-green-600 transition-all"
@@ -362,8 +293,7 @@ const handleQty = (k, v) => {
                 Design T-Shirt
               </button>
             </div>
-
-                       <button
+            <button
               onClick={() => setShowModal(false)}
               className="mt-6 text-sm text-gray-500 hover:underline"
             >
@@ -383,7 +313,7 @@ const handleQty = (k, v) => {
         color={selectedColorCode}
         colortext={colortext}
         gender={gender}
-        price={price}
+        price={Math.round(price)}
       />
     </section>
   );
