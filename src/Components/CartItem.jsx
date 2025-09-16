@@ -2,18 +2,16 @@ import QuantityControlss from "./QuantityControlss";
 import PriceDisplay from "./PriceDisplay";
 import { RiEyeFill } from "react-icons/ri";
 import { useState } from "react";
-import { usePriceContext } from '../ContextAPI/PriceContext';
+import { usePriceContext } from "../ContextAPI/PriceContext";
 
 const CartItem = ({ item, removeFromCart, updateQuantity }) => {
   const [previewImage, setPreviewImage] = useState(null);
-     const { toConvert, priceIncrease  } = usePriceContext();
+  const { toConvert, priceIncrease } = usePriceContext();
 
-    
-  
-      function calculatePrice(currency, ac, high) {
-      const actualPrice = currency*ac
-      return  actualPrice + (actualPrice * (high / 100));
-  
+  function calculatePrice(currency, ac, high) {
+    const actualPrice = currency * ac;
+    const finalPrice = actualPrice + actualPrice * (high / 100);
+    return Math.ceil(finalPrice); // ✅ round up to integer
   }
 
   return (
@@ -31,26 +29,28 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
         {/* Product Info */}
         <div className="flex-1 flex flex-col gap-1 text-white">
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold">{item.products_name}</h2>
+            <h2 className="text-lg sm:text-xl font-semibold">
+              {item.products_name}
+            </h2>
             <PriceDisplay
-              price={item.price}
+              price={Math.ceil(item.price)} // ✅ ensure integer
               className="text-base sm:text-lg font-bold text-[#FDC305]"
             />
           </div>
 
           <div className="text-sm text-gray-300">{item.description}</div>
-           <div className="flex flex-wrap gap-1">
-  {Object.entries(item.quantity).map(([size, count]) =>
-    count > 0 ? (
-      <span key={size} className="px-1 py-0.5  text-sm rounded border">
-        {size} × {count}
-      </span>
-    ) : null
-  )}
-</div>
+
+          <div className="flex flex-wrap gap-1">
+            {Object.entries(item.quantity).map(([size, count]) =>
+              count > 0 ? (
+                <span key={size} className="px-1 py-0.5 text-sm rounded border">
+                  {size} × {count}
+                </span>
+              ) : null
+            )}
+          </div>
 
           <div className="flex gap-4 mt-2 flex-wrap text-sm text-gray-400">
-           
             <p className="flex items-center">
               <span className="text-white font-medium mr-1">Color:</span>
               <span
@@ -58,15 +58,15 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
                 style={{ backgroundColor: item.color }}
               ></span>
             </p>
-            <p><span className="text-white font-medium">Gender:</span> {item?.gender}</p>
-           
-
+            <p>
+              <span className="text-white font-medium">Gender:</span>{" "}
+              {item?.gender}
+            </p>
           </div>
-         
 
           <div className="flex flex-wrap items-center gap-3 mt-2">
-            {/* Quantity Controls */}
-           
+            {/* Quantity Controls - if you want to add */}
+            {/* <QuantityControlss /> */}
 
             {/* Design Preview */}
             <button
@@ -101,45 +101,42 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
         </div>
       </div>
 
- {previewImage !== null && (
-  <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-    <div className="bg-white p-6 rounded-xl shadow-xl max-w-3xl w-full relative overflow-y-auto max-h-[90vh]">
-      {Array.isArray(previewImage) && previewImage.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {previewImage.map((img, index) => (
-           
-            <div className="flex flex-col   justify-center">
-              <img
-              key={index}
-              src={img.url}
-              alt={`Design Preview ${index + 1}`}
-              className="w-full h-auto object-contain rounded border"
-            />
-              <span className="text-black  text-shadow-md  font-bold text-center">
-                {img.view}
+      {previewImage !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-3xl w-full relative overflow-y-auto max-h-[90vh]">
+            {Array.isArray(previewImage) && previewImage.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {previewImage.map((img, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col justify-center"
+                  >
+                    <img
+                      src={img.url}
+                      alt={`Design Preview ${index + 1}`}
+                      className="w-full h-auto object-contain rounded border"
+                    />
+                    <span className="text-black font-bold text-center">
+                      {img.view}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-600 font-medium">
+                No preview is there
+              </p>
+            )}
 
-              </span>
-            </div>
-            
-         
-            
-          ))}
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-2 right-2 bg-black text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+            >
+              Close
+            </button>
+          </div>
         </div>
-      ) : (
-        <p className="text-center text-gray-600 font-medium">No preview is there</p>
       )}
-
-      <button
-        onClick={() => setPreviewImage(null)} // reset to null, not []
-        className="absolute top-2 right-2 bg-black text-white px-2 py-1 text-xs rounded hover:bg-red-600"
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
-
     </div>
   );
 };
