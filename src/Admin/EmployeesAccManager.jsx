@@ -1,5 +1,6 @@
 // src/pages/EmployeesAccManager.jsx
 import { useEffect, useMemo, useState } from "react";
+import EmployeesRoutesPage from "./Components/EmployeesRoutesPage";
 
 /* ===========================================
    API LAYER (INLINE)
@@ -493,6 +494,7 @@ const EmployeesAccManager = () => {
           </div>
         )}
       </div>
+      <EmployeesRoutesPage/>
     </div>
   );
 };

@@ -1,9 +1,37 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import tshirt from "../assets/gloomy-young-black-model-clean-white-unlabeled-cotton-t-shirt-removebg-preview.png"
 import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import { FaFilter } from "react-icons/fa";
-
+import {getCategoryById } from "../Service/APIservice"
+import Loading from "../Components/LoadingMain"
 const Prodcuts = () => {
+
+  
+  const {id} = useParams();
+   const [loading, setLoading] = useState(false);
+  const[product,setProdcuts] = useState([]);
+
+
+  useEffect(() => {
+     const getdata = async () => {
+      setLoading(true); // Start loading
+      try {
+        const category = await getCategoryById(id);
+        setProdcuts(category?.products || []);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+    getdata();
+
+
+  }, [id])
+  
+  if (loading) return <Loading />;
+
   return (
    <div className=" text-white min-h-screen p-4">
       {/* Breadcrumb */}
@@ -78,25 +106,41 @@ const Prodcuts = () => {
           
 
           {/* Product grid */}
-           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
-    {[1, 2, 3, 4, 5, 6].map((item) => (
-      <Link to={`/products/1`} key={item} className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
+  {product.map((item) => {
+    // Use the first image URL from the first color variant
+    const imgUrl = item.image_url?.[0]?.url?.[0] || "";
+
+    // Get the first color name, optional
+    const colorName = item.image_url?.[0]?.color || "";
+
+    return (
+      <Link
+        to={`/products/${item._id}`} // use the product's actual ID
+        key={item._id}
+        className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md"
+      >
         <div className="relative">
           <img
-            src={tshirt}
-            alt="T-Shirt Design"
-            className="w-[200px]  object-contain"
+            src={imgUrl}
+            alt={item.products_name}
+            className="w-[200px] object-contain"
           />
-          <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">Oversized Fit</div>
+         
         </div>
         <div className="p-4">
-          <h3 className="text-sm font-semibold">Custom T-Shirt {item}</h3>
-          <p className="text-gray-500 text-xs">Your design, your style</p>
-          <p className=" text-sm font-bold mt-2">₹499</p>
+          <h3 className="text-sm font-semibold">{item.products_name}</h3>
+         
+          {/* Use first pricing as example */}
+          <p className="text-sm font-bold mt-2">
+            ₹{item.pricing?.[0]?.price_per || 0}
+          </p>
         </div>
       </Link>
-    ))}
-  </div>
+    );
+  })}
+</div>
+
 
         </div>
       </div>

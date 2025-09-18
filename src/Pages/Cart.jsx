@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
-import CartItem from "../Components/CartItem .jsx";
+import CartItem from "../Components/CartItem.jsx";
 import AddressManager from "../Components/AddressManager";
 import Loading from "../Components/Loading";
 import { CartContext } from "../ContextAPI/CartContext";

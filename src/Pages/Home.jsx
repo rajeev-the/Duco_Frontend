@@ -22,6 +22,7 @@ const continentMapping = {
 const Home = () => {
  const { toConvert, priceIncrease ,setLocation } = usePriceContext();
  const [banner, setBanner] = React.useState("");
+  const [banner2, setBanner2] = React.useState("");
  const[Loading,setLoading] = React.useState(true)
 
 useEffect(() => {
@@ -41,6 +42,7 @@ useEffect(() => {
       const res = await axios.get("https://duco-backend.onrender.com/api/banners");
       // backend sends { success:true, banners:[{_id, link}, ...] }
       setBanner(res.data.banners?.[0]?.link || "");
+      setBanner2(res.data.banners?.[0]?.link2 || "")
        setLoading(false)
     } catch (err) {
       console.error("Failed to fetch banner data:", err);
@@ -61,7 +63,7 @@ useEffect(() => {
     <div className='h-full bg-[#0A0A0A] w-full  '>
         <SectionHome1 imglink={banner} Loading={Loading} />
         < SectionHome2 />'
-         <BannerHome link={"https://ik.imagekit.io/vuavxn05l/5213288.jpg?updatedAt=1757162698605"}/>
+         <BannerHome link={banner2}/>
           < TrendingHome/>
         <SectionHome3/>
    

@@ -71,7 +71,7 @@ export const getCategories = async () => {
 
   export const getSubcategoriesByCategoryId = async (categoryId) => {
   try {
-    const res = await axios.get(`https://duco-backend.onrender.com/subcategory/subcat/${categoryId}`);
+    const res = await axios.get(`${API_BASE}subcategory/subcat/${categoryId}`);
     return res.data.data || []; // Assuming controller sends { data: [...] }
   } catch (err) {
     console.error("Error fetching subcategories:", err);
@@ -81,7 +81,7 @@ export const getCategories = async () => {
 
   export const getproducts = async () => {
   try {
-    const res = await axios.get(`https://duco-backend.onrender.com/products/get/`);
+    const res = await axios.get(`${API_BASE}products/get/`);
     return res.data || []; // Assuming controller sends { data: [...] }
   } catch (err) {
     console.error("Error fetching subcategories:", err);
@@ -92,7 +92,7 @@ export const getCategories = async () => {
 
 export const getproductssingle = async (id) => {
   try {
-    const res = await axios.get(`https://duco-backend.onrender.com/products/get/${id}`);
+    const res = await axios.get(`${API_BASE}products/get/${id}`);
     return res.data || []; // Assuming controller sends { data: [...] }
   } catch (err) {
     console.error("Error fetching subcategories:", err);
@@ -106,7 +106,7 @@ export const getproductssingle = async (id) => {
 
 export const getproductcategory = async (idsub) => {
   try {
-    const res = await axios.get(`https://duco-backend.onrender.com/products/getsub/${idsub}`);
+    const res = await axios.get(`${API_BASE}products/getsub/${idsub}`);
     return res.data || []; // Assuming controller sends { data: [...] }
   } catch (err) {
     console.error("Error fetching subcategories:", err);
@@ -117,7 +117,7 @@ export const getproductcategory = async (idsub) => {
 
 export const Updateproductcate = async (id,updates) => {
   try {
-    const res = await axios.put(`https://duco-backend.onrender.com/products/update/:${id}`,updates);
+    const res = await axios.put(`${API_BASE}products/update/:${id}`,updates);
     return res.data || []; // Assuming controller sends { data: [...] }
   } catch (err) {
     console.error("Error fetching subcategories:", err);
@@ -128,7 +128,7 @@ export const Updateproductcate = async (id,updates) => {
 
 export const fetchOrdersByUser = async (userId) => {
   try {
-    const res = await fetch(`https://duco-backend.onrender.com/api/order/user/${userId}`);
+    const res = await fetch(`${API_BASE}api/order/user/${userId}`);
     const data = await res.json();
     return data;
   } catch (err) {
@@ -136,13 +136,12 @@ export const fetchOrdersByUser = async (userId) => {
     return [];
   }
 };
-// /Service/APIservi
 
 
 // CREATE: POST /api/banners  -> { success, banner }
-export async function createBanner(link) {
+export async function createBanner({ link, link2 }) {
   try {
-    const { data } = await axios.post(`${API_BASE}api/banners`, { link });
+    const { data } = await axios.post(`${API_BASE}api/banners`, { link, link2 });
     return { success: true, data: data.banner, error: null };
   } catch (err) {
     const message = err.response?.data?.error || err.message || "Failed to create banner";
@@ -150,7 +149,7 @@ export async function createBanner(link) {
   }
 }
 
-// READ: GET /api/banners  -> { success, banners:[{_id, link}] }
+// READ: GET /api/banners  -> { success, banners:[{_id, link, link2}] }
 export async function listBanners() {
   try {
     const { data } = await axios.get(`${API_BASE}api/banners`);
@@ -161,10 +160,10 @@ export async function listBanners() {
   }
 }
 
-// UPDATE: PUT /api/banners/:id  -> { success, banner:{_id, link} }
-export async function updateBanner(id, link) {
+// UPDATE: PUT /api/banners/:id  -> { success, banner:{_id, link, link2} }
+export async function updateBanner(id, { link, link2 }) {
   try {
-    const { data } = await axios.put(`${API_BASE}api/banners/${id}`, { link });
+    const { data } = await axios.put(`${API_BASE}api/banners/${id}`, { link, link2 });
     return { success: true, data: data.banner, error: null };
   } catch (err) {
     const message = err.response?.data?.error || err.message || "Failed to update banner";
@@ -238,5 +237,16 @@ export const deleteProduct = async (productId) => {
       err?.message ||
       "Failed to delete product";
     throw new Error(msg);
+  }
+};
+
+
+export const getCategoryById = async (categoryId) => {
+  try {
+    const res = await axios.get(`${API_BASE}category/get/${categoryId}`);
+    return res.data || null;
+  } catch (err) {
+    console.error(`Error fetching category ${categoryId}:`, err);
+    return null;
   }
 };

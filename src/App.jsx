@@ -76,10 +76,10 @@ const App = () => {
  
       <Route index path='' element={<Home/>}/>
        <Route index path='/home' element={<Home/>}/>
-            <Route  path='/men' element={<Prodcuts/>}/>
-              <Route  path='/women' element={<Prodcuts/>}/>
-                <Route  path='/kid' element={<Prodcuts/>}/>
-                  <Route  path='/corporate' element={<Prodcuts/>}/>
+            <Route  path='/men/:id' element={<Prodcuts/>}/>
+              <Route  path='/women/:id' element={<Prodcuts/>}/>
+                <Route  path='/kid/:id' element={<Prodcuts/>}/>
+                  <Route  path='/corporate/:id' element={<Prodcuts/>}/>
               <Route  path='/contact' element={<Contact/>}/>
                 <Route  path='/cart' element={<Cart/>}/>
                 <Route  path='/products/:id' element={<ProductRouter/>}/>
@@ -127,6 +127,7 @@ const App = () => {
                        <Route path='/admin/employess' element={<EmployeesAccManager/>}/>
                         <Route path='/admin/invoice' element={<Invoice/>}/>
                        
+                       
                    
               </Route>   
               </Route>
@@ -146,6 +147,14 @@ const App = () => {
       <Route path="banners" element={<Banner />} />
       <Route path="products" element={<ProdcutsCreated />} />
       <Route path="category" element={<Category />} />
+         <Route path='order' element={<OrderSection/>}/>
+            <Route path='bulkorder' element={<OrderBulk/>}/>
+           <Route path='sales' element={<AnalyticsDashboard/>}/>
+              <Route path='users' element={<UserInfo/>}/>
+                   <Route path='logistic' element={<LogisticsManager/>}/>
+                    <Route path='charges' element={<ChargePlanManager/>}/>
+                      <Route path='bankdetails' element={<BankDetailsManager/>}/>
+                        <Route path='invoice' element={<Invoice/>}/>
     </Route>
   </Route>
     

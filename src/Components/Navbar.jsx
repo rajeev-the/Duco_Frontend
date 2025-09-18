@@ -8,10 +8,10 @@ import ProductMegaMenu from './ProductMegaMenuXX';
 import MobileSidebar from './MobileSidebar';
  const menuItems = [
     { name: "Home", link: "/" ,isbold:false},
-    { name: "Men", link: "/men", hasMegaMenu: true ,isbold:true},
-    { name: "Women", link: "/women", hasMegaMenu: true ,isbold:true},
-    { name: "Kid", link: "/kid", hasMegaMenu: true ,isbold:true},
-    { name: "Corporate T-shirt", link: "/corporate" ,hasMegaMenu: true,isbold:true}
+    { name: "Men", link: "/men/688a276799318531731154ef", hasMegaMenu: true ,isbold:true},
+    { name: "Women", link: "/women/688a277999318531731154f2", hasMegaMenu: true ,isbold:true},
+    { name: "Kid", link: "/kid/688a279499318531731154f5", hasMegaMenu: true ,isbold:true},
+    { name: "Corporate T-shirt", link: "/corporate/68a3491b0fc06a8510c0c973" ,hasMegaMenu: true,isbold:true}
   ];
 
   const menuItemss = [
