@@ -57,6 +57,7 @@ useEffect(() => {
   pagebanner();
 }, []);
 
+console.log(banner2)
 
 
   return (

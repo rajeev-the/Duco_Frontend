@@ -23,7 +23,7 @@ const EmployeeLogin = () => {
       if (data.ok) {
         // save session
         localStorage.setItem("employeeAuth", JSON.stringify(form));
-        navigate(`/${data.url}`); // go to main dashboard
+        navigate(data.url); // go to main dashboard
       } else {
         alert("Invalid credentials");
       }
