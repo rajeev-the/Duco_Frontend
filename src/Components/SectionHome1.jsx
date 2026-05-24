@@ -20,7 +20,7 @@ const SectionHome1 = ({imglink}) => {
 } 
   
       <img
-        src={imglink }
+        src={heroImg}
         alt="Main Visual"
         className="w-full h-full object-cover rounded-2xl"
       />
