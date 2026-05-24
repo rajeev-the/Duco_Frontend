@@ -8,15 +8,30 @@ const BoxOfProdcuts = ({ price, title, id, image }) => {
   const { addtocart } = useContext(CartContext);
   const { toConvert, priceIncrease } = usePriceContext();
 
-  function calculatePrice(currency, ac, high) {
-    const actualPrice = currency * ac;
-    const final = actualPrice + (actualPrice * (high / 100));
-    return Math.ceil(final); // 🔥 force whole number
-  }
 
-  const finalPrice = toConvert && price && priceIncrease 
-    ? calculatePrice(toConvert, price, priceIncrease) 
+
+const finalPrice =
+  toConvert !== null &&
+  price !== null &&
+  priceIncrease !== null
+    ? calculatePrice(toConvert, price, priceIncrease)
     : null;
+
+
+    function calculatePrice(
+  currency = 1,
+  ac = 0,
+  high = 0
+) {
+
+  const actualPrice = currency * ac;
+
+  const final =
+    actualPrice +
+    (actualPrice * (high / 100));
+
+  return Math.ceil(final);
+}
 
   return (
     <Link
