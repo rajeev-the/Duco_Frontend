@@ -34,7 +34,7 @@ useEffect(() => {
     })
     .catch((error) => {
       console.log(error.message);
-      setLocation("Asia");
+      setLocation("India");
     });
     
     const pagebanner = async () => {

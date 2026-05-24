@@ -24,7 +24,7 @@ export const PriceProvider = ({ children }) => {
 
         // Extract price data and currency conversion rate
         const data = response.data;
-        setPriceIncrease(data.percentage);  // Set the price increase
+        setPriceIncrease(data.price_increase);  // Set the price increase
         setToConvert(data.currency.toconvert);  // Set the conversion rate
 
       } catch (error) {
