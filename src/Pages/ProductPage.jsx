@@ -51,26 +51,55 @@ const ProductPage = () => {
   const [iscount, setIscount] = useState(0);
 
   // Fetch product
-  useEffect(() => {
-    const fetchProduct = async () => {
+ useEffect(() => {
+
+  const fetchProduct = async () => {
+
+    try {
+
       const data = await getproductssingle(id);
+
       if (data) {
+
         const p = Array.isArray(data) ? data[0] : data;
+
         setProduct(p);
+
         setDefaultColorGroup(p.image_url?.[0]);
-        setSelectedColorCode(p.image_url?.[0]?.colorcode || '#ffffff');
-        setColortext(p.image_url?.[0]?.color);
+
+        setSelectedColorCode(
+          p.image_url?.[0]?.colorcode || '#ffffff'
+        );
+
+        setColortext(
+          p.image_url?.[0]?.color
+        );
+
         setGender(p.gender);
 
-        const calculated = calculatePrice(toConvert, p?.pricing?.[0]?.price_per, priceIncrease);
-        setPrice(Math.round(calculated)); // 👈 always round to integer
+        const calculated = calculatePrice(
+          toConvert,
+          p?.pricing?.[0]?.price_per,
+          priceIncrease
+        );
+
+        setPrice(Math.round(calculated));
+
       }
-      if (!priceIncrease) {
-        navigate("/");
-      }
-    };
+
+    } catch (error) {
+
+      console.error("Error fetching product:", error);
+
+    }
+
+  };
+
+  if (toConvert !== null && priceIncrease !== null) {
     fetchProduct();
-  }, [id]);
+  }
+
+}, [id, toConvert, priceIncrease]);
 
   // Load previous designs
   useEffect(() => {
@@ -94,11 +123,19 @@ const ProductPage = () => {
     }
   };
 
-  const calculatePrice = (currency, basePrice, high) => {
-    const actualPrice = currency * basePrice;
-    return actualPrice + (actualPrice * (high / 100));
-  };
+const calculatePrice = (
+  currency = 1,
+  basePrice = 0,
+  high = 0
+) => {
 
+  const actualPrice = currency * basePrice;
+
+  return actualPrice + (
+    actualPrice * (high / 100)
+  );
+
+};
   const handleQty = (k, v) => {
     const n = Math.max(0, Math.min(9999, Number(v.replace(/[^0-9]/g, "")) || 0));
     setQty((p) => ({ ...p, [k]: n }));

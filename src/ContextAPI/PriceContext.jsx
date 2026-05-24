@@ -1,51 +1,68 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Create Context for price_increase, toConvert, and location
+// Create Context
 const PriceContext = createContext();
 
-// Create a Provider component
+// Provider Component
 export const PriceProvider = ({ children }) => {
-  const [toConvert, setToConvert] = useState(null);
-  const [priceIncrease, setPriceIncrease] = useState(null);
-  const [location, setLocation] = useState(null); // Add location state
+
+  const [toConvert, setToConvert] = useState(1);
+  const [priceIncrease, setPriceIncrease] = useState(0);
+  const [location, setLocation] = useState("India");
 
   const API_BASE = 'https://duco-backend.onrender.com/';
 
   useEffect(() => {
-    if (!location) return; // Only run if location is set
+
+    if (!location) return;
 
     const fetchPriceData = async () => {
-      try {
-        // Fetch price data based on the current location using Axios
-        const response = await axios.post(`https://duco-backend.onrender.com/money/get_location_increase`, {
-         location: "India",  // Ensure `location` is properly defined
-        });
 
-        // Extract price data and currency conversion rate
+      try {
+
+        const response = await axios.post(
+          `${API_BASE}money/get_location_increase`,
+          {
+            location:"India"
+          }
+        );
+
         const data = response.data;
-        console.log(data)
-        setPriceIncrease(data.percentage);  // Set the price increase
-        setToConvert(data.currency.toconvert);  // Set the conversion rate
+
+        console.log(data);
+
+        setPriceIncrease(data?.percentage || 0);
+
+        setToConvert(data?.currency?.toconvert || 1);
 
       } catch (error) {
+
         console.error('Error fetching price data:', error);
-        // Handle error (e.g., show error message to the user)
+
       }
+
     };
 
     fetchPriceData();
-  }, [location]); // Dependency on location to trigger the effect when it changes
 
+  }, [location]);
 
   return (
-    <PriceContext.Provider value={{ toConvert, priceIncrease, setLocation }}>
+    <PriceContext.Provider
+      value={{
+        toConvert,
+        priceIncrease,
+        location,
+        setLocation
+      }}
+    >
       {children}
     </PriceContext.Provider>
   );
 };
 
-// Custom hook to use the context
+// Custom Hook
 export const usePriceContext = () => {
   return useContext(PriceContext);
 };
