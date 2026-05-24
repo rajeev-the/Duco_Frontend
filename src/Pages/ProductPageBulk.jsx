@@ -68,9 +68,9 @@ const ProductPageBulk = () => {
          setGender(p.gender)
 
       }
-      if(!priceIncrease){
-        navigate("/")
-      }
+      // if(!priceIncrease){
+      //   navigate("/")
+      // }
       
     };
     fetchProduct();
