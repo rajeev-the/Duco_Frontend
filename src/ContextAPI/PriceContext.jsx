@@ -19,12 +19,13 @@ export const PriceProvider = ({ children }) => {
       try {
         // Fetch price data based on the current location using Axios
         const response = await axios.post(`https://duco-backend.onrender.com/money/get_location_increase`, {
-          location,  // Ensure `location` is properly defined
+         location: "India",  // Ensure `location` is properly defined
         });
 
         // Extract price data and currency conversion rate
         const data = response.data;
-        setPriceIncrease(data.price_increase);  // Set the price increase
+        console.log(data)
+        setPriceIncrease(data.percentage);  // Set the price increase
         setToConvert(data.currency.toconvert);  // Set the conversion rate
 
       } catch (error) {
