@@ -15,12 +15,10 @@ const SectionHome1 = ({imglink}) => {
 
     {/* Left big image */}
     <Link to={"/women"} className="relative w-full md:w-[70%] rounded-2xl overflow-hidden max-h-[600px]">
-{
-      !imglink && <Loading />
-} 
+
   
       <img
-        src={heroImg}
+        src={heroImg }
         alt="Main Visual"
         className="w-full h-full object-cover rounded-2xl"
       />
