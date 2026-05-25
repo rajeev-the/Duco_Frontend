@@ -14,429 +14,515 @@ const safeNum = (v, fallback = 0) => {
 };
 
 const Cart = () => {
-  const { cart, clear, removeFromCart, updateQuantity } = useContext(CartContext);
+
+  const {
+    cart,
+    clear,
+    removeFromCart,
+    updateQuantity,
+  } = useContext(CartContext);
+
   const [user, setUser] = useState(null);
+
   const [products, setProducts] = useState([]);
+
   const [loadingProducts, setLoadingProducts] = useState(true);
+
   const [loadingRates, setLoadingRates] = useState(false);
+
   const [address, setAddress] = useState(null);
 
   const navigate = useNavigate();
+
   const { toConvert } = usePriceContext();
 
-  // per-unit charges from /chargeplan/rates
+  // Charges
   const [pfPerUnit, setPfPerUnit] = useState(0);
+
   const [printPerUnit, setPrintPerUnit] = useState(0);
+
   const [gstPercent, setGstPercent] = useState(0);
 
-  // read user from localStorage once
+  // User from localStorage
   useEffect(() => {
+
     try {
+
       const stored = localStorage.getItem("user");
-      if (stored) setUser(JSON.parse(stored));
+
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+
     } catch (e) {
+
       console.error("Invalid user in localStorage", e);
     }
+
   }, []);
 
-
-
-  // fetch products
+  // Fetch Products
   useEffect(() => {
+
     const run = async () => {
+
       try {
+
         setLoadingProducts(true);
+
         const fetched = await getproducts();
-        if (Array.isArray(fetched)) setProducts(fetched);
+
+        console.log("========== PRODUCTS ==========");
+        console.log(fetched);
+
+        if (Array.isArray(fetched)) {
+          setProducts(fetched);
+        }
+
       } catch (e) {
+
         console.error(e);
-        toast.error("Failed to load products. Please refresh.");
+
+        toast.error("Failed to load products");
+
       } finally {
+
         setLoadingProducts(false);
       }
     };
+
     run();
+
   }, []);
 
-  // enrich cart items with product data
+  // Merge Cart + Product Data
   const actualData = useMemo(() => {
-    if (!Array.isArray(cart) || !Array.isArray(products)) return [];
+
+    if (!Array.isArray(cart) || !Array.isArray(products)) {
+      return [];
+    }
+
     return cart
       .map((ci) => {
+
         const p = products.find((x) => x._id === ci.id);
+
         if (!p) return null;
-        return { ...p, ...ci }; // merge product fields + cart fields
+
+        return {
+          ...p,
+          ...ci,
+        };
+
       })
       .filter(Boolean);
+
   }, [cart, products]);
 
-  // total quantity across all items (sum of nested quantity object values)
+  // Total Quantity
   const totalQuantity = useMemo(() => {
+
     return actualData.reduce((sum, item) => {
+
       const inner = Object.values(item.quantity || {}).reduce(
         (acc, q) => acc + safeNum(q, 0),
         0
       );
+
       return sum + inner;
+
     }, 0);
+
   }, [actualData]);
 
-  // subtotal of products (price * per-item quantities)
+  // Subtotal
   const subtotal = useMemo(() => {
+
     return actualData.reduce((sum, item) => {
+
       const qty = Object.values(item.quantity || {}).reduce(
         (acc, q) => acc + safeNum(q, 0),
         0
       );
+
       return sum + safeNum(item.price, 0) * qty;
+
     }, 0);
+
   }, [actualData]);
 
+  // Fetch Charges
+  useEffect(() => {
 
-  
+    const fetchRates = async () => {
 
-//   // fetch per-unit rates when totalQuantity changes (≥ 1)
-//   useEffect(() => {
-//     const fetchRates = async () => {
-//       try {
-//         setLoadingRates(true);
-//         const qty = totalQuantity > 0 ? totalQuantity : 0;
-//         const res = await getChargePlanRates(qty);
-//         if (res?.success) {
-//           setPfPerUnit(safeNum(res.data?.perUnit?.pakageingandforwarding, 0));
-//           setPrintPerUnit(safeNum(res.data?.perUnit?.printingcost, 0));
-//           setGstPercent(
-//     safeNum(
-//          res?.data?.gstPercent ??
-//          res?.data?.percent?.gst ??
-//          res?.data?.perUnit?.gst,
-//          0
-//        )
-//      );
-          
-//         } else {
-//           // If backend uses different shape, fall back to zeros
-//           setPfPerUnit(0);
-//           setPrintPerUnit(0);
-//                   setGstPercent(0);
-       
-//         }
-//       } catch (e) {
-//         console.error(e);
-//         toast.error("Failed to load charges. Please refresh.");
-//         setPfPerUnit(0);
-//         setPrintPerUnit(0);
+      try {
 
-//       } finally {
-//         setLoadingRates(false);
-//       }
-//     };
+        setLoadingRates(true);
 
-//     // If there are no items, don't call the API; zero out charges
-//     if (totalQuantity > 0) {
-//       fetchRates();
-//     } else {
-//       setPfPerUnit(0);
-//       setPrintPerUnit(0);
-//       setGstPercent(0);
-//     }
-//   }, [totalQuantity]);
+        const qty = totalQuantity > 0 ? totalQuantity : 0;
 
-//   // totals for charges (per-unit * totalQuantity)
-//   const pfTotal = useMemo(() => pfPerUnit , [pfPerUnit, totalQuantity]);
-//   const printTotal = useMemo(() => printPerUnit , [printPerUnit, totalQuantity]);
-//   const gstTotal = useMemo(
-//    () => (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100,
-//    [subtotal, gstPercent]
-//  );
+        console.log("========== TOTAL QUANTITY ==========");
+        console.log(qty);
 
-//   // grand total in base units
-//   const grandTotal = useMemo(() => {
-//     return safeNum(subtotal, 0) + safeNum(pfTotal, 0) + safeNum(printTotal, 0) + safeNum(gstTotal, 0);
-//   }, [subtotal, pfTotal, printTotal, gstTotal]);
+        const res = await getChargePlanRates(qty);
 
+        console.log("========== FULL API RESPONSE ==========");
+        console.log(res);
 
-// fetch per-unit rates when totalQuantity changes (≥ 1)
-useEffect(() => {
+        if (res?.success) {
 
-  const fetchRates = async () => {
+          const data = res?.data || {};
 
-    try {
+          // PF Slab
+          const pfSlab = data?.pakageingandforwarding?.find(
+            (item) =>
+              qty >= item.minqty &&
+              qty <= item.maxqty
+          );
 
-      setLoadingRates(true);
+          console.log("PF SLAB =>", pfSlab);
 
-      const qty = totalQuantity > 0 ? totalQuantity : 0;
+          // Printing Slab
+          const printSlab = data?.printingcost?.find(
+            (item) =>
+              qty >= item.minqty &&
+              qty <= item.maxqty
+          );
 
-      console.log("========== TOTAL QUANTITY ==========");
-      console.log(qty);
+          console.log("PRINT SLAB =>", printSlab);
 
-      const res = await getChargePlanRates(qty);
+          // GST Slab
+          const gstSlab = data?.gst?.find(
+            (item) =>
+              qty >= item.minqty &&
+              qty <= item.maxqty
+          );
 
-      console.log("========== CHARGE API RESPONSE ==========");
-      console.log(res);
+          console.log("GST SLAB =>", gstSlab);
 
-      console.log("res.data =>", res?.data);
+          const pf = safeNum(pfSlab?.cost, 0);
 
-      console.log(
-        "pakageingandforwarding =>",
-        res?.data?.perUnit?.pakageingandforwarding
-      );
+          const printing = safeNum(printSlab?.cost, 0);
 
-      console.log(
-        "printingcost =>",
-        res?.data?.perUnit?.printingcost
-      );
+          const gst = safeNum(gstSlab?.percent, 0);
 
-      console.log(
-        "gstPercent =>",
-        res?.data?.gstPercent
-      );
+          console.log("========== FINAL VALUES ==========");
+          console.log("PF =>", pf);
+          console.log("PRINT =>", printing);
+          console.log("GST =>", gst);
 
-      console.log(
-        "percent.gst =>",
-        res?.data?.percent?.gst
-      );
+          setPfPerUnit(pf);
 
-      console.log(
-        "perUnit.gst =>",
-        res?.data?.perUnit?.gst
-      );
+          setPrintPerUnit(printing);
 
-      if (res?.success) {
+          setGstPercent(gst);
 
-        const pf = safeNum(
-          res?.data?.perUnit?.pakageingandforwarding,
-          0
-        );
+        } else {
 
-        const printing = safeNum(
-          res?.data?.perUnit?.printingcost,
-          0
-        );
+          console.log("❌ API success false");
 
-        const gst = safeNum(
-          res?.data?.gstPercent ??
-          res?.data?.percent?.gst ??
-          res?.data?.perUnit?.gst,
-          0
-        );
+          setPfPerUnit(0);
+          setPrintPerUnit(0);
+          setGstPercent(0);
+        }
 
-        console.log("========== FINAL VALUES ==========");
-        console.log("PF =>", pf);
-        console.log("PRINT =>", printing);
-        console.log("GST =>", gst);
+      } catch (e) {
 
-        setPfPerUnit(pf);
-        setPrintPerUnit(printing);
-        setGstPercent(gst);
+        console.error("❌ CHARGE API ERROR =>", e);
 
-      } else {
-
-        console.log("❌ API success false");
+        toast.error("Failed to load charges");
 
         setPfPerUnit(0);
         setPrintPerUnit(0);
         setGstPercent(0);
+
+      } finally {
+
+        setLoadingRates(false);
       }
+    };
 
-    } catch (e) {
+    if (totalQuantity > 0) {
 
-      console.error("❌ CHARGE API ERROR =>", e);
+      fetchRates();
 
-      toast.error("Failed to load charges. Please refresh.");
+    } else {
 
       setPfPerUnit(0);
       setPrintPerUnit(0);
       setGstPercent(0);
-
-    } finally {
-
-      setLoadingRates(false);
     }
-  };
 
-  if (totalQuantity > 0) {
+  }, [totalQuantity]);
 
-    fetchRates();
+  // P&F Total
+  const pfTotal = useMemo(() => {
 
-  } else {
+    const value =
+      safeNum(pfPerUnit, 0) *
+      safeNum(totalQuantity, 0);
 
-    console.log("❌ totalQuantity is 0");
+    console.log("pfTotal =>", value);
 
-    setPfPerUnit(0);
-    setPrintPerUnit(0);
-    setGstPercent(0);
-  }
+    return value;
 
-}, [totalQuantity]);
+  }, [pfPerUnit, totalQuantity]);
 
+  // Print Total
+  const printTotal = useMemo(() => {
 
-// totals for charges (per-unit * totalQuantity)
+    const value =
+      safeNum(printPerUnit, 0) *
+      safeNum(totalQuantity, 0);
 
-const pfTotal = useMemo(() => {
+    console.log("printTotal =>", value);
 
-  console.log("pfPerUnit =>", pfPerUnit);
-  console.log("totalQuantity =>", totalQuantity);
+    return value;
 
-  return safeNum(pfPerUnit, 0) * safeNum(totalQuantity, 0);
+  }, [printPerUnit, totalQuantity]);
 
-}, [pfPerUnit, totalQuantity]);
+  // GST Total
+  const gstTotal = useMemo(() => {
 
+    const gst =
+      (safeNum(subtotal, 0) *
+        safeNum(gstPercent, 0)) / 100;
 
-const printTotal = useMemo(() => {
+    console.log("gstTotal =>", gst);
 
-  console.log("printPerUnit =>", printPerUnit);
-  console.log("totalQuantity =>", totalQuantity);
+    return gst;
 
-  return safeNum(printPerUnit, 0) * safeNum(totalQuantity, 0);
+  }, [subtotal, gstPercent]);
 
-}, [printPerUnit, totalQuantity]);
+  // Grand Total
+  const grandTotal = useMemo(() => {
 
+    const total =
+      safeNum(subtotal, 0) +
+      safeNum(pfTotal, 0) +
+      safeNum(printTotal, 0) +
+      safeNum(gstTotal, 0);
 
-const gstTotal = useMemo(() => {
+    console.log("========== GRAND TOTAL ==========");
+    console.log({
+      subtotal,
+      pfTotal,
+      printTotal,
+      gstTotal,
+      total,
+    });
 
-  const gst =
-    (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100;
+    return total;
 
-  console.log("subtotal =>", subtotal);
-  console.log("gstPercent =>", gstPercent);
-  console.log("gstTotal =>", gst);
+  }, [subtotal, pfTotal, printTotal, gstTotal]);
 
-  return gst;
+  // Convert Currency
+  const convert = (amount) =>
+    (
+      safeNum(amount, 0) *
+      safeNum(toConvert, 0)
+    ).toFixed(2);
 
-}, [subtotal, gstPercent]);
+  // Order Payload
+  const orderPayload = useMemo(() => ({
 
+    items: actualData,
 
-// grand total
-const grandTotal = useMemo(() => {
+    totalPay:
+      safeNum(grandTotal, 0) *
+      safeNum(toConvert, 0),
 
-  const total =
-    safeNum(subtotal, 0) +
-    safeNum(pfTotal, 0) +
-    safeNum(printTotal, 0) +
-    safeNum(gstTotal, 0);
+    address,
 
-  console.log("========== GRAND TOTAL ==========");
-  console.log({
-    subtotal,
+    user,
+
+    pf: pfTotal,
+
+    gst: gstTotal,
+
+    printing: printTotal,
+
+  }), [
+    actualData,
+    grandTotal,
+    toConvert,
+    address,
+    user,
     pfTotal,
-    printTotal,
     gstTotal,
-    total,
-  });
+    printTotal,
+  ]);
 
-  return total;
+  console.log("========== ORDER PAYLOAD ==========");
+  console.log(orderPayload);
 
-}, [subtotal, pfTotal, printTotal, gstTotal]);
-
-
-
-
-
-  // conversion helper for display
-  const convert = (amount) => (safeNum(amount, 0) * safeNum(toConvert, 0)).toFixed(2);
-
-  const orderPayload = useMemo(
-    () => ({
-      items: actualData, // enriched items (frontend only)
-      totalPay: safeNum(grandTotal, 0) * safeNum(toConvert, 0),
-      address,
-      user,
-      pf:pfPerUnit,
-      gst:gstPercent,
-      printing:printPerUnit
-    }),
-    [actualData, grandTotal, toConvert, address, user]
-  );
-  console.log(orderPayload)
-  
-
+  // Checkout
   const handleCheckout = () => {
+
     if (!user) {
-      toast.error("Please log in to continue.");
+
+      toast.error("Please log in");
+
       return;
     }
+
     if (!actualData.length) {
-      toast.error("Your cart is empty. Add some products first.");
+
+      toast.error("Cart is empty");
+
       navigate("/home");
+
       return;
     }
-    if (!address || Object.keys(address || {}).length === 0) {
-      toast.error("Please select a delivery address.");
+
+    if (!address) {
+
+      toast.error("Select address");
+
       return;
     }
-    navigate("/payment", { state: orderPayload });
+
+    navigate("/payment", {
+      state: orderPayload,
+    });
   };
 
-  const isLoading = loadingProducts || loadingRates;
+  const isLoading =
+    loadingProducts || loadingRates;
+
   if (isLoading) return <Loading />;
 
   return (
+
     <div className="min-h-screen text-white p-8">
-      <h1 className="text-3xl font-bold mb-8">SHOPPING CART</h1>
+
+      <h1 className="text-3xl font-bold mb-8">
+        SHOPPING CART
+      </h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
+
         {/* Cart Items */}
         <div className="flex-1">
+
           {actualData.length > 0 ? (
+
             actualData.map((item, i) => (
+
               <CartItem
-                key={`${item._id}-${item.size}-${item.color}-${i}`}
+                key={`${item._id}-${i}`}
                 item={item}
                 removeFromCart={() =>
-                  removeFromCart(item.id, item.quantity, item.color, item.design)
+                  removeFromCart(
+                    item.id,
+                    item.quantity,
+                    item.color,
+                    item.design
+                  )
                 }
                 updateQuantity={(newQty) =>
-                  updateQuantity(item.id, item.quantity, item.color, item.design, newQty)
+                  updateQuantity(
+                    item.id,
+                    item.quantity,
+                    item.color,
+                    item.design,
+                    newQty
+                  )
                 }
               />
             ))
+
           ) : (
+
             <div className="text-gray-400 text-center mt-16 text-xl">
               Your cart is empty.
             </div>
           )}
+
         </div>
 
-        {/* Order Summary */}
+        {/* Summary */}
         <div className="lg:w-96 flex flex-col">
+
           <div
             className="lg:w-96 h-fit rounded-sm p-6"
-            style={{ backgroundColor: "#112430" }}
+            style={{
+              backgroundColor: "#112430",
+            }}
           >
-            <h2 className="text-2xl font-bold mb-6 text-white">ORDER SUMMARY</h2>
+
+            <h2 className="text-2xl font-bold mb-6 text-white">
+              ORDER SUMMARY
+            </h2>
 
             <div className="space-y-4 mb-8">
+
               <div className="flex justify-between">
-                <span className="text-gray-300">Subtotal</span>
-                <span className="text-white">{convert(subtotal)}</span>
+                <span className="text-gray-300">
+                  Subtotal
+                </span>
+
+                <span className="text-white">
+                  {convert(subtotal)}
+                </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-300">P&F Charges</span>
-                <span className="text-white">{convert(pfTotal)}</span>
+                <span className="text-gray-300">
+                  P&F Charges
+                </span>
+
+                <span className="text-white">
+                  {convert(pfTotal)}
+                </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-300">Printing Charge</span>
-                <span className="text-white">{convert(printTotal)}</span>
+                <span className="text-gray-300">
+                  Printing Charge
+                </span>
+
+                <span className="text-white">
+                  {convert(printTotal)}
+                </span>
               </div>
+
               <div className="flex justify-between">
-                <span className="text-gray-300">GST Charge</span>
-              <span className="text-white">{convert(gstTotal)}</span>
+                <span className="text-gray-300">
+                  GST Charge
+                </span>
+
+                <span className="text-white">
+                  {convert(gstTotal)}
+                </span>
               </div>
+
             </div>
 
             <div className="flex justify-between border-t border-gray-600 pt-4 mb-6">
-              <span className="text-white font-bold">Total</span>
-              <span className="text-white font-bold">{convert(grandTotal)}</span>
+
+              <span className="text-white font-bold">
+                Total
+              </span>
+
+              <span className="text-white font-bold">
+                {convert(grandTotal)}
+              </span>
+
             </div>
 
             <button
               className="w-full py-4 font-bold hover:bg-opacity-90 transition-all"
-              style={{ backgroundColor: "#FDC305", color: "#112430" }}
+              style={{
+                backgroundColor: "#FDC305",
+                color: "#112430",
+              }}
               onClick={handleCheckout}
             >
               CHECK OUT
             </button>
+
           </div>
 
           {/* Address */}
@@ -446,8 +532,11 @@ const grandTotal = useMemo(() => {
             user={user}
             setUser={setUser}
           />
+
         </div>
+
       </div>
+
     </div>
   );
 };
