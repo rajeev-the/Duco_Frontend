@@ -1,6 +1,7 @@
 
 import React from 'react'
-import banner from '../WhatsApp Image 2026-05-25 at 1.24.09 AM.jpeg'
+import banner from '../assets/WhatsApp Image 2026-05-25 at 1.24.09 AM.jpeg'
+
 
 const BannerHome = () => {
   return (
