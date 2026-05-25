@@ -39,6 +39,8 @@ const Cart = () => {
     }
   }, []);
 
+
+
   // fetch products
   useEffect(() => {
     const run = async () => {
@@ -90,65 +92,246 @@ const Cart = () => {
     }, 0);
   }, [actualData]);
 
-  // fetch per-unit rates when totalQuantity changes (≥ 1)
-  useEffect(() => {
-    const fetchRates = async () => {
-      try {
-        setLoadingRates(true);
-        const qty = totalQuantity > 0 ? totalQuantity : 0;
-        const res = await getChargePlanRates(qty);
-        if (res?.success) {
-          setPfPerUnit(safeNum(res.data?.perUnit?.pakageingandforwarding, 0));
-          setPrintPerUnit(safeNum(res.data?.perUnit?.printingcost, 0));
-          setGstPercent(
-    safeNum(
-         res?.data?.gstPercent ??
-         res?.data?.percent?.gst ??
-         res?.data?.perUnit?.gst,
-         0
-       )
-     );
+
+  
+
+//   // fetch per-unit rates when totalQuantity changes (≥ 1)
+//   useEffect(() => {
+//     const fetchRates = async () => {
+//       try {
+//         setLoadingRates(true);
+//         const qty = totalQuantity > 0 ? totalQuantity : 0;
+//         const res = await getChargePlanRates(qty);
+//         if (res?.success) {
+//           setPfPerUnit(safeNum(res.data?.perUnit?.pakageingandforwarding, 0));
+//           setPrintPerUnit(safeNum(res.data?.perUnit?.printingcost, 0));
+//           setGstPercent(
+//     safeNum(
+//          res?.data?.gstPercent ??
+//          res?.data?.percent?.gst ??
+//          res?.data?.perUnit?.gst,
+//          0
+//        )
+//      );
           
-        } else {
-          // If backend uses different shape, fall back to zeros
-          setPfPerUnit(0);
-          setPrintPerUnit(0);
-                  setGstPercent(0);
+//         } else {
+//           // If backend uses different shape, fall back to zeros
+//           setPfPerUnit(0);
+//           setPrintPerUnit(0);
+//                   setGstPercent(0);
        
-        }
-      } catch (e) {
-        console.error(e);
-        toast.error("Failed to load charges. Please refresh.");
+//         }
+//       } catch (e) {
+//         console.error(e);
+//         toast.error("Failed to load charges. Please refresh.");
+//         setPfPerUnit(0);
+//         setPrintPerUnit(0);
+
+//       } finally {
+//         setLoadingRates(false);
+//       }
+//     };
+
+//     // If there are no items, don't call the API; zero out charges
+//     if (totalQuantity > 0) {
+//       fetchRates();
+//     } else {
+//       setPfPerUnit(0);
+//       setPrintPerUnit(0);
+//       setGstPercent(0);
+//     }
+//   }, [totalQuantity]);
+
+//   // totals for charges (per-unit * totalQuantity)
+//   const pfTotal = useMemo(() => pfPerUnit , [pfPerUnit, totalQuantity]);
+//   const printTotal = useMemo(() => printPerUnit , [printPerUnit, totalQuantity]);
+//   const gstTotal = useMemo(
+//    () => (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100,
+//    [subtotal, gstPercent]
+//  );
+
+//   // grand total in base units
+//   const grandTotal = useMemo(() => {
+//     return safeNum(subtotal, 0) + safeNum(pfTotal, 0) + safeNum(printTotal, 0) + safeNum(gstTotal, 0);
+//   }, [subtotal, pfTotal, printTotal, gstTotal]);
+
+
+// fetch per-unit rates when totalQuantity changes (≥ 1)
+useEffect(() => {
+
+  const fetchRates = async () => {
+
+    try {
+
+      setLoadingRates(true);
+
+      const qty = totalQuantity > 0 ? totalQuantity : 0;
+
+      console.log("========== TOTAL QUANTITY ==========");
+      console.log(qty);
+
+      const res = await getChargePlanRates(qty);
+
+      console.log("========== CHARGE API RESPONSE ==========");
+      console.log(res);
+
+      console.log("res.data =>", res?.data);
+
+      console.log(
+        "pakageingandforwarding =>",
+        res?.data?.perUnit?.pakageingandforwarding
+      );
+
+      console.log(
+        "printingcost =>",
+        res?.data?.perUnit?.printingcost
+      );
+
+      console.log(
+        "gstPercent =>",
+        res?.data?.gstPercent
+      );
+
+      console.log(
+        "percent.gst =>",
+        res?.data?.percent?.gst
+      );
+
+      console.log(
+        "perUnit.gst =>",
+        res?.data?.perUnit?.gst
+      );
+
+      if (res?.success) {
+
+        const pf = safeNum(
+          res?.data?.perUnit?.pakageingandforwarding,
+          0
+        );
+
+        const printing = safeNum(
+          res?.data?.perUnit?.printingcost,
+          0
+        );
+
+        const gst = safeNum(
+          res?.data?.gstPercent ??
+          res?.data?.percent?.gst ??
+          res?.data?.perUnit?.gst,
+          0
+        );
+
+        console.log("========== FINAL VALUES ==========");
+        console.log("PF =>", pf);
+        console.log("PRINT =>", printing);
+        console.log("GST =>", gst);
+
+        setPfPerUnit(pf);
+        setPrintPerUnit(printing);
+        setGstPercent(gst);
+
+      } else {
+
+        console.log("❌ API success false");
+
         setPfPerUnit(0);
         setPrintPerUnit(0);
-
-      } finally {
-        setLoadingRates(false);
+        setGstPercent(0);
       }
-    };
 
-    // If there are no items, don't call the API; zero out charges
-    if (totalQuantity > 0) {
-      fetchRates();
-    } else {
+    } catch (e) {
+
+      console.error("❌ CHARGE API ERROR =>", e);
+
+      toast.error("Failed to load charges. Please refresh.");
+
       setPfPerUnit(0);
       setPrintPerUnit(0);
       setGstPercent(0);
+
+    } finally {
+
+      setLoadingRates(false);
     }
-  }, [totalQuantity]);
+  };
 
-  // totals for charges (per-unit * totalQuantity)
-  const pfTotal = useMemo(() => pfPerUnit , [pfPerUnit, totalQuantity]);
-  const printTotal = useMemo(() => printPerUnit , [printPerUnit, totalQuantity]);
-  const gstTotal = useMemo(
-   () => (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100,
-   [subtotal, gstPercent]
- );
+  if (totalQuantity > 0) {
 
-  // grand total in base units
-  const grandTotal = useMemo(() => {
-    return safeNum(subtotal, 0) + safeNum(pfTotal, 0) + safeNum(printTotal, 0) + safeNum(gstTotal, 0);
-  }, [subtotal, pfTotal, printTotal, gstTotal]);
+    fetchRates();
+
+  } else {
+
+    console.log("❌ totalQuantity is 0");
+
+    setPfPerUnit(0);
+    setPrintPerUnit(0);
+    setGstPercent(0);
+  }
+
+}, [totalQuantity]);
+
+
+// totals for charges (per-unit * totalQuantity)
+
+const pfTotal = useMemo(() => {
+
+  console.log("pfPerUnit =>", pfPerUnit);
+  console.log("totalQuantity =>", totalQuantity);
+
+  return safeNum(pfPerUnit, 0) * safeNum(totalQuantity, 0);
+
+}, [pfPerUnit, totalQuantity]);
+
+
+const printTotal = useMemo(() => {
+
+  console.log("printPerUnit =>", printPerUnit);
+  console.log("totalQuantity =>", totalQuantity);
+
+  return safeNum(printPerUnit, 0) * safeNum(totalQuantity, 0);
+
+}, [printPerUnit, totalQuantity]);
+
+
+const gstTotal = useMemo(() => {
+
+  const gst =
+    (safeNum(subtotal, 0) * safeNum(gstPercent, 0)) / 100;
+
+  console.log("subtotal =>", subtotal);
+  console.log("gstPercent =>", gstPercent);
+  console.log("gstTotal =>", gst);
+
+  return gst;
+
+}, [subtotal, gstPercent]);
+
+
+// grand total
+const grandTotal = useMemo(() => {
+
+  const total =
+    safeNum(subtotal, 0) +
+    safeNum(pfTotal, 0) +
+    safeNum(printTotal, 0) +
+    safeNum(gstTotal, 0);
+
+  console.log("========== GRAND TOTAL ==========");
+  console.log({
+    subtotal,
+    pfTotal,
+    printTotal,
+    gstTotal,
+    total,
+  });
+
+  return total;
+
+}, [subtotal, pfTotal, printTotal, gstTotal]);
+
+
+
+
 
   // conversion helper for display
   const convert = (amount) => (safeNum(amount, 0) * safeNum(toConvert, 0)).toFixed(2);
