@@ -120,36 +120,73 @@ const Cart = () => {
   }, [cart, products]);
 
   // Total Quantity
-  const totalQuantity = useMemo(() => {
+const totalQuantity = useMemo(() => {
 
-    return actualData.reduce((sum, item) => {
+  return actualData.reduce((sum, item) => {
 
-      const inner = Object.values(item.quantity || {}).reduce(
+    console.log("ITEM =>", item);
+
+    console.log("QUANTITY =>", item.quantity);
+
+    let qty = 0;
+
+    // CASE 1 -> quantity is object
+    if (
+      typeof item.quantity === "object" &&
+      item.quantity !== null
+    ) {
+
+      qty = Object.values(item.quantity).reduce(
         (acc, q) => acc + safeNum(q, 0),
         0
       );
+    }
 
-      return sum + inner;
+    // CASE 2 -> quantity is number/string
+    else {
 
-    }, 0);
+      qty = safeNum(item.quantity, 0);
+    }
 
-  }, [actualData]);
+    console.log("FINAL ITEM QTY =>", qty);
+
+    return sum + qty;
+
+  }, 0);
+
+}, [actualData]);
 
   // Subtotal
-  const subtotal = useMemo(() => {
+const subtotal = useMemo(() => {
 
-    return actualData.reduce((sum, item) => {
+  return actualData.reduce((sum, item) => {
 
-      const qty = Object.values(item.quantity || {}).reduce(
+    let qty = 0;
+
+    if (
+      typeof item.quantity === "object" &&
+      item.quantity !== null
+    ) {
+
+      qty = Object.values(item.quantity).reduce(
         (acc, q) => acc + safeNum(q, 0),
         0
       );
+    }
 
-      return sum + safeNum(item.price, 0) * qty;
+    else {
 
-    }, 0);
+      qty = safeNum(item.quantity, 0);
+    }
 
-  }, [actualData]);
+    console.log("PRICE =>", item.price);
+    console.log("QTY =>", qty);
+
+    return sum + safeNum(item.price, 0) * qty;
+
+  }, 0);
+
+}, [actualData]);
 
   // Fetch Charges
   useEffect(() => {
