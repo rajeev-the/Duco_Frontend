@@ -19,7 +19,7 @@ const OderSection = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("https://duco-backend.onrender.com/api/order");
+      const res = await fetch("https://duco-backend-mhru.onrender.com/api/order");
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : []);
     } catch (err) {

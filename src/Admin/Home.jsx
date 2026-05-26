@@ -13,7 +13,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("https://duco-backend.onrender.com/products/get");
+        const res = await axios.get("https://duco-backend-mhru.onrender.com/products/get");
         setProducts(res.data); // ✅ use res.data
       } catch (err) {
         console.error("Failed to fetch products:", err);

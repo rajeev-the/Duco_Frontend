@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'https://duco-backend.onrender.com/'; // Set if you have a different baseURL
+const API_BASE = 'https://duco-backend-mhru.onrender.com/'; // Set if you have a different baseURL
 
 export const fetchAllPrices = async () => {
   const response = await axios.get(`${API_BASE}money/get_money`);
@@ -16,7 +16,7 @@ export const createOrUpdatePrice = async (data) => {
 
 export const fetchPreviousDesigns = async (userId) => {
   try {
-    const res = await fetch(`https://duco-backend.onrender.com/api/designs/user/${userId}`);
+    const res = await fetch(`https://duco-backend-mhru.onrender.com/api/designs/user/${userId}`);
     const data = await res.json();
     return data;
   } catch (err) {
@@ -31,7 +31,7 @@ export const fetchPreviousDesigns = async (userId) => {
 
 export const fetchPreviousDesignswithpreoduts = async (userId,productId) => {
   try {
-    const res = await fetch(`https://duco-backend.onrender.com/api/designs/user/${userId}/${productId}`);
+    const res = await fetch(`https://duco-backend-mhru.onrender.com/api/designs/user/${userId}/${productId}`);
     const data = await res.json();
     return data;
   } catch (err) {
@@ -45,7 +45,7 @@ export const fetchPreviousDesignswithpreoduts = async (userId,productId) => {
 
 export const createDesign = async (payload) => {
   try {
-    const res = await axios.post('https://duco-backend.onrender.com/api/designs', payload, {
+    const res = await axios.post('https://duco-backend-mhru.onrender.com/api/designs', payload, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -60,7 +60,7 @@ export const createDesign = async (payload) => {
 
 export const getCategories = async () => {
     try {
-      const res = await axios.get("https://duco-backend.onrender.com/category/getall");
+      const res = await axios.get("https://duco-backend-mhru.onrender.com/category/getall");
       return res.data.category || [];
     } catch (err) {
       console.error("Error fetching categories:", err);

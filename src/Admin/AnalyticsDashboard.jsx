@@ -8,7 +8,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
-const API_BASE = "https://duco-backend.onrender.com/"; // e.g. "http://localhost:5000"; keep empty for same-origin
+const API_BASE = "https://duco-backend-mhru.onrender.com/"; // e.g. "http://localhost:5000"; keep empty for same-origin
 
 const STATUSES = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 

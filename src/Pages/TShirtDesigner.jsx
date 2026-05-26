@@ -166,7 +166,7 @@ const TshirtDesigner = () => {
     }
 
     const fileName = `${isUploadedLogo ? 'logo' : 'tshirt'}_${view}_${Date.now()}.png`;
-    const authRes = await axios.get("https://duco-backend.onrender.com/api/imagekit/auth");
+    const authRes = await axios.get("https://duco-backend-mhru.onrender.com/api/imagekit/auth");
     const { signature, expire, token } = authRes.data;
 
     const formData = new FormData();

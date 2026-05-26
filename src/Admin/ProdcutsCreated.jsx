@@ -9,7 +9,7 @@ const ProductsCreated = () => {
   useEffect(() => {
     const getSubCategories = async () => {
       try {
-        const res = await axios.get("https://duco-backend.onrender.com/subcategory/getallsubctg");
+        const res = await axios.get("https://duco-backend-mhru.onrender.com/subcategory/getallsubctg");
         setSubcategories(res.data.subCategory || []);
       } catch (err) {
         console.error("Error fetching subcategories:", err);
@@ -104,7 +104,7 @@ const ProductsCreated = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('https://duco-backend.onrender.com/products/create', formData);
+      const res = await axios.post('https://duco-backend-mhru.onrender.com/products/create', formData);
       alert(res?.data?.message || "Product created successfully");
     } catch (error) {
       console.error('Error creating product:', error);

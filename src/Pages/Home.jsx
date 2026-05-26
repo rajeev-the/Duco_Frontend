@@ -39,7 +39,7 @@ useEffect(() => {
     
     const pagebanner = async () => {
     try {
-      const res = await axios.get("https://duco-backend.onrender.com/api/banners");
+      const res = await axios.get("https://duco-backend-mhru.onrender.com/api/banners");
       // backend sends { success:true, banners:[{_id, link}, ...] }
       setBanner(res.data.banners?.[0]?.link || "");
       setBanner2(res.data.banners?.[0]?.link2 || "")

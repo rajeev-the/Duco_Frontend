@@ -1,5 +1,5 @@
 // src/api/logisticsApi.js
-const API_BASE = "https://duco-backend.onrender.com/api" || ""; 
+const API_BASE = "https://duco-backend-mhru.onrender.com/api" || ""; 
 
 
 

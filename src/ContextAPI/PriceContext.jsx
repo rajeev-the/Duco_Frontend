@@ -11,7 +11,7 @@ export const PriceProvider = ({ children }) => {
   const [priceIncrease, setPriceIncrease] = useState(0);
   const [location, setLocation] = useState("India");
 
-  const API_BASE = 'https://duco-backend.onrender.com/';
+  const API_BASE = 'https://duco-backend-mhru.onrender.com/';
 
   useEffect(() => {
 

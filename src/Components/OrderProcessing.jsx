@@ -8,7 +8,7 @@ const OrderProcessing = () => {
   const navigate = useNavigate();
   const { paymentId, orderData ,paymentmode } = location.state || {};
   console.log("OrderProcessing:", { paymentId, orderData ,paymentmode });
-    const API_BASE = 'https://duco-backend.onrender.com/';
+    const API_BASE = 'https://duco-backend-mhru.onrender.com/';
   
   useEffect(() => {
     if (!paymentId || !orderData) {

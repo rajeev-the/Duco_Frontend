@@ -35,7 +35,7 @@ const OrderDetailsCard = ({ orderId }) => {
   const handleStatusChange = async (newStatus) => {
     setOrder((prev) => ({ ...prev, status: newStatus }));
     try {
-      await fetch(`https://duco-backend.onrender.com/api/order/update/${orderId}`, {
+      await fetch(`https://duco-backend-mhru.onrender.com/api/order/update/${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -48,7 +48,7 @@ const OrderDetailsCard = ({ orderId }) => {
   const handleQlinkOrderIdChange = async (newId) => {
     setOrder((prev) => ({ ...prev, qlinkOrderId: newId }));
     try {
-      await fetch(`https://duco-backend.onrender.com/api/order/update/${orderId}`, {
+      await fetch(`https://duco-backend-mhru.onrender.com/api/order/update/${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ qlinkOrderId: newId?.trim() || null }),
@@ -80,7 +80,7 @@ const OrderDetailsCard = ({ orderId }) => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`https://duco-backend.onrender.com/api/order/${orderId}`);
+        const res = await fetch(`https://duco-backend-mhru.onrender.com/api/order/${orderId}`);
         const data = await res.json();
         setOrder(data);
       } catch (err) {
