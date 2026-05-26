@@ -17,6 +17,7 @@ const Signup = ({ setIsOpenLog, login }) => {
     setLoading(true);
     try {
       const res = await sendOtpToEmail({ email });
+      console.log(res);
       toast.success(res.message || 'OTP sent');
       setIsExistingUser(res.userExists); // 👈 set if user already exists
       setStep(2);
