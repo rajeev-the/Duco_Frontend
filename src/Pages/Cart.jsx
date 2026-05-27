@@ -230,7 +230,7 @@ const subtotal = useMemo(() => {
               setPrintPerUnit(printing);
 
               setGstPercent(gst);
-                      
+                    
 
         } else {
 
