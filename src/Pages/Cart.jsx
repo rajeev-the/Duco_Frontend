@@ -208,52 +208,29 @@ const subtotal = useMemo(() => {
         // console.log(res);
 
         if (res?.success) {
+                          const data = res?.data || {};
 
-          const data = res?.data || {};
+              const pf = safeNum(
+                data?.perUnit?.pakageingandforwarding,
+                0
+              );
 
-          // PF Slab
-          const pfSlab = data?.pakageingandforwarding?.find(
-            (item) =>
-              qty >= item.minqty &&
-              qty <= item.maxqty
-          );
+              const printing = safeNum(
+                data?.perUnit?.printingcost,
+                0
+              );
 
-          // console.log("PF SLAB =>", pfSlab);
+              const gst = safeNum(
+                data?.gstPercent,
+                0
+              );
 
-          // Printing Slab
-          const printSlab = data?.printingcost?.find(
-            (item) =>
-              qty >= item.minqty &&
-              qty <= item.maxqty
-          );
+              setPfPerUnit(pf);
 
-          // console.log("PRINT SLAB =>", printSlab);
+              setPrintPerUnit(printing);
 
-          // GST Slab
-          const gstSlab = data?.gst?.find(
-            (item) =>
-              qty >= item.minqty &&
-              qty <= item.maxqty
-          );
-
-          // console.log("GST SLAB =>", gstSlab);
-
-          const pf = safeNum(pfSlab?.cost, 0);
-
-          const printing = safeNum(printSlab?.cost, 0);
-
-          const gst = safeNum(gstSlab?.percent, 0);
-
-          // console.log("========== FINAL VALUES ==========");
-          // console.log("PF =>", pf);
-          // console.log("PRINT =>", printing);
-          // console.log("GST =>", gst);
-
-          setPfPerUnit(pf);
-
-          setPrintPerUnit(printing);
-
-          setGstPercent(gst);
+              setGstPercent(gst);
+                      
 
         } else {
 
