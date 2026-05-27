@@ -180,6 +180,8 @@ export const getChargePlanRates = async (qty) => {
 
     const finalQty = Number(qty);
 
+    console.log(finalQty+ typeof(finalQty));
+
   const res = await axios.post(`${API_BASE}api/chargeplan/rates` ,{
      qty:finalQty
     });

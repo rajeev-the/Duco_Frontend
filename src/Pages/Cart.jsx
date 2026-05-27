@@ -72,8 +72,8 @@ const Cart = () => {
 
         const fetched = await getproducts();
 
-        console.log("========== PRODUCTS ==========");
-        console.log(fetched);
+        // console.log("========== PRODUCTS ==========");
+        // console.log(fetched);
 
         if (Array.isArray(fetched)) {
           setProducts(fetched);
@@ -124,9 +124,9 @@ const totalQuantity = useMemo(() => {
 
   return actualData.reduce((sum, item) => {
 
-    console.log("ITEM =>", item);
+    // console.log("ITEM =>", item);
 
-    console.log("QUANTITY =>", item.quantity);
+    // console.log("QUANTITY =>", item.quantity);
 
     let qty = 0;
 
@@ -148,7 +148,7 @@ const totalQuantity = useMemo(() => {
       qty = safeNum(item.quantity, 0);
     }
 
-    console.log("FINAL ITEM QTY =>", qty);
+    // console.log("FINAL ITEM QTY =>", qty);
 
     return sum + qty;
 
@@ -179,8 +179,8 @@ const subtotal = useMemo(() => {
       qty = safeNum(item.quantity, 0);
     }
 
-    console.log("PRICE =>", item.price);
-    console.log("QTY =>", qty);
+    // console.log("PRICE =>", item.price);
+    // console.log("QTY =>", qty);
 
     return sum + safeNum(item.price, 0) * qty;
 
@@ -199,13 +199,13 @@ const subtotal = useMemo(() => {
 
         const qty = totalQuantity > 0 ? totalQuantity : 0;
 
-        console.log("========== TOTAL QUANTITY ==========");
-        console.log(qty);
+        // console.log("========== TOTAL QUANTITY ==========");
+        // console.log(qty);
 
         const res = await getChargePlanRates(qty);
 
-        console.log("========== FULL API RESPONSE ==========");
-        console.log(res);
+        // console.log("========== FULL API RESPONSE ==========");
+        // console.log(res);
 
         if (res?.success) {
 
@@ -218,7 +218,7 @@ const subtotal = useMemo(() => {
               qty <= item.maxqty
           );
 
-          console.log("PF SLAB =>", pfSlab);
+          // console.log("PF SLAB =>", pfSlab);
 
           // Printing Slab
           const printSlab = data?.printingcost?.find(
@@ -227,7 +227,7 @@ const subtotal = useMemo(() => {
               qty <= item.maxqty
           );
 
-          console.log("PRINT SLAB =>", printSlab);
+          // console.log("PRINT SLAB =>", printSlab);
 
           // GST Slab
           const gstSlab = data?.gst?.find(
@@ -236,7 +236,7 @@ const subtotal = useMemo(() => {
               qty <= item.maxqty
           );
 
-          console.log("GST SLAB =>", gstSlab);
+          // console.log("GST SLAB =>", gstSlab);
 
           const pf = safeNum(pfSlab?.cost, 0);
 
@@ -244,10 +244,10 @@ const subtotal = useMemo(() => {
 
           const gst = safeNum(gstSlab?.percent, 0);
 
-          console.log("========== FINAL VALUES ==========");
-          console.log("PF =>", pf);
-          console.log("PRINT =>", printing);
-          console.log("GST =>", gst);
+          // console.log("========== FINAL VALUES ==========");
+          // console.log("PF =>", pf);
+          // console.log("PRINT =>", printing);
+          // console.log("GST =>", gst);
 
           setPfPerUnit(pf);
 
@@ -391,8 +391,8 @@ const subtotal = useMemo(() => {
     printTotal,
   ]);
 
-  console.log("========== ORDER PAYLOAD ==========");
-  console.log(orderPayload);
+  // console.log("========== ORDER PAYLOAD ==========");
+  // console.log(orderPayload);
 
   // Checkout
   const handleCheckout = () => {
