@@ -177,8 +177,11 @@ export async function adminLogin(userid, password) {
 }
 
 export const getChargePlanRates = async (qty) => {
+
+    const finalQty = Number(qty);
+
   const res = await axios.post(`${API_BASE}api/chargeplan/rates` ,{
-     qty
+     qty:finalQty
     });
     console.log(res);
   return res.data;
