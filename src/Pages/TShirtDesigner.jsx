@@ -177,7 +177,7 @@ const TshirtDesigner = () => {
     formData.append("signature", signature);
     formData.append("useUniqueFileName", "true");
     formData.append("folder", "/tshirt-designs");
-    formData.append("publicKey", "public_pxbUbZQmz2LGTkhrvGgUMelJZbg=");
+    formData.append("publicKey", "public_J3yLsbN/8c6ljmzkLEKtYT2Pzaw=");
 
     const res = await axios.post("https://upload.imagekit.io/api/v1/files/upload", formData, {
       onUploadProgress: (progressEvent) => {
