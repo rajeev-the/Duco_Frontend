@@ -490,7 +490,7 @@ const TshirtDesigner = () => {
           />
         )}
 
-        <main className="flex-1 flex items-center justify-center mt-4 lg:mt-0 p-4"
+        <main className="flex-1 flex items-center justify-center mt-4 lg:mt-0 lg:top-[-50px] absolute p-4">
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="relative w-full max-w-2xl h-96 sm:h-[30rem] md:h-[38rem] rounded-3xl overflow-hidden mx-auto">
               {views.map((view) => renderDesignArea(view))}
