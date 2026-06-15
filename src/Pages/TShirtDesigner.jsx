@@ -50,7 +50,7 @@ const TshirtDesigner = () => {
   const defaultSideState = (view) => ({
     uploadedImage: null,
     customText: '',
-    textSize: 20,
+    textSize: 100,
     textColor: '#000000',
     font: 'font-sans',
     imageSize: 120,
@@ -286,7 +286,7 @@ const TshirtDesigner = () => {
     return (
       <div
         ref={designRefs[view]}
-        className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${
+        className={`absolute top-10 left-0 w-full h-full transition-opacity duration-300 ${
           isActive ? 'relative z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
