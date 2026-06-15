@@ -286,7 +286,7 @@ const TshirtDesigner = () => {
     return (
       <div
         ref={designRefs[view]}
-        className={`absolute top-10 left-0 w-full h-full transition-opacity duration-300 ${
+        className={`absolute top-0 left-0 w-full h-full transition-opacity duration-300 ${
           isActive ? 'relative z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -353,11 +353,14 @@ const TshirtDesigner = () => {
 
       <div className="flex flex-col lg:flex-row p-0 lg:p-4 relative">
         {/* Sidebar */}
+
         <aside className={`
           w-full lg:w-80 bg-white rounded-2xl shadow-xl p-6 border border-gray-300
           lg:static fixed top-0 left-0 h-full z-40 overflow-y-auto transition-transform duration-300
           ${isMobile ? (sidebarOpen ? 'translate-x-0' : '-translate-x-full') : ''}
         `}>
+
+
           {/* Close button for mobile */}
           {isMobile && (
             <div className="flex justify-end mb-4 lg:hidden">
@@ -487,7 +490,7 @@ const TshirtDesigner = () => {
           />
         )}
 
-        <main className="flex-1 flex items-center justify-center mt-4 lg:mt-0 lg:top-[-150px] relative p-4">
+        <main className="flex-1 flex items-center justify-center mt-4 lg:mt-0 lg:top-[-150px] absolute p-4">
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             <div className="relative w-full max-w-2xl h-96 sm:h-[30rem] md:h-[38rem] rounded-3xl overflow-hidden mx-auto">
               {views.map((view) => renderDesignArea(view))}
